@@ -1,8 +1,13 @@
+import UserInfo from "../components/UserInfo";
+
 const HomePage = () => {
   return (
     <div>
-      <h1>HomePage</h1>
-      <p>Under construction, but I am doing my best!</p>
+      <h1>You are logged in</h1>
+      <p>
+        This site is currently under construction, but I am doing my best! 🔨🐻
+      </p>
+      <UserInfo />
     </div>
   );
 };
