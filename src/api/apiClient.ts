@@ -11,16 +11,14 @@ class ApiClient<T> {
     this.endpoint = endpoint;
   }
 
-  getAll = () => {
-    return axiosInstance
-      .get<T[]>(this.endpoint)
-      .then((response) => response.data);
+  getAll = async () => {
+    const response = await axiosInstance.get<T[]>(this.endpoint);
+    return response.data;
   };
 
-  get = () => {
-    return axiosInstance
-      .get<T>(this.endpoint)
-      .then((response) => response.data);
+  get = async () => {
+    const response = await axiosInstance.get<T>(this.endpoint);
+    return response.data;
   };
 }
 
