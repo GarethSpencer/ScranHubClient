@@ -6,6 +6,7 @@ import ScranhubAuth0Provider from "./auth0/ScranhubAuth0Provider";
 import "bootstrap/dist/css/bootstrap.min.css";
 import router from "./routes";
 import { RouterProvider } from "react-router-dom";
+import DarkModeProvider from "./components/DarkModeProvider";
 
 const queryClient = new QueryClient();
 
@@ -13,8 +14,10 @@ createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <ScranhubAuth0Provider>
       <QueryClientProvider client={queryClient}>
-        <RouterProvider router={router} />
-        <ReactQueryDevtools />
+        <DarkModeProvider>
+          <RouterProvider router={router} />
+          <ReactQueryDevtools />
+        </DarkModeProvider>
       </QueryClientProvider>
     </ScranhubAuth0Provider>
   </StrictMode>,

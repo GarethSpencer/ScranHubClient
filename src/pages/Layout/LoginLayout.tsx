@@ -1,12 +1,22 @@
 import "./Layout.css";
-import LoginPage from "./LoginPage";
+import LoginPage from "../LoginPage";
+import DarkModeContext from "../../contexts/darkModeContext";
+import { useContext } from "react";
+import { MdDarkMode, MdLightMode } from "react-icons/md";
 
 const LoginLayout = () => {
+  const { state: isDarkMode, toggleDarkMode } = useContext(DarkModeContext);
   const copyrightYear = new Date().getFullYear();
 
   return (
     <div className="main-layout-container flex-column">
       <div className="login-content-wrapper">
+        <button
+          className="position-absolute top-0 end-0 m-3 border-0 bg-transparent fs-4 theme-toggle-btn"
+          onClick={() => toggleDarkMode({ type: "SET" })}
+        >
+          {isDarkMode ? <MdLightMode /> : <MdDarkMode />}
+        </button>
         <LoginPage />
       </div>
       <div className="content-footer">
