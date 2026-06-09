@@ -7,11 +7,13 @@ interface Props {
 }
 
 const DarkModeProvider = ({ children }: Props) => {
-  const [state, toggleDarkMode] = useReducer(
-    darkModeReducer,
-    null,
-    () => localStorage.getItem("darkMode") === "true",
-  );
+  const [state, toggleDarkMode] = useReducer(darkModeReducer, null, () => {
+    const stored = localStorage.getItem("darkMode");
+    if (stored !== null) {
+      return stored === "true";
+    }
+    return window.matchMedia("(prefers-color-scheme: dark)").matches;
+  });
 
   useEffect(() => {
     localStorage.setItem("darkMode", String(state));
