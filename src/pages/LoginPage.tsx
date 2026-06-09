@@ -21,8 +21,9 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="text-center mt-5">
-      <h1 className="display-4">ScranHub</h1>
+    <div className="text-center mt-2">
+      <p className="content-logo">🍜</p>
+      <h1 className="display-5">ScranHub</h1>
       <h2 className="lead">
         Plan and rate your scranning adventures with your friends!
       </h2>
