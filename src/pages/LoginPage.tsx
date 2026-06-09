@@ -38,7 +38,7 @@ const LoginPage = () => {
         <p className="mt-3 text-center text-muted">
           Need to create an account?
           <a
-            className="ms-1"
+            className="ms-1 d-block"
             href="#"
             onClick={(event) => auth0Signup(event, { type: "signup" })}
           >
