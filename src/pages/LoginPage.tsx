@@ -21,19 +21,24 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="container">
-      <h1 className="text-center mt-5">Login</h1>
+    <div className="text-center mt-5">
+      <h1 className="display-4">ScranHub</h1>
+      <h2 className="lead">
+        Plan and rate your scranning adventures with your friends!
+      </h2>
       <div className="w-75 mx-auto mt-5">
         <Button
+          size="lg"
           variant="primary"
           className="w-100"
           onClick={(event) => auth0Signup(event, { type: "login" })}
         >
-          Get Scranning
+          Login
         </Button>
-        <p className="mt-3 text-center">
-          Need to create an account?{" "}
+        <p className="mt-3 text-center text-muted">
+          Need to create an account?
           <a
+            className="ms-1"
             href="#"
             onClick={(event) => auth0Signup(event, { type: "signup" })}
           >
