@@ -15,6 +15,10 @@ const DarkModeProvider = ({ children }: Props) => {
 
   useEffect(() => {
     localStorage.setItem("darkMode", String(state));
+    document.documentElement.setAttribute(
+      "data-bs-theme",
+      state ? "dark" : "light",
+    );
   }, [state]);
 
   return (
