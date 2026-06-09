@@ -10,7 +10,7 @@ const LoginLayout = () => {
 
   return (
     <div className="main-layout-container flex-column">
-      <div className="login-content-wrapper">
+      <div className="login-content-wrapper mx-2">
         <button
           className="position-absolute top-0 end-0 m-3 border-0 bg-transparent fs-4 theme-toggle-btn"
           onClick={() => toggleDarkMode({ type: "SET" })}
