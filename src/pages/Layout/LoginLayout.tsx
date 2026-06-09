@@ -7,6 +7,9 @@ import { MdDarkMode, MdLightMode } from "react-icons/md";
 const LoginLayout = () => {
   const { state: isDarkMode, toggleDarkMode } = useContext(DarkModeContext);
   const copyrightYear = new Date().getFullYear();
+  const magnificLink = "https://www.magnific.com";
+  const frontendLink = "https://github.com/garethspencer/ScranHubClient";
+  const backendLink = "https://github.com/garethspencer/ScranHub";
 
   return (
     <div className="main-layout-container flex-column">
@@ -20,10 +23,14 @@ const LoginLayout = () => {
         <LoginPage />
       </div>
       <div className="content-footer">
-        <a href="https://www.magnific.com">
+        <a href={magnificLink} className="d-block">
           Background image designed by Freepik - Magnific.com
         </a>
-        <p>© {copyrightYear} Gareth Spencer. All rights reserved.</p>
+        <p className="d-block mt-2">
+          © {copyrightYear} Gareth Spencer. Check out my{" "}
+          <a href={frontendLink}>frontend</a> and{" "}
+          <a href={backendLink}>backend</a> source code on GitHub.
+        </p>
       </div>
     </div>
   );
