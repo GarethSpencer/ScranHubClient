@@ -1,20 +1,24 @@
 import "./Layout.css";
 import { Outlet } from "react-router-dom";
 import LayoutFooter from "../components/LayoutFooter";
-import DarkModeButton from "../components/DarkModeButton";
-import LogoutButton from "../components/LogoutButton";
+import NavBar from "../components/NavBar";
+import Container from "react-bootstrap/Container";
+import Row from "react-bootstrap/Row";
 
 const Layout = () => {
   return (
     <div className="main-layout-container">
-      <div className="content-wrapper">
-        <div>
-          <LogoutButton />
-          <DarkModeButton />
-        </div>
-        <Outlet />
-      </div>
-      <LayoutFooter />
+      <Container fluid>
+        <Row>
+          <NavBar />
+        </Row>
+        <Row>
+          <div className="content-wrapper">
+            <Outlet />
+          </div>
+        </Row>
+        <LayoutFooter />
+      </Container>
     </div>
   );
 };

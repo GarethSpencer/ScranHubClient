@@ -89,7 +89,7 @@
 }
 
 [data-bs-theme="dark"] .logout-btn {
-  color: #aaa;
+  color: rgb(170, 170, 170);
   filter: drop-shadow(0 0 1px rgba(0, 0, 0, 1))
     drop-shadow(0 0 4px rgba(0, 0, 0, 1));
 }
@@ -101,4 +101,20 @@
 .main-layout-container {
   min-height: 100vh;
   min-height: 100dvh;
+}
+
+.navbar-divider {
+  --bs-dropdown-divider-bg: rgba(170, 170, 170, 0.4);
+}
+
+.navbar-mobile-link {
+  border-radius: 0.375rem;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+  transition: background-color 0.15s ease-in-out;
+}
+
+.navbar-mobile-link:hover,
+.navbar-mobile-link:focus {
+  background-color: rgba(0, 0, 0, 0.15);
 }

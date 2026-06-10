@@ -5,7 +5,7 @@ import Spinner from "react-bootstrap/esm/Spinner";
 
 const UserInfo = () => {
   const apiClient = new ApiClient<GetUserResponse>("/user/me");
-  const { data, isLoading, isError } = useQuery({
+  const { isLoading, isError } = useQuery({
     queryKey: ["userInfo", "me"],
     queryFn: apiClient.get,
   });
@@ -22,11 +22,6 @@ const UserInfo = () => {
   return (
     <>
       <h2>API connection successful</h2>
-      <p>
-        Your initial userName is: {data?.user?.displayName}. Your status is: [
-        {data?.user?.active ? "Active" : "Inactive"}]. Your Id is [
-        {data?.user?.userId}].
-      </p>
     </>
   );
 };
