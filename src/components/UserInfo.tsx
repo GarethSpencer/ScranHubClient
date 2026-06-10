@@ -1,4 +1,4 @@
-import type GetUserDetailedResponse from "../models/responses/GetUserDetailedResponse";
+import type GetUserDetailedResponse from "../models/responses/user/GetUserDetailedResponse";
 import ApiClient from "../api/apiClient";
 import { useQuery } from "@tanstack/react-query";
 import Spinner from "react-bootstrap/esm/Spinner";
