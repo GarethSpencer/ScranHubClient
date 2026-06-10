@@ -3,17 +3,19 @@ import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import NavDropdown from "react-bootstrap/NavDropdown";
+import Toast from "react-bootstrap/Toast";
+import ToastContainer from "react-bootstrap/ToastContainer";
 import useAuth from "../auth/useAuth";
 import useDarkMode from "../contexts/darkMode/useDarkMode";
 import ApiClient from "../api/apiClient";
-import type GetUserResponse from "../models/responses/GetUserResponse";
+import type GetUserDetailedResponse from "../models/responses/GetUserDetailedResponse";
 import { useQuery } from "@tanstack/react-query";
 import UserDetailsModal from "./UserDetailsModal";
 
 function NavBar() {
   const { logout } = useAuth();
   const { toggleDarkMode } = useDarkMode();
-  const apiClient = new ApiClient<GetUserResponse>("/user/me");
+  const apiClient = new ApiClient<GetUserDetailedResponse>("/user/me");
   const { data, isLoading, isError } = useQuery({
     queryKey: ["userInfo", "me"],
     queryFn: apiClient.get,
@@ -28,6 +30,7 @@ function NavBar() {
   const [expanded, setExpanded] = useState(false);
   const navRef = useRef<HTMLElement>(null);
   const [showUserDetailsModal, setShowUserDetailsModal] = useState(false);
+  const [showUpdateUserToast, setShowUpdateUserToast] = useState(false);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -118,7 +121,21 @@ function NavBar() {
       <UserDetailsModal
         showUserDetailsModal={showUserDetailsModal}
         setShowUserDetailsModal={setShowUserDetailsModal}
+        onUpdateUserSuccess={() => setShowUpdateUserToast(true)}
       />
+      <ToastContainer position="bottom-end" className="p-3">
+        <Toast
+          show={showUpdateUserToast}
+          onClose={() => setShowUpdateUserToast(false)}
+          delay={4000}
+          autohide
+          bg="success"
+        >
+          <Toast.Body className="text-white">
+            Username updated successfully.
+          </Toast.Body>
+        </Toast>
+      </ToastContainer>
     </>
   );
 }

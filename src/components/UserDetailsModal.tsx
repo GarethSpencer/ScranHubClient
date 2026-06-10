@@ -1,24 +1,29 @@
-import Button from "react-bootstrap/Button";
+import { useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import ApiClient from "../api/apiClient";
 import type GetUserResponse from "../models/responses/GetUserResponse";
 import { useQuery } from "@tanstack/react-query";
 import Placeholder from "react-bootstrap/Placeholder";
+import UserDetailsForm from "./UserDetailsForm";
 
 interface Props {
   showUserDetailsModal: boolean;
   setShowUserDetailsModal: (input: boolean) => void;
+  onUpdateUserSuccess: () => void;
 }
 
 function UserDetailsModal({
   showUserDetailsModal,
   setShowUserDetailsModal,
+  onUpdateUserSuccess,
 }: Props) {
   const apiClient = new ApiClient<GetUserResponse>("/user/me");
-  const { data, isLoading, isError } = useQuery({
+  const { isLoading, isError } = useQuery({
     queryKey: ["userInfo", "me"],
     queryFn: apiClient.get,
   });
+
+  const [isUpdatingUser, setIsUpdatingUser] = useState(false);
 
   if (isError) return null;
 
@@ -30,15 +35,13 @@ function UserDetailsModal({
           setShowUserDetailsModal(false);
         }}
       >
-        {" "}
         <Modal.Header closeButton>
           <Modal.Title>Loading</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          {" "}
           <Placeholder as="p" animation="glow">
             <Placeholder xs={12} />
-          </Placeholder>{" "}
+          </Placeholder>
         </Modal.Body>
       </Modal>
     );
@@ -47,33 +50,22 @@ function UserDetailsModal({
     <Modal
       show={showUserDetailsModal}
       onHide={() => {
+        if (isUpdatingUser) return;
         setShowUserDetailsModal(false);
       }}
+      backdrop={isUpdatingUser ? "static" : true}
+      keyboard={!isUpdatingUser}
     >
-      <Modal.Header closeButton>
+      <Modal.Header closeButton={!isUpdatingUser}>
         <Modal.Title>My Details</Modal.Title>
       </Modal.Header>
-      <Modal.Body>Your name is {data?.user.displayName}</Modal.Body>
-      {isLoading ? null : (
-        <Modal.Footer>
-          <Button
-            variant="secondary"
-            onClick={() => {
-              setShowUserDetailsModal(false);
-            }}
-          >
-            Close
-          </Button>
-          <Button
-            variant="primary"
-            onClick={() => {
-              setShowUserDetailsModal(false);
-            }}
-          >
-            Save Changes
-          </Button>
-        </Modal.Footer>
-      )}
+      <Modal.Body>
+        <UserDetailsForm
+          setShowUserDetailsModal={setShowUserDetailsModal}
+          onUpdateUserSuccess={onUpdateUserSuccess}
+          onUpdateUserPendingChange={setIsUpdatingUser}
+        />
+      </Modal.Body>
     </Modal>
   );
 }

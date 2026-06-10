@@ -20,6 +20,14 @@ class ApiClient<T> {
     const response = await axiosInstance.get<T>(this.endpoint);
     return response.data;
   };
+
+  patch = async <TRequest>(id: string, data: TRequest) => {
+    const response = await axiosInstance.patch<T>(
+      `${this.endpoint}/${id}`,
+      data
+    );
+    return response.data;
+  };
 }
 
 export default ApiClient;
