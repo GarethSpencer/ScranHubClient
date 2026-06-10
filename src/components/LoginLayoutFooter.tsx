@@ -1,4 +1,4 @@
-import "./../pages/Layout/Layout.css";
+import "./../layout/Layout.css";
 
 const LoginLayoutFooter = () => {
   const copyrightYear = new Date().getFullYear();

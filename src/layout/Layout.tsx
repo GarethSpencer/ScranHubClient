@@ -1,8 +1,8 @@
 import "./Layout.css";
 import { Outlet } from "react-router-dom";
-import LayoutFooter from "../../components/LayoutFooter";
-import DarkModeButton from "../../components/DarkModeButton";
-import LogoutButton from "../../components/LogoutButton";
+import LayoutFooter from "../components/LayoutFooter";
+import DarkModeButton from "../components/DarkModeButton";
+import LogoutButton from "../components/LogoutButton";
 
 const Layout = () => {
   return (

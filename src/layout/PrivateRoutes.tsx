@@ -1,6 +1,6 @@
-import useAuth from "../../auth/useAuth";
+import useAuth from "../auth/useAuth";
 import { Navigate, Outlet } from "react-router-dom";
-import useApiClient from "../../api/useApiClient";
+import useApiClient from "../api/useApiClient";
 
 const PrivateRoutes = () => {
   useApiClient();

@@ -1,7 +1,7 @@
 import "./Layout.css";
-import LoginPage from "../LoginPage";
-import DarkModeButton from "../../components/DarkModeButton";
-import LoginLayoutFooter from "../../components/LoginLayoutFooter";
+import LoginPage from "../pages/LoginPage";
+import DarkModeButton from "../components/DarkModeButton";
+import LoginLayoutFooter from "../components/LoginLayoutFooter";
 
 const LoginLayout = () => {
   return (
