@@ -75,7 +75,11 @@ function NavBar() {
             </Nav.Link>
           </Nav>
           <Nav className="ms-auto d-none d-lg-flex">
-            <NavDropdown title={dropdownText} id="basic-nav-dropdown">
+            <NavDropdown
+              title={dropdownText}
+              id="basic-nav-dropdown"
+              align="end"
+            >
               <NavDropdown.Item role="button">My Details</NavDropdown.Item>
               <NavDropdown.Item
                 role="button"
