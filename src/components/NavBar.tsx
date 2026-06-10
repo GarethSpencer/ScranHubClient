@@ -8,6 +8,7 @@ import useDarkMode from "../contexts/darkMode/useDarkMode";
 import ApiClient from "../api/apiClient";
 import type GetUserResponse from "../models/responses/GetUserResponse";
 import { useQuery } from "@tanstack/react-query";
+import UserDetailsModal from "./UserDetailsModal";
 
 function NavBar() {
   const { logout } = useAuth();
@@ -26,6 +27,7 @@ function NavBar() {
 
   const [expanded, setExpanded] = useState(false);
   const navRef = useRef<HTMLElement>(null);
+  const [showUserDetailsModal, setShowUserDetailsModal] = useState(false);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -39,66 +41,85 @@ function NavBar() {
   }, []);
 
   return (
-    <Navbar
-      expand="lg"
-      bg="primary"
-      variant="dark"
-      fixed="top"
-      expanded={expanded}
-      onToggle={setExpanded}
-      ref={navRef}
-    >
-      <Container fluid>
-        <Navbar.Brand href="#">ScranHub</Navbar.Brand>
-        <Navbar.Toggle aria-controls="basic-navbar-nav" />
-        <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="ms-auto d-lg-none">
-            <Navbar.Text className="fw-bold">{dropdownText}</Navbar.Text>
-            <hr className="dropdown-divider navbar-divider" />
-            <Nav.Link role="button" className="text-white navbar-mobile-link">
-              My Details
-            </Nav.Link>
-            <Nav.Link
-              role="button"
-              className="text-white navbar-mobile-link"
-              onClick={() => toggleDarkMode({ type: "SET" })}
-            >
-              Toggle Dark Mode
-            </Nav.Link>
-            <hr className="dropdown-divider navbar-divider" />
-            <Nav.Link
-              role="button"
-              className="text-white navbar-mobile-link"
-              onClick={logoutAction}
-            >
-              Logout
-            </Nav.Link>
-          </Nav>
-          <Nav className="ms-auto d-none d-lg-flex">
-            <NavDropdown
-              title={dropdownText}
-              id="basic-nav-dropdown"
-              align="end"
-            >
-              <NavDropdown.Item role="button">My Details</NavDropdown.Item>
-              <NavDropdown.Item
+    <>
+      <Navbar
+        expand="lg"
+        bg="primary"
+        variant="dark"
+        fixed="top"
+        expanded={expanded}
+        onToggle={setExpanded}
+        ref={navRef}
+      >
+        <Container fluid>
+          <Navbar.Brand href="#">ScranHub</Navbar.Brand>
+          <Navbar.Toggle aria-controls="basic-navbar-nav" />
+          <Navbar.Collapse id="basic-navbar-nav">
+            <Nav className="ms-auto d-lg-none">
+              <Navbar.Text className="fw-bold">{dropdownText}</Navbar.Text>
+              <hr className="dropdown-divider navbar-divider" />
+              <Nav.Link
                 role="button"
-                onClick={(event) => {
-                  event.stopPropagation();
-                  toggleDarkMode({ type: "SET" });
+                onClick={() => {
+                  setShowUserDetailsModal(true);
                 }}
+                className="text-white navbar-mobile-link"
+              >
+                My Details
+              </Nav.Link>
+              <Nav.Link
+                role="button"
+                className="text-white navbar-mobile-link"
+                onClick={() => toggleDarkMode({ type: "SET" })}
               >
                 Toggle Dark Mode
-              </NavDropdown.Item>
-              <NavDropdown.Divider />
-              <NavDropdown.Item role="button" onClick={logoutAction}>
+              </Nav.Link>
+              <hr className="dropdown-divider navbar-divider" />
+              <Nav.Link
+                role="button"
+                className="text-white navbar-mobile-link"
+                onClick={logoutAction}
+              >
                 Logout
-              </NavDropdown.Item>
-            </NavDropdown>
-          </Nav>
-        </Navbar.Collapse>
-      </Container>
-    </Navbar>
+              </Nav.Link>
+            </Nav>
+            <Nav className="ms-auto d-none d-lg-flex">
+              <NavDropdown
+                title={dropdownText}
+                id="basic-nav-dropdown"
+                align="end"
+              >
+                <NavDropdown.Item
+                  role="button"
+                  onClick={() => {
+                    setShowUserDetailsModal(true);
+                  }}
+                >
+                  My Details
+                </NavDropdown.Item>
+                <NavDropdown.Item
+                  role="button"
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    toggleDarkMode({ type: "SET" });
+                  }}
+                >
+                  Toggle Dark Mode
+                </NavDropdown.Item>
+                <NavDropdown.Divider />
+                <NavDropdown.Item role="button" onClick={logoutAction}>
+                  Logout
+                </NavDropdown.Item>
+              </NavDropdown>
+            </Nav>
+          </Navbar.Collapse>
+        </Container>
+      </Navbar>
+      <UserDetailsModal
+        showUserDetailsModal={showUserDetailsModal}
+        setShowUserDetailsModal={setShowUserDetailsModal}
+      />
+    </>
   );
 }
 
