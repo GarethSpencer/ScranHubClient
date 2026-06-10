@@ -1,6 +1,6 @@
 import React, { useEffect, useReducer } from "react";
-import darkModeReducer from "../reducers/darkModeReducer";
-import DarkModeContext from "../contexts/darkModeContext";
+import darkModeReducer from "./darkModeReducer";
+import DarkModeContext from "./darkModeContext";
 
 interface Props {
   children: React.ReactNode;

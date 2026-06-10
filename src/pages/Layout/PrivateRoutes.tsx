@@ -1,4 +1,4 @@
-import useAuth from "../../useAuth";
+import useAuth from "../../auth/useAuth";
 import { Navigate, Outlet } from "react-router-dom";
 import useApiClient from "../../api/useApiClient";
 

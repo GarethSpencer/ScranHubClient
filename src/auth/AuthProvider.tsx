@@ -6,7 +6,7 @@ interface Props {
   children: React.ReactNode;
 }
 
-const ScranhubAuth0Provider = ({ children }: Props) => {
+const AuthProvider = ({ children }: Props) => {
   return (
     <Auth0Provider
       domain={import.meta.env.VITE_AUTH0_DOMAIN}
@@ -21,4 +21,4 @@ const ScranhubAuth0Provider = ({ children }: Props) => {
   );
 };
 
-export default ScranhubAuth0Provider;
+export default AuthProvider;

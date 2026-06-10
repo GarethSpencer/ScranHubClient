@@ -1,12 +1,12 @@
 import Button from "react-bootstrap/Button";
-import { useAuth0 } from "@auth0/auth0-react";
+import useAuth from "../auth/useAuth";
 
 interface LoginType {
   type: "login" | "signup";
 }
 
 const LoginPage = () => {
-  const { loginWithRedirect } = useAuth0();
+  const { loginWithRedirect } = useAuth();
 
   const auth0Signup = (
     e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>,

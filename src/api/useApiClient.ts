@@ -1,9 +1,9 @@
-import { useAuth0 } from "@auth0/auth0-react";
+import useAuth from "../auth/useAuth";
 import { axiosInstance } from "./apiClient";
 import { useEffect } from "react";
 
 const useApiClient = () => {
-  const { getAccessTokenSilently } = useAuth0();
+  const { getAccessTokenSilently } = useAuth();
 
   useEffect(() => {
     const interceptor = axiosInstance.interceptors.request.use(

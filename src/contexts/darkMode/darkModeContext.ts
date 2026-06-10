@@ -1,5 +1,5 @@
 import type { Dispatch } from "react";
-import type { SetAction } from "../reducers/darkModeReducer";
+import type { SetAction } from "./darkModeReducer";
 import React from "react";
 
 interface DarkModeContextType {
