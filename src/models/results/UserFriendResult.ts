@@ -1,4 +1,4 @@
-import type { FriendshipStatus } from "../../enum/FriendshipStatus";
+import type { FriendshipStatus } from "../../enums/FriendshipStatus";
 
 export default interface UserFriendResult {
   userFriendId: string;
