@@ -22,7 +22,7 @@ function NavBar() {
   });
 
   const dropdownText =
-    "Logged In: " + (isLoading || isError ? "" : data?.user.displayName);
+    "Logged In: " + (isLoading || isError ? "" : data?.user?.displayName);
 
   const logoutAction = () =>
     logout({ logoutParams: { returnTo: window.location.origin } });
@@ -53,6 +53,7 @@ function NavBar() {
         expanded={expanded}
         onToggle={setExpanded}
         ref={navRef}
+        className="shadow p-3"
       >
         <Container fluid>
           <Navbar.Brand href="#">ScranHub</Navbar.Brand>

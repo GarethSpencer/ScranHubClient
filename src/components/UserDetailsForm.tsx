@@ -30,7 +30,7 @@ const UserDetailsForm = ({
   const updateUserApiClient = new ApiClient<void>("/user");
   const updateUserMutation = useMutation({
     mutationFn: (request: UpdateUserRequest) =>
-      updateUserApiClient.patch(data!.user.userId, request),
+      updateUserApiClient.patch(data!.user!.userId, request),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["userInfo", "me"] });
       setShowUserDetailsModal(false);
@@ -52,15 +52,15 @@ const UserDetailsForm = ({
     const formData = new FormData(event.currentTarget);
     const displayName = formData.get("displayName") as string;
 
-    if (displayName === data?.user.displayName) {
+    if (displayName === data?.user?.displayName) {
       setShowUserDetailsModal(false);
       return;
     }
 
     updateUserMutation.mutate({
       displayName,
-      admin: data!.user.admin,
-      active: data!.user.active,
+      admin: data!.user!.admin,
+      active: data!.user!.active,
     });
   };
 
@@ -71,12 +71,12 @@ const UserDetailsForm = ({
         <Form.Control
           type="text"
           name="displayName"
-          defaultValue={data?.user.displayName}
+          defaultValue={data?.user?.displayName}
         />
       </Form.Group>
       <Form.Group className="mb-3">
         <Form.Label>Email address</Form.Label>
-        <Form.Control placeholder={data?.user.email} disabled />
+        <Form.Control placeholder={data?.user?.email} disabled />
         <Form.Text className="text-muted">
           Your email is never shared with anyone else.
         </Form.Text>
