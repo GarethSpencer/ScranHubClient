@@ -5,6 +5,28 @@ import babel from "@rolldown/plugin-babel";
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), babel({ presets: [reactCompilerPreset()] })],
+  build: {
+    rolldownOptions: {
+      output: {
+        codeSplitting: {
+          groups: [
+            {
+              name: "react-bootstrap",
+              test: /[\\/]node_modules[\\/](react-bootstrap|bootstrap)[\\/]/,
+            },
+            {
+              name: "auth0",
+              test: /[\\/]node_modules[\\/]@auth0[\\/]/,
+            },
+            {
+              name: "vendor",
+              test: /[\\/]node_modules[\\/]/,
+            },
+          ],
+        },
+      },
+    },
+  },
   css: {
     preprocessorOptions: {
       scss: {
