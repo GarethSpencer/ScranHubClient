@@ -24,6 +24,22 @@ jobs:
           persist-credentials: false
           submodules: false
           lfs: false
+      - name: Setup Node
+        id: setup
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install dependencies
+        id: deps
+        run: npm ci
+      - name: Build
+        id: build
+        env:
+          VITE_AUTH0_DOMAIN: ${{ vars.VITE_AUTH0_DOMAIN }}
+          VITE_AUTH0_CLIENT_ID: ${{ vars.VITE_AUTH0_CLIENT_ID }}
+          VITE_AUTH0_AUDIENCE: ${{ vars.VITE_AUTH0_AUDIENCE }}
+          VITE_API_BASE_URL: ${{ vars.VITE_API_BASE_URL }}
+        run: npm run build
       - name: Install OIDC Client from Core Package
         run: npm install @actions/core@1.6.0 @actions/http-client
       - name: Get Id Token
@@ -34,20 +50,16 @@ jobs:
             const coredemo = require('@actions/core')
             return await coredemo.getIDToken()
           result-encoding: string
-      - name: Build And Deploy
-        id: builddeploy
+      - name: Deploy
+        id: deploy
         uses: Azure/static-web-apps-deploy@v1
-        env:
-          VITE_AUTH0_DOMAIN: ${{ vars.VITE_AUTH0_DOMAIN }}
-          VITE_AUTH0_CLIENT_ID: ${{ vars.VITE_AUTH0_CLIENT_ID }}
-          VITE_AUTH0_AUDIENCE: ${{ vars.VITE_AUTH0_AUDIENCE }}
-          VITE_API_BASE_URL: ${{ vars.VITE_API_BASE_URL }}
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_WITTY_HILL_0DAC1DB03 }}
           action: "upload"
-          app_location: "/" # App source code path
+          app_location: "dist" # Pre-built app content directory
           api_location: "" # Api source code path - optional
-          output_location: "dist" # Built app content directory - optional
+          output_location: "" # Already pointing at built output via app_location
+          skip_app_build: true
           github_id_token: ${{ steps.idtoken.outputs.result }}
 
   close_pull_request_job:
