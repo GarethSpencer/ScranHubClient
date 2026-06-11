@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import ApiClient from "../api/apiClient";
-import type GetUserResponse from "../models/responses/user/GetUserResponse";
+import type GetUserResponse from "../models/responses/users/GetUserResponse";
 import { useQuery } from "@tanstack/react-query";
 import Placeholder from "react-bootstrap/Placeholder";
 import UserDetailsForm from "./UserDetailsForm";

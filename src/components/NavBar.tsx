@@ -8,7 +8,7 @@ import ToastContainer from "react-bootstrap/ToastContainer";
 import useAuth from "../auth/useAuth";
 import useDarkMode from "../contexts/darkMode/useDarkMode";
 import ApiClient from "../api/apiClient";
-import type GetUserDetailedResponse from "../models/responses/user/GetUserDetailedResponse";
+import type GetUserDetailedResponse from "../models/responses/users/GetUserDetailedResponse";
 import { useQuery } from "@tanstack/react-query";
 import UserDetailsModal from "./UserDetailsModal";
 

@@ -1,4 +1,6 @@
+import type { HttpStatusCode } from "axios";
+
 export default interface CommonResponse {
-  statusCode: string;
+  statusCode: HttpStatusCode;
   message?: string;
 }
