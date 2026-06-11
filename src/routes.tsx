@@ -8,11 +8,11 @@ import LoginLayout from "./layout/LoginLayout";
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Layout />,
+    element: <PrivateRoutes />,
     errorElement: <ErrorPage />,
     children: [
       {
-        element: <PrivateRoutes />,
+        element: <Layout />,
         children: [
           {
             index: true,

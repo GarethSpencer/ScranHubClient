@@ -15,6 +15,7 @@ const AuthProvider = ({ children }: Props) => {
         redirect_uri: window.location.origin,
         audience: import.meta.env.VITE_AUTH0_AUDIENCE,
       }}
+      cacheLocation="localstorage"
     >
       {children}
     </Auth0Provider>
