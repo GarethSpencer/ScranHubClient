@@ -7,6 +7,7 @@ import useAuth from "../auth/useAuth";
 import useDarkMode from "../contexts/darkMode/useDarkMode";
 import { useGetCurrentUser } from "../api/controllerHooks/useUserController";
 import UserDetailsModal from "./UserDetailsModal";
+import DeactivateAccountModal from "./DeactivateAccountModal";
 
 function NavBar() {
   const { logout } = useAuth();
@@ -22,6 +23,8 @@ function NavBar() {
   const [expanded, setExpanded] = useState(false);
   const navRef = useRef<HTMLElement>(null);
   const [showUserDetailsModal, setShowUserDetailsModal] = useState(false);
+  const [showDeactivateAccountModal, setShowDeactivateAccountModal] =
+    useState(false);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -69,6 +72,15 @@ function NavBar() {
               >
                 Toggle Dark Mode
               </Nav.Link>
+              <Nav.Link
+                role="button"
+                onClick={() => {
+                  setShowDeactivateAccountModal(true);
+                }}
+                className="text-white navbar-mobile-link"
+              >
+                Deactivate Account
+              </Nav.Link>
               <hr className="dropdown-divider navbar-divider" />
               <Nav.Link
                 role="button"
@@ -101,6 +113,14 @@ function NavBar() {
                 >
                   Toggle Dark Mode
                 </NavDropdown.Item>
+                <NavDropdown.Item
+                  role="button"
+                  onClick={() => {
+                    setShowDeactivateAccountModal(true);
+                  }}
+                >
+                  Deactivate Account
+                </NavDropdown.Item>
                 <NavDropdown.Divider />
                 <NavDropdown.Item role="button" onClick={logoutAction}>
                   Logout
@@ -113,6 +133,10 @@ function NavBar() {
       <UserDetailsModal
         showUserDetailsModal={showUserDetailsModal}
         setShowUserDetailsModal={setShowUserDetailsModal}
+      />
+      <DeactivateAccountModal
+        showDeactivateAccountModal={showDeactivateAccountModal}
+        setShowDeactivateAccountModal={setShowDeactivateAccountModal}
       />
     </>
   );

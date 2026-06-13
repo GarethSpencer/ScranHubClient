@@ -1,8 +1,10 @@
-import { useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import Placeholder from "react-bootstrap/Placeholder";
 import UserDetailsForm from "./UserDetailsForm";
-import { useGetCurrentUser } from "../api/controllerHooks/useUserController";
+import {
+  useGetCurrentUser,
+  useUpdateUser,
+} from "../api/controllerHooks/useUserController";
 
 interface Props {
   showUserDetailsModal: boolean;
@@ -13,9 +15,9 @@ function UserDetailsModal({
   showUserDetailsModal,
   setShowUserDetailsModal,
 }: Props) {
-  const { isLoading, isError } = useGetCurrentUser();
+  const { data, isLoading, isError } = useGetCurrentUser();
 
-  const [isUpdatingUser, setIsUpdatingUser] = useState(false);
+  const updateUserMutation = useUpdateUser(data?.user?.userId ?? "");
 
   if (isError) return null;
 
@@ -42,19 +44,19 @@ function UserDetailsModal({
     <Modal
       show={showUserDetailsModal}
       onHide={() => {
-        if (isUpdatingUser) return;
+        if (updateUserMutation.isPending) return;
         setShowUserDetailsModal(false);
       }}
-      backdrop={isUpdatingUser ? "static" : true}
-      keyboard={!isUpdatingUser}
+      backdrop={updateUserMutation.isPending ? "static" : true}
+      keyboard={!updateUserMutation.isPending}
     >
-      <Modal.Header closeButton={!isUpdatingUser}>
+      <Modal.Header closeButton={!updateUserMutation.isPending}>
         <Modal.Title>My Details</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <UserDetailsForm
           setShowUserDetailsModal={setShowUserDetailsModal}
-          onUpdateUserPendingChange={setIsUpdatingUser}
+          updateUserMutation={updateUserMutation}
         />
       </Modal.Body>
     </Modal>

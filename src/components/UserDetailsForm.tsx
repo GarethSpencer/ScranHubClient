@@ -1,27 +1,27 @@
 import type { SubmitEvent } from "react";
-import { useEffect } from "react";
-import { useGetCurrentUser, useUpdateUser } from "../api/controllerHooks/useUserController";
+import { useGetCurrentUser } from "../api/controllerHooks/useUserController";
+import type { UseMutationResult } from "@tanstack/react-query";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import Alert from "react-bootstrap/Alert";
 import Spinner from "react-bootstrap/Spinner";
+import type CommonResponse from "../models/responses/generic/CommonResponse";
+import type UpdateUserRequest from "../models/requests/users/UpdateUserRequest";
 
 interface Props {
   setShowUserDetailsModal: (input: boolean) => void;
-  onUpdateUserPendingChange: (isPending: boolean) => void;
+  updateUserMutation: UseMutationResult<
+    CommonResponse,
+    Error,
+    UpdateUserRequest
+  >;
 }
 
 const UserDetailsForm = ({
   setShowUserDetailsModal,
-  onUpdateUserPendingChange,
+  updateUserMutation,
 }: Props) => {
   const { data, isLoading, isError } = useGetCurrentUser();
-
-  const updateUserMutation = useUpdateUser(data?.user?.userId ?? "");
-
-  useEffect(() => {
-    onUpdateUserPendingChange(updateUserMutation.isPending);
-  }, [updateUserMutation.isPending, onUpdateUserPendingChange]);
 
   if (isLoading) return null;
 
@@ -70,27 +70,30 @@ const UserDetailsForm = ({
           Failed to update username. Please try again.
         </Alert>
       )}
-      <Button
-        variant="primary"
-        type="submit"
-        disabled={updateUserMutation.isPending}
-      >
-        {updateUserMutation.isPending ? (
-          <>
-            <Spinner
-              as="span"
-              animation="border"
-              size="sm"
-              role="status"
-              aria-hidden="true"
-              className="me-2"
-            />
-            Updating...
-          </>
-        ) : (
-          "Update Username"
-        )}
-      </Button>
+      <div className="d-grid">
+        <Button
+          className="d-grid gap-2"
+          variant="primary"
+          type="submit"
+          disabled={updateUserMutation.isPending}
+        >
+          {updateUserMutation.isPending ? (
+            <>
+              <Spinner
+                as="span"
+                animation="border"
+                size="sm"
+                role="status"
+                aria-hidden="true"
+                className="me-2"
+              />
+              Updating...
+            </>
+          ) : (
+            "Update Username"
+          )}
+        </Button>
+      </div>
     </Form>
   );
 };

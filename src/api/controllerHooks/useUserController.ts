@@ -51,7 +51,10 @@ export const useCreateUser = () => {
   });
 };
 
-export const useUpdateUser = (userId: string) => {
+export const useUpdateUser = (
+  userId: string,
+  options?: { skipInvalidation?: boolean },
+) => {
   const queryClient = useQueryClient();
   const { showToast } = useToast();
 
@@ -62,8 +65,10 @@ export const useUpdateUser = (userId: string) => {
         requestData,
       ),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["currentUser"] });
-      queryClient.invalidateQueries({ queryKey: ["users", userId] });
+      if (!options?.skipInvalidation) {
+        queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+        queryClient.invalidateQueries({ queryKey: ["users", userId] });
+      }
       if (data.message) showToast(data.message, "success");
     },
   });
