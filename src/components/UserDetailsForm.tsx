@@ -1,9 +1,6 @@
 import type { SubmitEvent } from "react";
 import { useEffect } from "react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import ApiClient from "../api/apiClient";
-import type GetUserDetailedResponse from "../models/responses/users/GetUserDetailedResponse";
-import type UpdateUserRequest from "../models/requests/users/UpdateUserRequest";
+import { useGetCurrentUser, useUpdateUser } from "../api/controllerHooks/useUserController";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import Alert from "react-bootstrap/Alert";
@@ -11,32 +8,16 @@ import Spinner from "react-bootstrap/Spinner";
 
 interface Props {
   setShowUserDetailsModal: (input: boolean) => void;
-  onUpdateUserSuccess: () => void;
   onUpdateUserPendingChange: (isPending: boolean) => void;
 }
 
 const UserDetailsForm = ({
   setShowUserDetailsModal,
-  onUpdateUserSuccess,
   onUpdateUserPendingChange,
 }: Props) => {
-  const apiClient = new ApiClient<GetUserDetailedResponse>("/user/me");
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ["userInfo", "me"],
-    queryFn: apiClient.get,
-  });
+  const { data, isLoading, isError } = useGetCurrentUser();
 
-  const queryClient = useQueryClient();
-  const updateUserApiClient = new ApiClient<void>("/user");
-  const updateUserMutation = useMutation({
-    mutationFn: (request: UpdateUserRequest) =>
-      updateUserApiClient.patch(data!.user!.userId, request),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["userInfo", "me"] });
-      setShowUserDetailsModal(false);
-      onUpdateUserSuccess();
-    },
-  });
+  const updateUserMutation = useUpdateUser(data?.user?.userId ?? "");
 
   useEffect(() => {
     onUpdateUserPendingChange(updateUserMutation.isPending);
@@ -57,11 +38,14 @@ const UserDetailsForm = ({
       return;
     }
 
-    updateUserMutation.mutate({
-      displayName,
-      admin: data!.user!.admin,
-      active: data!.user!.active,
-    });
+    updateUserMutation.mutate(
+      {
+        displayName,
+        admin: data!.user!.admin,
+        active: data!.user!.active,
+      },
+      { onSuccess: () => setShowUserDetailsModal(false) },
+    );
   };
 
   return (

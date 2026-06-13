@@ -24,27 +24,52 @@ axiosInstance.interceptors.request.use(async (config) => {
   return config;
 });
 
-class ApiClient<T> {
+class ApiClient {
   endpoint: string;
 
   constructor(endpoint: string) {
     this.endpoint = endpoint;
   }
 
-  getAll = async () => {
-    const response = await axiosInstance.get<T[]>(this.endpoint);
+  private buildUrl = (endpointExtension?: string) => {
+    if (!endpointExtension) return this.endpoint;
+    return endpointExtension.startsWith("?")
+      ? `${this.endpoint}${endpointExtension}`
+      : `${this.endpoint}/${endpointExtension}`;
+  };
+
+  get = async <TResponse>(endpointExtension?: string) => {
+    const response = await axiosInstance.get<TResponse>(
+      this.buildUrl(endpointExtension),
+    );
     return response.data;
   };
 
-  get = async () => {
-    const response = await axiosInstance.get<T>(this.endpoint);
+  post = async <TResponse, TRequest>(
+    endpointExtension?: string,
+    data?: TRequest,
+  ) => {
+    const response = await axiosInstance.post<TResponse>(
+      this.buildUrl(endpointExtension),
+      data,
+    );
     return response.data;
   };
 
-  patch = async <TRequest>(id: string, data: TRequest) => {
-    const response = await axiosInstance.patch<T>(
-      `${this.endpoint}/${id}`,
-      data
+  patch = async <TResponse, TRequest>(
+    endpointExtension?: string,
+    data?: TRequest,
+  ) => {
+    const response = await axiosInstance.patch<TResponse>(
+      this.buildUrl(endpointExtension),
+      data,
+    );
+    return response.data;
+  };
+
+  delete = async <TResponse>(endpointExtension?: string) => {
+    const response = await axiosInstance.delete<TResponse>(
+      this.buildUrl(endpointExtension),
     );
     return response.data;
   };

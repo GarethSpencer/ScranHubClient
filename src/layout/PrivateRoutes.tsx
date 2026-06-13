@@ -1,9 +1,9 @@
 import useAuth from "../auth/useAuth";
 import { Navigate, Outlet } from "react-router-dom";
-import useApiClient from "../api/useApiClient";
+import useConfigureApiAuth from "../api/useConfigureApiAuth";
 
 const PrivateRoutes = () => {
-  useApiClient();
+  useConfigureApiAuth();
   const { isAuthenticated, isLoading } = useAuth();
   if (isLoading) return null;
 

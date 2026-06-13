@@ -1,27 +1,19 @@
 import { useState } from "react";
 import Modal from "react-bootstrap/Modal";
-import ApiClient from "../api/apiClient";
-import type GetUserResponse from "../models/responses/users/GetUserResponse";
-import { useQuery } from "@tanstack/react-query";
 import Placeholder from "react-bootstrap/Placeholder";
 import UserDetailsForm from "./UserDetailsForm";
+import { useGetCurrentUser } from "../api/controllerHooks/useUserController";
 
 interface Props {
   showUserDetailsModal: boolean;
   setShowUserDetailsModal: (input: boolean) => void;
-  onUpdateUserSuccess: () => void;
 }
 
 function UserDetailsModal({
   showUserDetailsModal,
   setShowUserDetailsModal,
-  onUpdateUserSuccess,
 }: Props) {
-  const apiClient = new ApiClient<GetUserResponse>("/user/me");
-  const { isLoading, isError } = useQuery({
-    queryKey: ["userInfo", "me"],
-    queryFn: apiClient.get,
-  });
+  const { isLoading, isError } = useGetCurrentUser();
 
   const [isUpdatingUser, setIsUpdatingUser] = useState(false);
 
@@ -62,7 +54,6 @@ function UserDetailsModal({
       <Modal.Body>
         <UserDetailsForm
           setShowUserDetailsModal={setShowUserDetailsModal}
-          onUpdateUserSuccess={onUpdateUserSuccess}
           onUpdateUserPendingChange={setIsUpdatingUser}
         />
       </Modal.Body>

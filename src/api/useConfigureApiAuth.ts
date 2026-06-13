@@ -2,7 +2,7 @@ import useAuth from "../auth/useAuth";
 import { setAccessTokenGetter } from "./apiClient";
 import { useEffect } from "react";
 
-const useApiClient = () => {
+const useConfigureApiAuth = () => {
   const { getAccessTokenSilently } = useAuth();
 
   useEffect(() => {
@@ -10,4 +10,4 @@ const useApiClient = () => {
   }, [getAccessTokenSilently]);
 };
 
-export default useApiClient;
+export default useConfigureApiAuth;

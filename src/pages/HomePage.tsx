@@ -1,5 +1,3 @@
-import UserInfo from "../components/UserInfo";
-
 const HomePage = () => {
   return (
     <>
@@ -7,7 +5,6 @@ const HomePage = () => {
       <p>
         This site is currently under construction, but I am doing my best! 🔨🐻
       </p>
-      <UserInfo />
     </>
   );
 };
