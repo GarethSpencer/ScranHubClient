@@ -8,6 +8,10 @@ import type CreateUserRequest from "../../models/requests/users/CreateUserReques
 import type AddUserResponse from "../../models/responses/users/AddUserResponse";
 import type CommonResponse from "../../models/responses/generic/CommonResponse";
 import type UpdateUserRequest from "../../models/requests/users/UpdateUserRequest";
+import type UserFriendsResponse from "../../models/responses/users/UserFriendsResponse";
+import type AddUserFriendResponse from "../../models/responses/users/AddUserFriendResponse";
+import type AddFriendRequest from "../../models/requests/users/AddFriendRequest";
+import type UpdateUserFriendRequest from "../../models/requests/users/UpdateUserFriendRequest";
 
 export const useGetCurrentUser = () => {
   return useQuery<GetUserDetailedResponse, Error>({
@@ -74,15 +78,72 @@ export const useUpdateUser = (
   });
 };
 
-export const useDeleteUser = () => {
+export const useDeleteUser = (userId: string) => {
   const queryClient = useQueryClient();
   const { showToast } = useToast();
 
-  return useMutation<CommonResponse, Error, string>({
-    mutationFn: (userId: string) =>
-      userControllerService.delete<CommonResponse>(userId),
+  return useMutation<CommonResponse, Error>({
+    mutationFn: () => userControllerService.delete<CommonResponse>(userId),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
+      if (data.message) showToast(data.message, "success");
+    },
+  });
+};
+
+export const useGetFriends = () => {
+  return useQuery<UserFriendsResponse, Error>({
+    queryKey: ["friends"],
+    queryFn: () => userControllerService.get<UserFriendsResponse>("me/friends"),
+    staleTime: 10 * 1000,
+  });
+};
+
+export const useAddFriend = (friendId: string) => {
+  const queryClient = useQueryClient();
+  const { showToast } = useToast();
+
+  return useMutation<AddUserFriendResponse, Error>({
+    mutationFn: () =>
+      userControllerService.post<AddUserFriendResponse, null>(
+        `me/friends/${friendId}`,
+      ),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["friends"] });
+      if (data.message) showToast(data.message, "success");
+    },
+  });
+};
+
+export const useAddFriendByEmail = () => {
+  const queryClient = useQueryClient();
+  const { showToast } = useToast();
+
+  return useMutation<CommonResponse, Error, AddFriendRequest>({
+    mutationFn: (requestData: AddFriendRequest) =>
+      userControllerService.post<CommonResponse, AddFriendRequest>(
+        "me/friends",
+        requestData,
+      ),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["friends"] });
+      if (data.message) showToast(data.message, "success");
+    },
+  });
+};
+
+export const useUpdateFriend = (friendId: string) => {
+  const queryClient = useQueryClient();
+  const { showToast } = useToast();
+
+  return useMutation<CommonResponse, Error, UpdateUserFriendRequest>({
+    mutationFn: (requestData: UpdateUserFriendRequest) =>
+      userControllerService.patch<CommonResponse, UpdateUserFriendRequest>(
+        `me/friends/${friendId}`,
+        requestData,
+      ),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["friends"] });
       if (data.message) showToast(data.message, "success");
     },
   });

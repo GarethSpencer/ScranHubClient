@@ -6,6 +6,12 @@ export const axiosInstance = axios.create({
 
 type TokenGetter = () => Promise<string>;
 
+declare module "axios" {
+  export interface AxiosRequestConfig {
+    skipAuth?: boolean;
+  }
+}
+
 let getAccessToken: TokenGetter | null = null;
 let resolveTokenGetterReady: () => void;
 const tokenGetterReady = new Promise<void>((resolve) => {
@@ -18,6 +24,8 @@ export const setAccessTokenGetter = (getter: TokenGetter) => {
 };
 
 axiosInstance.interceptors.request.use(async (config) => {
+  if (config.skipAuth) return config;
+
   await tokenGetterReady;
   const token = await getAccessToken!();
   config.headers.Authorization = `Bearer ${token}`;
@@ -26,9 +34,11 @@ axiosInstance.interceptors.request.use(async (config) => {
 
 class ApiClient {
   endpoint: string;
+  skipAuth: boolean;
 
-  constructor(endpoint: string) {
+  constructor(endpoint: string, skipAuth = false) {
     this.endpoint = endpoint;
+    this.skipAuth = skipAuth;
   }
 
   private buildUrl = (endpointExtension?: string) => {
@@ -41,6 +51,7 @@ class ApiClient {
   get = async <TResponse>(endpointExtension?: string) => {
     const response = await axiosInstance.get<TResponse>(
       this.buildUrl(endpointExtension),
+      { skipAuth: this.skipAuth },
     );
     return response.data;
   };
@@ -52,6 +63,7 @@ class ApiClient {
     const response = await axiosInstance.post<TResponse>(
       this.buildUrl(endpointExtension),
       data,
+      { skipAuth: this.skipAuth },
     );
     return response.data;
   };
@@ -63,6 +75,7 @@ class ApiClient {
     const response = await axiosInstance.patch<TResponse>(
       this.buildUrl(endpointExtension),
       data,
+      { skipAuth: this.skipAuth },
     );
     return response.data;
   };
@@ -70,6 +83,7 @@ class ApiClient {
   delete = async <TResponse>(endpointExtension?: string) => {
     const response = await axiosInstance.delete<TResponse>(
       this.buildUrl(endpointExtension),
+      { skipAuth: this.skipAuth },
     );
     return response.data;
   };
