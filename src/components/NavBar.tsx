@@ -47,7 +47,7 @@ function NavBar() {
         expanded={expanded}
         onToggle={setExpanded}
         ref={navRef}
-        className="shadow p-3"
+        className="shadow navbar-fixed"
       >
         <Container fluid>
           <Navbar.Brand href="/">ScranHub</Navbar.Brand>

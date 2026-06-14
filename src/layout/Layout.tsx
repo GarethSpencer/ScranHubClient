@@ -12,10 +12,8 @@ const Layout = () => {
         <Row>
           <NavBar />
         </Row>
-        <Row>
-          <div className="content-wrapper">
-            <Outlet />
-          </div>
+        <Row className="justify-content-center content-wrapper-row">
+          <Outlet />
         </Row>
         <LayoutFooter />
       </Container>
