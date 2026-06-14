@@ -50,7 +50,7 @@ function NavBar() {
         className="shadow p-3"
       >
         <Container fluid>
-          <Navbar.Brand href="#">ScranHub</Navbar.Brand>
+          <Navbar.Brand href="/">ScranHub</Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="ms-auto d-lg-none">
@@ -60,6 +60,7 @@ function NavBar() {
                 role="button"
                 onClick={() => {
                   setShowUserDetailsModal(true);
+                  setExpanded(false);
                 }}
                 className="text-white navbar-mobile-link"
               >
@@ -76,6 +77,7 @@ function NavBar() {
                 role="button"
                 onClick={() => {
                   setShowDeactivateAccountModal(true);
+                  setExpanded(false);
                 }}
                 className="text-white navbar-mobile-link"
               >
@@ -100,6 +102,7 @@ function NavBar() {
                   role="button"
                   onClick={() => {
                     setShowUserDetailsModal(true);
+                    setExpanded(false);
                   }}
                 >
                   My Details
@@ -117,6 +120,7 @@ function NavBar() {
                   role="button"
                   onClick={() => {
                     setShowDeactivateAccountModal(true);
+                    setExpanded(false);
                   }}
                 >
                   Deactivate Account
