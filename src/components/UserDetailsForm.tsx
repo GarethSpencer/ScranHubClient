@@ -72,7 +72,6 @@ const UserDetailsForm = ({
       )}
       <div className="d-grid">
         <Button
-          className="d-grid gap-2"
           variant="primary"
           type="submit"
           disabled={updateUserMutation.isPending}
