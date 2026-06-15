@@ -1,0 +1,78 @@
+import Table from "react-bootstrap/Table";
+import {
+  useDeleteFriend,
+  useGetFriends,
+} from "../api/controllerHooks/useUserController";
+import type FriendResult from "../models/results/FriendResult";
+import Button from "react-bootstrap/Button";
+import Pagination from "react-bootstrap/Pagination";
+import { useState } from "react";
+
+const UserFriendTable = () => {
+  const [page, setPage] = useState(1);
+  const pageSize = 10;
+  const { data, isLoading, isError } = useGetFriends({
+    pageNumber: page,
+    pageSize: pageSize,
+  });
+  const { mutate, isPending } = useDeleteFriend();
+
+  if (isLoading) return null;
+  if (isError) return null;
+  if (!data?.friends) return null;
+
+  const onDeleteFriend = (userFriendId: string) => {
+    mutate(userFriendId, {
+      onSuccess: () => {
+        if (page > 1 && data.totalCount <= (page - 1) * pageSize + 1) {
+          setPage(page - 1);
+        }
+      },
+    });
+  };
+
+  return (
+    <>
+      <h2>My Friends</h2>
+      <Table striped="columns">
+        <thead>
+          <tr>
+            <th>Display Name</th>
+            <th>Delete</th>
+          </tr>
+        </thead>
+        <tbody>
+          {data?.friends.map((x: FriendResult) => (
+            <tr key={x.userFriendId}>
+              <td>{x.displayName}</td>
+              <td>
+                <Button
+                  onClick={() => onDeleteFriend(x.userFriendId)}
+                  disabled={isPending}
+                >
+                  {isPending ? "Please Wait" : "Delete"}
+                </Button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
+      <Pagination>
+        {Array.from(
+          { length: Math.ceil(data.totalCount / pageSize) },
+          (_, index) => index + 1,
+        ).map((pageNumber) => (
+          <Pagination.Item
+            key={pageNumber}
+            active={pageNumber === page}
+            onClick={() => setPage(pageNumber)}
+          >
+            {pageNumber}
+          </Pagination.Item>
+        ))}
+      </Pagination>
+    </>
+  );
+};
+
+export default UserFriendTable;

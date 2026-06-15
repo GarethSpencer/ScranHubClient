@@ -12,6 +12,7 @@ import type UserFriendsResponse from "../../models/responses/users/UserFriendsRe
 import type AddUserFriendResponse from "../../models/responses/users/AddUserFriendResponse";
 import type AddFriendRequest from "../../models/requests/users/AddFriendRequest";
 import type UpdateUserFriendRequest from "../../models/requests/users/UpdateUserFriendRequest";
+import type PaginationBaseRequest from "../../models/requests/generic/PaginationBaseRequest";
 
 export const useGetCurrentUser = () => {
   return useQuery<GetUserDetailedResponse, Error>({
@@ -78,12 +79,13 @@ export const useUpdateUser = (
   });
 };
 
-export const useDeleteUser = (userId: string) => {
+export const useDeleteUser = () => {
   const queryClient = useQueryClient();
   const { showToast } = useToast();
 
-  return useMutation<CommonResponse, Error>({
-    mutationFn: () => userControllerService.delete<CommonResponse>(userId),
+  return useMutation<CommonResponse, Error, string>({
+    mutationFn: (userId: string) =>
+      userControllerService.delete<CommonResponse>(userId),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
       if (data.message) showToast(data.message, "success");
@@ -91,20 +93,23 @@ export const useDeleteUser = (userId: string) => {
   });
 };
 
-export const useGetFriends = () => {
+export const useGetFriends = (request: PaginationBaseRequest) => {
   return useQuery<UserFriendsResponse, Error>({
-    queryKey: ["friends"],
-    queryFn: () => userControllerService.get<UserFriendsResponse>("me/friends"),
+    queryKey: ["friends", request],
+    queryFn: () =>
+      userControllerService.get<UserFriendsResponse>(
+        `me/friends?PageNumber=${request.pageNumber}&PageSize=${request.pageSize}`,
+      ),
     staleTime: 10 * 1000,
   });
 };
 
-export const useAddFriend = (friendId: string) => {
+export const useAddFriend = () => {
   const queryClient = useQueryClient();
   const { showToast } = useToast();
 
-  return useMutation<AddUserFriendResponse, Error>({
-    mutationFn: () =>
+  return useMutation<AddUserFriendResponse, Error, string>({
+    mutationFn: (friendId: string) =>
       userControllerService.post<AddUserFriendResponse, null>(
         `me/friends/${friendId}`,
       ),
@@ -132,15 +137,35 @@ export const useAddFriendByEmail = () => {
   });
 };
 
-export const useUpdateFriend = (friendId: string) => {
+export const useUpdateFriend = () => {
   const queryClient = useQueryClient();
   const { showToast } = useToast();
 
-  return useMutation<CommonResponse, Error, UpdateUserFriendRequest>({
-    mutationFn: (requestData: UpdateUserFriendRequest) =>
+  return useMutation<
+    CommonResponse,
+    Error,
+    { friendId: string; requestData: UpdateUserFriendRequest }
+  >({
+    mutationFn: ({ friendId, requestData }) =>
       userControllerService.patch<CommonResponse, UpdateUserFriendRequest>(
         `me/friends/${friendId}`,
         requestData,
+      ),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["friends"] });
+      if (data.message) showToast(data.message, "success");
+    },
+  });
+};
+
+export const useDeleteFriend = () => {
+  const queryClient = useQueryClient();
+  const { showToast } = useToast();
+
+  return useMutation<CommonResponse, Error, string>({
+    mutationFn: (userFriendId: string) =>
+      userControllerService.delete<CommonResponse>(
+        `me/friends/${userFriendId}`,
       ),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["friends"] });

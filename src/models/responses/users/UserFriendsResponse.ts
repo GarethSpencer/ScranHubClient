@@ -1,8 +1,7 @@
 import type FriendResult from "../../results/FriendResult";
-import type CommonResponse from "../generic/CommonResponse";
+import type CommonPaginationResponse from "../generic/CommonPaginationResponse";
 
-export default interface UserFriendsResponse extends CommonResponse {
+export default interface UserFriendsResponse extends CommonPaginationResponse {
   user?: string;
   friends?: FriendResult[];
-  friendCount?: number;
 }

@@ -5,6 +5,7 @@ import PrivateRoutes from "./layout/PrivateRoutes";
 import ErrorPage from "./pages/ErrorPage";
 import LoginLayout from "./layout/LoginLayout";
 import Todo from "./components/Todo";
+import ManageFriendsPage from "./pages/ManageFriendsPage";
 
 const router = createBrowserRouter([
   {
@@ -21,7 +22,7 @@ const router = createBrowserRouter([
           },
           {
             path: "/friends",
-            element: <Todo />,
+            element: <ManageFriendsPage />,
           },
           {
             path: "/groups",
