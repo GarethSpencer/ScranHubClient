@@ -40,7 +40,6 @@
 }
 
 .content-wrapper {
-  background-color: white;
   width: 100%;
   padding: 1.5rem 1rem;
 }
@@ -63,10 +62,8 @@
 
 @media (min-width: 768px) {
   .content-wrapper {
-    border-radius: 12px;
     padding: 2rem;
     max-width: 800px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
   }
 }
 
@@ -91,8 +88,7 @@
   color: #eee;
 }
 
-[data-bs-theme="dark"] .login-content-wrapper,
-[data-bs-theme="dark"] .content-wrapper {
+[data-bs-theme="dark"] .login-content-wrapper {
   background-color: #1e1e2e;
   color: #cdd6f4;
 }
@@ -160,4 +156,30 @@
 .navbar-mobile-link:hover,
 .navbar-mobile-link:focus {
   background-color: rgba(0, 0, 0, 0.15);
+}
+
+.menu-card-icon {
+  width: 40px;
+  height: 40px;
+}
+
+@media (min-width: 768px) {
+  .menu-card-icon {
+    width: 80px;
+    height: 80px;
+  }
+}
+
+[data-bs-theme="dark"] .menu-card {
+  filter: brightness(0.7);
+}
+
+.menu-card:hover,
+.menu-card:focus {
+  filter: brightness(0.9) !important;
+}
+
+[data-bs-theme="dark"] .menu-card:hover,
+[data-bs-theme="dark"] .menu-card:focus {
+  filter: brightness(0.6) !important;
 }

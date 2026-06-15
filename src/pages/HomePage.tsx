@@ -1,9 +1,9 @@
-import Todo from "../components/Todo";
+import MenuContainer from "../components/MenuContainer";
 
 const HomePage = () => {
   return (
     <div className="content-wrapper">
-      <Todo />
+      <MenuContainer />
     </div>
   );
 };
