@@ -2,6 +2,7 @@ import { createBrowserRouter } from "react-router-dom";
 import Layout from "./layout/Layout";
 import HomePage from "./pages/HomePage";
 import PrivateRoutes from "./layout/PrivateRoutes";
+import AdminRoutes from "./layout/AdminRoutes";
 import ErrorPage from "./pages/ErrorPage";
 import LoginLayout from "./layout/LoginLayout";
 import Todo from "./components/Todo";
@@ -29,8 +30,13 @@ const router = createBrowserRouter([
             element: <Todo />,
           },
           {
-            path: "/admin",
-            element: <Todo />,
+            element: <AdminRoutes />,
+            children: [
+              {
+                path: "/admin",
+                element: <Todo />,
+              },
+            ],
           },
         ],
       },

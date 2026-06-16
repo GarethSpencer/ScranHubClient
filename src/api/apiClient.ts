@@ -48,10 +48,10 @@ class ApiClient {
       : `${this.endpoint}/${endpointExtension}`;
   };
 
-  get = async <TResponse>(endpointExtension?: string) => {
+  get = async <TResponse>(endpointExtension?: string, signal?: AbortSignal) => {
     const response = await axiosInstance.get<TResponse>(
       this.buildUrl(endpointExtension),
-      { skipAuth: this.skipAuth },
+      { skipAuth: this.skipAuth, signal },
     );
     return response.data;
   };

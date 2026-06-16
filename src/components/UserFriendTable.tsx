@@ -19,21 +19,9 @@ const UserFriendTable = () => {
   });
   const { mutate, isPending } = useDeleteFriend();
 
-  if (isLoading)
-    return (
-      <>
-        <h2>My Friends</h2>
-        <h3>Please wait</h3>
-      </>
-    );
+  if (isLoading) return <h3>Please wait</h3>;
   if (isError) return null;
-  if (!data?.friends)
-    return (
-      <>
-        <h2>My Friends</h2>
-        <h3>Nothing to show here</h3>
-      </>
-    );
+  if (!data?.friends) return <h3>Nothing to show here</h3>;
 
   const onDeleteFriend = (userFriendId: string) => {
     mutate(userFriendId, {
@@ -47,7 +35,6 @@ const UserFriendTable = () => {
 
   return (
     <>
-      <h2>My Friends</h2>
       <Table striped="columns">
         <thead>
           <tr>

@@ -13,6 +13,7 @@ import type AddUserFriendResponse from "../../models/responses/users/AddUserFrie
 import type AddFriendRequest from "../../models/requests/users/AddFriendRequest";
 import type UpdateUserFriendRequest from "../../models/requests/users/UpdateUserFriendRequest";
 import type GetUserFriendRequest from "../../models/requests/users/GetUserFriendRequest";
+import type SearchUserRequest from "../../models/requests/users/SearchUserRequest";
 
 export const useGetCurrentUser = () => {
   return useQuery<GetUserDetailedResponse, Error>({
@@ -30,14 +31,16 @@ export const useGetUser = (userId: string) => {
   });
 };
 
-export const useSearchUsers = (searchText: string) => {
+export const useSearchUsers = (request: SearchUserRequest) => {
   return useQuery<GetUsersResponse>({
-    queryKey: ["users", "search", searchText],
-    queryFn: () =>
+    queryKey: ["users", "search", request],
+    queryFn: ({ signal }) =>
       userControllerService.get<GetUsersResponse>(
-        `?SearchText='${searchText}'`,
+        `?SearchText=${request.searchText}&PageNumber=${request.pageNumber}&PageSize=${request.pageSize}`,
+        signal,
       ),
     staleTime: 10 * 1000,
+    enabled: request.searchText.length >= 3,
   });
 };
 

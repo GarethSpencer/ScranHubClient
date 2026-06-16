@@ -28,7 +28,7 @@ function AddFriendByEmailForm() {
       <Form.Group className="mb-3" controlId="formGroupEmail">
         <Form.Label>
           Enter the full email address of another ScranHub user to send them a
-          friend request.
+          friend request
         </Form.Label>
         <Form.Control type="email" name="email" placeholder="Enter email" />
       </Form.Group>

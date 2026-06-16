@@ -1,3 +1,4 @@
+import AddFriendByDisplayNameForm from "../components/AddFriendByDisplayNameForm";
 import AddFriendByEmailForm from "../components/AddFriendByEmailForm";
 import DeclinedFriendRequests from "../components/DeclinedFriendRequests";
 import PendingFriendRequests from "../components/PendingFriendRequests";
@@ -7,17 +8,15 @@ const ManageFriendsPage = () => {
   return (
     <>
       <h2>Find Friends</h2>
-      <ul>
-        <li>Search by displayname (and send request)</li>
-        <AddFriendByEmailForm />
-      </ul>
-      <ul>
-        <PendingFriendRequests />
-        <DeclinedFriendRequests />
-      </ul>
-      <ul>
-        <UserFriendTable />
-      </ul>
+      <AddFriendByDisplayNameForm />
+      <AddFriendByEmailForm />
+
+      <h2>Manage Requests</h2>
+      <PendingFriendRequests />
+      <DeclinedFriendRequests />
+
+      <h2>My Friends</h2>
+      <UserFriendTable />
     </>
   );
 };

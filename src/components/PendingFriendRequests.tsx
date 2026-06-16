@@ -24,21 +24,9 @@ const PendingFriendRequests = () => {
   const { mutate: updateMutate, isPending: isUpdatePending } =
     useUpdateFriend();
 
-  if (isLoading)
-    return (
-      <>
-        <h2>My Pending Requests</h2>
-        <h3>Please wait</h3>
-      </>
-    );
+  if (isLoading) return <h3>Please wait</h3>;
   if (isError) return null;
-  if (!data?.friends)
-    return (
-      <>
-        <h2>My Pending Requests</h2>
-        <h3>Nothing to show here</h3>
-      </>
-    );
+  if (!data?.friends) return <h3>Nothing to show here</h3>;
 
   const isPending = isDeletePending || isUpdatePending;
 
@@ -87,7 +75,6 @@ const PendingFriendRequests = () => {
 
   return (
     <>
-      <h2>My Pending Requests</h2>
       <Table striped="columns">
         <thead>
           <tr>
