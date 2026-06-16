@@ -1,5 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 import Layout from "./layout/Layout";
+import SectionLayout from "./layout/SectionLayout";
 import HomePage from "./pages/HomePage";
 import PrivateRoutes from "./layout/PrivateRoutes";
 import AdminRoutes from "./layout/AdminRoutes";
@@ -22,19 +23,37 @@ const router = createBrowserRouter([
             element: <HomePage />,
           },
           {
-            path: "/friends",
-            element: <ManageFriendsPage />,
+            path: "friends",
+            element: <SectionLayout />,
+            children: [
+              {
+                index: true,
+                element: <ManageFriendsPage />,
+              },
+            ],
           },
           {
-            path: "/groups",
-            element: <Todo />,
+            path: "groups",
+            element: <SectionLayout />,
+            children: [
+              {
+                index: true,
+                element: <Todo />,
+              },
+            ],
           },
           {
             element: <AdminRoutes />,
             children: [
               {
-                path: "/admin",
-                element: <Todo />,
+                path: "admin",
+                element: <SectionLayout />,
+                children: [
+                  {
+                    index: true,
+                    element: <Todo />,
+                  },
+                ],
               },
             ],
           },

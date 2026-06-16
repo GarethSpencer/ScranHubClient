@@ -22,7 +22,7 @@
 }
 
 .navbar-fixed .navbar-brand:hover,
-.navbar-fixed .navbar-brand:focus {
+.navbar-fixed .navbar-brand:focus-visible {
   opacity: 0.75;
 }
 
@@ -202,4 +202,47 @@
 .navbar-dim:hover,
 [data-bs-theme="dark"] .navbar-dim:hover {
   color: rgba(255, 255, 255, 0.75);
+}
+
+.navbar-section-link {
+  position: relative;
+  font-weight: 500;
+}
+
+.navbar-section-link.active {
+  color: #fff;
+}
+
+.navbar-section-link.active::after {
+  content: "";
+  position: absolute;
+  left: 0.5rem;
+  right: 0.5rem;
+  bottom: 0;
+  height: 2px;
+  background-color: #fff;
+  border-radius: 2px;
+}
+
+.navbar-mobile-link.active {
+  background-color: rgba(0, 0, 0, 0.25);
+  font-weight: 600;
+}
+
+.section-tabs {
+  --bs-nav-tabs-border-color: rgba(255, 255, 255, 0.25);
+  --bs-nav-link-color: rgba(255, 255, 255, 0.75);
+  --bs-nav-link-hover-color: #fff;
+  --bs-nav-tabs-link-active-color: var(--bs-body-color);
+  --bs-nav-tabs-link-active-bg: var(--bs-body-bg);
+  --bs-nav-tabs-link-active-border-color: rgba(255, 255, 255, 0.25)
+    rgba(255, 255, 255, 0.25) var(--bs-body-bg);
+}
+
+.section-tabs .nav-link {
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
+}
+
+.section-tabs .nav-link.active {
+  text-shadow: none;
 }

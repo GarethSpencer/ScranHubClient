@@ -10,15 +10,20 @@ import UserDetailsModal from "./UserDetailsModal";
 import DeactivateAccountModal from "./DeactivateAccountModal";
 import NotificationIcon from "./NotificationIcon";
 import NotificationsModal from "./NotificationsModal";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
+import { sections } from "../navigation/sections";
 
 function NavBar() {
   const { logout } = useAuth();
   const { toggleDarkMode } = useDarkMode();
   const { data, isLoading, isError } = useGetCurrentUser();
 
+  const visibleSections = sections.filter(
+    (section) => !section.adminOnly || (data?.user?.admin ?? false),
+  );
+
   const dropdownText =
-    "Logged In: " + (isLoading || isError ? "" : data?.user?.displayName);
+    "Welcome " + (isLoading || isError ? "" : data?.user?.displayName);
 
   const logoutAction = () =>
     logout({ logoutParams: { returnTo: window.location.origin } });
@@ -54,9 +59,25 @@ function NavBar() {
         className="shadow navbar-fixed"
       >
         <Container fluid>
-          <Navbar.Brand as={Link} to="/">
+          <Navbar.Brand as={Link} to="/" onClick={() => setExpanded(false)}>
             ScranHub
           </Navbar.Brand>
+          <Nav className="d-none d-lg-flex me-auto ms-3 align-items-center">
+            {visibleSections.map((section) => {
+              const Icon = section.icon;
+              return (
+                <Nav.Link
+                  key={section.path}
+                  as={NavLink}
+                  to={section.path}
+                  className="navbar-section-link d-flex align-items-center gap-2"
+                >
+                  <Icon aria-hidden="true" />
+                  {section.label}
+                </Nav.Link>
+              );
+            })}
+          </Nav>
           <NotificationIcon
             pendingFriendships={data?.user?.pendingReceivedFriendshipCount ?? 0}
             className="ms-auto d-lg-none me-4"
@@ -69,6 +90,22 @@ function NavBar() {
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="ms-auto d-lg-none">
               <Navbar.Text className="fw-bold">{dropdownText}</Navbar.Text>
+              <hr className="dropdown-divider navbar-divider" />
+              {visibleSections.map((section) => {
+                const Icon = section.icon;
+                return (
+                  <Nav.Link
+                    key={section.path}
+                    as={NavLink}
+                    to={section.path}
+                    onClick={() => setExpanded(false)}
+                    className="text-white navbar-mobile-link d-flex align-items-center gap-2"
+                  >
+                    <Icon aria-hidden="true" />
+                    {section.label}
+                  </Nav.Link>
+                );
+              })}
               <hr className="dropdown-divider navbar-divider" />
               <Nav.Link
                 role="button"
