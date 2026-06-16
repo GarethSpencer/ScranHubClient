@@ -1,3 +1,4 @@
+import AddFriendByEmailForm from "../components/AddFriendByEmailForm";
 import DeclinedFriendRequests from "../components/DeclinedFriendRequests";
 import PendingFriendRequests from "../components/PendingFriendRequests";
 import UserFriendTable from "../components/UserFriendTable";
@@ -8,7 +9,7 @@ const ManageFriendsPage = () => {
       <h2>Find Friends</h2>
       <ul>
         <li>Search by displayname (and send request)</li>
-        <li>Send request by email</li>
+        <AddFriendByEmailForm />
       </ul>
       <ul>
         <PendingFriendRequests />
