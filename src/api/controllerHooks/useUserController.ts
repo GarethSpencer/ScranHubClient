@@ -1,4 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import useToast from "../../contexts/toast/useToast";
 import userControllerService from "../controllerServices/userControllerService";
 import type GetUserDetailedResponse from "../../models/responses/users/GetUserDetailedResponse";
@@ -103,6 +108,27 @@ export const useGetFriends = (request: GetUserFriendRequest) => {
       userControllerService.get<UserFriendsResponse>(
         `me/friends?PageNumber=${request.pageNumber}&PageSize=${request.pageSize}&status=${request.status}`,
       ),
+    staleTime: 10 * 1000,
+  });
+};
+
+export const useGetFriendsInfinite = (
+  request: Omit<GetUserFriendRequest, "pageNumber">,
+) => {
+  return useInfiniteQuery<UserFriendsResponse, Error>({
+    queryKey: ["friends", "infinite", request],
+    initialPageParam: 1,
+    queryFn: ({ pageParam }) =>
+      userControllerService.get<UserFriendsResponse>(
+        `me/friends?PageNumber=${pageParam}&PageSize=${request.pageSize}&status=${request.status}`,
+      ),
+    getNextPageParam: (lastPage, allPages) => {
+      const loaded = allPages.reduce(
+        (count, page) => count + (page.friends?.length ?? 0),
+        0,
+      );
+      return loaded < lastPage.totalCount ? allPages.length + 1 : undefined;
+    },
     staleTime: 10 * 1000,
   });
 };

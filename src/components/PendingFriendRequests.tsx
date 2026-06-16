@@ -1,20 +1,32 @@
 import Table from "react-bootstrap/Table";
 import {
   useDeleteFriend,
-  useGetFriends,
+  useGetFriendsInfinite,
   useUpdateFriend,
 } from "../api/controllerHooks/useUserController";
 import type FriendResult from "../models/results/FriendResult";
 import Button from "react-bootstrap/Button";
-import Pagination from "react-bootstrap/Pagination";
-import { useState } from "react";
+import Spinner from "react-bootstrap/Spinner";
+import { useEffect, useRef, useState } from "react";
 import { FriendshipStatus } from "../enums/FriendshipStatus";
 
-const PendingFriendRequests = () => {
-  const [page, setPage] = useState(1);
+type ActingAction = "approve" | "decline" | "delete";
+type Acting = { id: string; action: ActingAction };
+
+interface Props {
+  showSentRequests: boolean;
+}
+
+const PendingFriendRequests = ({ showSentRequests }: Props) => {
   const pageSize = 10;
-  const { data, isLoading, isError } = useGetFriends({
-    pageNumber: page,
+  const {
+    data,
+    isLoading,
+    isError,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useGetFriendsInfinite({
     pageSize: pageSize,
     status: FriendshipStatus.Pending,
   });
@@ -24,114 +36,139 @@ const PendingFriendRequests = () => {
   const { mutate: updateMutate, isPending: isUpdatePending } =
     useUpdateFriend();
 
+  const [acting, setActing] = useState<Acting | null>(null);
+
+  const sentinelRef = useRef<HTMLTableRowElement>(null);
+
+  useEffect(() => {
+    const sentinel = sentinelRef.current;
+    if (!sentinel || !hasNextPage) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && !isFetchingNextPage) {
+          fetchNextPage();
+        }
+      },
+      { rootMargin: "50px" },
+    );
+
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+
   if (isLoading) return <h3>Please wait</h3>;
   if (isError) return null;
-  if (!data?.friends) return <h3>Nothing to show here</h3>;
+
+  const friends = (
+    data?.pages.flatMap((page) => page.friends ?? []) ?? []
+  ).filter((x) => showSentRequests || !x.initiator);
+  if (friends.length === 0) return <h3>Nothing to show here</h3>;
 
   const isPending = isDeletePending || isUpdatePending;
 
   const onDeleteFriend = (userFriendId: string) => {
+    setActing({ id: userFriendId, action: "delete" });
     deleteMutate(userFriendId, {
-      onSuccess: () => {
-        if (page > 1 && data.totalCount <= (page - 1) * pageSize + 1) {
-          setPage(page - 1);
-        }
-      },
+      onSettled: () => setActing(null),
     });
   };
 
   const onAcceptFriend = (friendId: string) => {
-    const request = {
-      friendId: friendId,
-      requestData: {
-        status: FriendshipStatus.Accepted,
+    setActing({ id: friendId, action: "approve" });
+    updateMutate(
+      {
+        friendId: friendId,
+        requestData: {
+          status: FriendshipStatus.Accepted,
+        },
       },
-    };
-
-    updateMutate(request, {
-      onSuccess: () => {
-        if (page > 1 && data.totalCount <= (page - 1) * pageSize + 1) {
-          setPage(page - 1);
-        }
+      {
+        onSettled: () => setActing(null),
       },
-    });
+    );
   };
 
   const onDeclineFriend = (friendId: string) => {
-    const request = {
-      friendId: friendId,
-      requestData: {
-        status: FriendshipStatus.Declined,
+    setActing({ id: friendId, action: "decline" });
+    updateMutate(
+      {
+        friendId: friendId,
+        requestData: {
+          status: FriendshipStatus.Declined,
+        },
       },
-    };
-    updateMutate(request, {
-      onSuccess: () => {
-        if (page > 1 && data.totalCount <= (page - 1) * pageSize + 1) {
-          setPage(page - 1);
-        }
+      {
+        onSettled: () => setActing(null),
       },
-    });
+    );
   };
 
+  const isActing = (id: string, action: ActingAction) =>
+    acting?.id === id && acting.action === action;
+
   return (
-    <>
-      <Table striped="columns">
-        <thead>
-          <tr>
-            <th>Display Name</th>
-            <th>Sent / Received</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data?.friends.map((x: FriendResult) => (
-            <tr key={x.userFriendId}>
-              <td>{x.displayName}</td>
-              <td>{x.initiator ? "Sent" : "Recieved"}</td>
-              <td>
-                {x.initiator ? (
+    <Table striped="columns">
+      <thead>
+        <tr>
+          <th>Display Name</th>
+          {showSentRequests && <th>Sent / Received</th>}
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {friends.map((x: FriendResult) => (
+          <tr key={x.userFriendId}>
+            <td>{x.displayName}</td>
+            {showSentRequests && <td>{x.initiator ? "Sent" : "Recieved"}</td>}
+            <td>
+              {x.initiator ? (
+                <Button
+                  onClick={() => onDeleteFriend(x.userFriendId)}
+                  disabled={isPending}
+                >
+                  {isActing(x.userFriendId, "delete") ? (
+                    <Spinner animation="border" size="sm" />
+                  ) : (
+                    "Delete"
+                  )}
+                </Button>
+              ) : (
+                <>
                   <Button
-                    onClick={() => onDeleteFriend(x.userFriendId)}
+                    onClick={() => onAcceptFriend(x.friendId)}
                     disabled={isPending}
                   >
-                    {isPending ? "Please Wait" : "Delete"}
+                    {isActing(x.friendId, "approve") ? (
+                      <Spinner animation="border" size="sm" />
+                    ) : (
+                      "Approve"
+                    )}
                   </Button>
-                ) : (
-                  <>
-                    <Button
-                      onClick={() => onAcceptFriend(x.friendId)}
-                      disabled={isPending}
-                    >
-                      {isPending ? "Please Wait" : "Approve"}
-                    </Button>
-                    <Button
-                      onClick={() => onDeclineFriend(x.friendId)}
-                      disabled={isPending}
-                    >
-                      {isPending ? "Please Wait" : "Decline"}
-                    </Button>
-                  </>
-                )}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </Table>
-      <Pagination>
-        {Array.from(
-          { length: Math.ceil(data.totalCount / pageSize) },
-          (_, index) => index + 1,
-        ).map((pageNumber) => (
-          <Pagination.Item
-            key={pageNumber}
-            active={pageNumber === page}
-            onClick={() => setPage(pageNumber)}
-          >
-            {pageNumber}
-          </Pagination.Item>
+                  <Button
+                    onClick={() => onDeclineFriend(x.friendId)}
+                    disabled={isPending}
+                  >
+                    {isActing(x.friendId, "decline") ? (
+                      <Spinner animation="border" size="sm" />
+                    ) : (
+                      "Decline"
+                    )}
+                  </Button>
+                </>
+              )}
+            </td>
+          </tr>
         ))}
-      </Pagination>
-    </>
+        {hasNextPage && (
+          <tr ref={sentinelRef}>
+            <td colSpan={3} className="text-center">
+              {isFetchingNextPage && <Spinner animation="border" size="sm" />}
+            </td>
+          </tr>
+        )}
+      </tbody>
+    </Table>
   );
 };
 

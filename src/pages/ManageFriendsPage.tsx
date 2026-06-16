@@ -12,7 +12,7 @@ const ManageFriendsPage = () => {
       <AddFriendByEmailForm />
 
       <h2>Manage Requests</h2>
-      <PendingFriendRequests />
+      <PendingFriendRequests showSentRequests={true} />
       <DeclinedFriendRequests />
 
       <h2>My Friends</h2>

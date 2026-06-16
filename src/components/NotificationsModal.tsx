@@ -15,12 +15,13 @@ function NotificationsModal({
       show={showNotificationsModal}
       onHide={() => setShowNotificationsModal(false)}
       size="lg"
+      scrollable
     >
       <Modal.Header closeButton>
         <Modal.Title>Pending Friend Requests</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <PendingFriendRequests />
+        <PendingFriendRequests showSentRequests={false} />
       </Modal.Body>
     </Modal>
   );
