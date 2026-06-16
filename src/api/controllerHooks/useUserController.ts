@@ -12,7 +12,7 @@ import type UserFriendsResponse from "../../models/responses/users/UserFriendsRe
 import type AddUserFriendResponse from "../../models/responses/users/AddUserFriendResponse";
 import type AddFriendRequest from "../../models/requests/users/AddFriendRequest";
 import type UpdateUserFriendRequest from "../../models/requests/users/UpdateUserFriendRequest";
-import type PaginationBaseRequest from "../../models/requests/generic/PaginationBaseRequest";
+import type GetUserFriendRequest from "../../models/requests/users/GetUserFriendRequest";
 
 export const useGetCurrentUser = () => {
   return useQuery<GetUserDetailedResponse, Error>({
@@ -93,12 +93,12 @@ export const useDeleteUser = () => {
   });
 };
 
-export const useGetFriends = (request: PaginationBaseRequest) => {
+export const useGetFriends = (request: GetUserFriendRequest) => {
   return useQuery<UserFriendsResponse, Error>({
     queryKey: ["friends", request],
     queryFn: () =>
       userControllerService.get<UserFriendsResponse>(
-        `me/friends?PageNumber=${request.pageNumber}&PageSize=${request.pageSize}`,
+        `me/friends?PageNumber=${request.pageNumber}&PageSize=${request.pageSize}&status=${request.status}`,
       ),
     staleTime: 10 * 1000,
   });

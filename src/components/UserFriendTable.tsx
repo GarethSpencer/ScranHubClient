@@ -7,6 +7,7 @@ import type FriendResult from "../models/results/FriendResult";
 import Button from "react-bootstrap/Button";
 import Pagination from "react-bootstrap/Pagination";
 import { useState } from "react";
+import { FriendshipStatus } from "../enums/FriendshipStatus";
 
 const UserFriendTable = () => {
   const [page, setPage] = useState(1);
@@ -14,6 +15,7 @@ const UserFriendTable = () => {
   const { data, isLoading, isError } = useGetFriends({
     pageNumber: page,
     pageSize: pageSize,
+    status: FriendshipStatus.Accepted,
   });
   const { mutate, isPending } = useDeleteFriend();
 
