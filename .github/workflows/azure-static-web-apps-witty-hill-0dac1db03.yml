@@ -60,6 +60,7 @@ jobs:
           api_location: "" # Api source code path - optional
           output_location: "" # Already pointing at built output via app_location
           skip_app_build: true
+          github_id_token: ${{ steps.idtoken.outputs.result }}
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
