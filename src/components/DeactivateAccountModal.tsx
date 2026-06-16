@@ -42,7 +42,13 @@ function DeactivateAccountModal({
         <Modal.Body>
           <Placeholder as="p" animation="glow">
             <Placeholder xs={12} />
+            <Placeholder xs={8} />
           </Placeholder>
+          <Placeholder as="p" animation="glow">
+            <Placeholder xs={12} />
+            <Placeholder xs={11} />
+          </Placeholder>
+          <Placeholder.Button xs={12} aria-hidden="true" />
         </Modal.Body>
       </Modal>
     );

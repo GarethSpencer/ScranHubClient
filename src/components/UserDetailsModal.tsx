@@ -33,9 +33,15 @@ function UserDetailsModal({
           <Modal.Title>Loading</Modal.Title>
         </Modal.Header>
         <Modal.Body>
+          <p>Username</p>
           <Placeholder as="p" animation="glow">
-            <Placeholder xs={12} />
+            <Placeholder xs={12} size="lg" />
           </Placeholder>
+          <p>Email address</p>
+          <Placeholder as="p" animation="glow">
+            <Placeholder xs={12} size="lg" />
+          </Placeholder>
+          <Placeholder.Button xs={12} aria-hidden="true" />
         </Modal.Body>
       </Modal>
     );
