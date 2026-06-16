@@ -6,6 +6,7 @@ export default interface UserDetailedResult {
   active: boolean;
   admin: boolean;
   friendCount: number;
+  pendingReceivedFriendshipCount: number;
   createdOn: Date;
   createdBy: string;
   updatedOn?: Date;

@@ -187,3 +187,13 @@
 [data-bs-theme="dark"] .menu-card:focus {
   filter: brightness(0.6) !important;
 }
+
+.navbar-dim,
+[data-bs-theme="dark"] .navbar-dim {
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.navbar-dim:hover,
+[data-bs-theme="dark"] .navbar-dim:hover {
+  color: rgba(255, 255, 255, 0.75);
+}

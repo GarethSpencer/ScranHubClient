@@ -8,6 +8,8 @@ import useDarkMode from "../contexts/darkMode/useDarkMode";
 import { useGetCurrentUser } from "../api/controllerHooks/useUserController";
 import UserDetailsModal from "./UserDetailsModal";
 import DeactivateAccountModal from "./DeactivateAccountModal";
+import NotificationIcon from "./NotificationIcon";
+import NotificationsModal from "./NotificationsModal";
 
 function NavBar() {
   const { logout } = useAuth();
@@ -25,6 +27,7 @@ function NavBar() {
   const [showUserDetailsModal, setShowUserDetailsModal] = useState(false);
   const [showDeactivateAccountModal, setShowDeactivateAccountModal] =
     useState(false);
+  const [showNotificationsModal, setShowNotificationsModal] = useState(false);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -51,7 +54,15 @@ function NavBar() {
       >
         <Container fluid>
           <Navbar.Brand href="/">ScranHub</Navbar.Brand>
-          <Navbar.Toggle aria-controls="basic-navbar-nav" />
+          <NotificationIcon
+            pendingFriendships={data?.user?.pendingReceivedFriendshipCount ?? 0}
+            className="ms-auto d-lg-none me-4"
+            onClick={() => {
+              setShowNotificationsModal(true);
+              setExpanded(false);
+            }}
+          />
+          <Navbar.Toggle aria-controls="basic-navbar-nav" className="ms-2" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="ms-auto d-lg-none">
               <Navbar.Text className="fw-bold">{dropdownText}</Navbar.Text>
@@ -92,7 +103,14 @@ function NavBar() {
                 Logout
               </Nav.Link>
             </Nav>
-            <Nav className="ms-auto d-none d-lg-flex">
+            <Nav className="ms-auto d-none d-lg-flex align-items-center">
+              <NotificationIcon
+                pendingFriendships={
+                  data?.user?.pendingReceivedFriendshipCount ?? 0
+                }
+                className="me-4"
+                onClick={() => setShowNotificationsModal(true)}
+              />
               <NavDropdown
                 title={dropdownText}
                 id="basic-nav-dropdown"
@@ -134,6 +152,10 @@ function NavBar() {
           </Navbar.Collapse>
         </Container>
       </Navbar>
+      <NotificationsModal
+        showNotificationsModal={showNotificationsModal}
+        setShowNotificationsModal={setShowNotificationsModal}
+      />
       <UserDetailsModal
         showUserDetailsModal={showUserDetailsModal}
         setShowUserDetailsModal={setShowUserDetailsModal}
