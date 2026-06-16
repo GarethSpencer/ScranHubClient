@@ -18,6 +18,12 @@
   min-height: var(--navbar-content-height);
   display: flex;
   align-items: center;
+  transition: opacity 0.15s ease-in-out;
+}
+
+.navbar-fixed .navbar-brand:hover,
+.navbar-fixed .navbar-brand:focus {
+  opacity: 0.75;
 }
 
 .main-layout-container {

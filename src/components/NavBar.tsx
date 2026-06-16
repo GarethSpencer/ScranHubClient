@@ -10,6 +10,7 @@ import UserDetailsModal from "./UserDetailsModal";
 import DeactivateAccountModal from "./DeactivateAccountModal";
 import NotificationIcon from "./NotificationIcon";
 import NotificationsModal from "./NotificationsModal";
+import { Link } from "react-router-dom";
 
 function NavBar() {
   const { logout } = useAuth();
@@ -53,7 +54,9 @@ function NavBar() {
         className="shadow navbar-fixed"
       >
         <Container fluid>
-          <Navbar.Brand href="/">ScranHub</Navbar.Brand>
+          <Navbar.Brand as={Link} to="/">
+            ScranHub
+          </Navbar.Brand>
           <NotificationIcon
             pendingFriendships={data?.user?.pendingReceivedFriendshipCount ?? 0}
             className="ms-auto d-lg-none me-4"
