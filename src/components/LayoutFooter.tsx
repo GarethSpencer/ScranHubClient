@@ -1,4 +1,4 @@
-import "./../layout/Layout.css";
+import "./../layout/Layout.scss";
 
 const LayoutFooter = () => {
   const copyrightYear = new Date().getFullYear();

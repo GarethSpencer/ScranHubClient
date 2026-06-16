@@ -1,3 +1,7 @@
+@import "bootstrap/scss/functions";
+@import "bootstrap/scss/variables";
+@import "bootstrap/scss/mixins/breakpoints";
+
 :root {
   --navbar-padding: 1rem;
   --navbar-content-height: 2.5rem;
@@ -44,7 +48,7 @@
   padding: 1.5rem 1rem;
 }
 
-@media (max-width: 767px) {
+@include media-breakpoint-down(md) {
   .main-layout-container {
     align-items: flex-start;
   }
@@ -60,7 +64,7 @@
   }
 }
 
-@media (min-width: 768px) {
+@include media-breakpoint-up(md) {
   .content-wrapper {
     padding: 2rem;
     max-width: 800px;
@@ -163,7 +167,7 @@
   height: 40px;
 }
 
-@media (min-width: 768px) {
+@include media-breakpoint-up(md) {
   .menu-card-icon {
     width: 80px;
     height: 80px;

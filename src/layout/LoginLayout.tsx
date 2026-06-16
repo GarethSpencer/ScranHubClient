@@ -1,4 +1,4 @@
-import "./Layout.css";
+import "./Layout.scss";
 import LoginPage from "../pages/LoginPage";
 import DarkModeButton from "../components/DarkModeButton";
 import LoginLayoutFooter from "../components/LoginLayoutFooter";

@@ -1,4 +1,4 @@
-import "./Layout.css";
+import "./Layout.scss";
 import { Outlet } from "react-router-dom";
 import LayoutFooter from "../components/LayoutFooter";
 import NavBar from "../components/NavBar";
