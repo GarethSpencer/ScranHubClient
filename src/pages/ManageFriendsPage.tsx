@@ -1,3 +1,4 @@
+import PendingFriendRequests from "../components/PendingFriendRequests";
 import UserFriendTable from "../components/UserFriendTable";
 
 const ManageFriendsPage = () => {
@@ -10,7 +11,7 @@ const ManageFriendsPage = () => {
       </ul>
       <h2>Manage Friend Requests</h2>
       <ul>
-        <li>Pending requests (to and from)</li>
+        <PendingFriendRequests />
         <li>Rejected requests (to)</li>
       </ul>
       <ul>
