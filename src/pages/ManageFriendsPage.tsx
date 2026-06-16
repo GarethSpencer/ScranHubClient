@@ -1,3 +1,4 @@
+import DeclinedFriendRequests from "../components/DeclinedFriendRequests";
 import PendingFriendRequests from "../components/PendingFriendRequests";
 import UserFriendTable from "../components/UserFriendTable";
 
@@ -9,10 +10,9 @@ const ManageFriendsPage = () => {
         <li>Search by displayname (and send request)</li>
         <li>Send request by email</li>
       </ul>
-      <h2>Manage Friend Requests</h2>
       <ul>
         <PendingFriendRequests />
-        <li>Rejected requests (to)</li>
+        <DeclinedFriendRequests />
       </ul>
       <ul>
         <UserFriendTable />

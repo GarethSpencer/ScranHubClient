@@ -2,6 +2,7 @@ import Table from "react-bootstrap/Table";
 import {
   useDeleteFriend,
   useGetFriends,
+  useUpdateFriend,
 } from "../api/controllerHooks/useUserController";
 import type FriendResult from "../models/results/FriendResult";
 import Button from "react-bootstrap/Button";
@@ -9,20 +10,24 @@ import Pagination from "react-bootstrap/Pagination";
 import { useState } from "react";
 import { FriendshipStatus } from "../enums/FriendshipStatus";
 
-const UserFriendTable = () => {
+const DeclinedFriendRequests = () => {
   const [page, setPage] = useState(1);
   const pageSize = 10;
   const { data, isLoading, isError } = useGetFriends({
     pageNumber: page,
     pageSize: pageSize,
-    status: FriendshipStatus.Accepted,
+    status: FriendshipStatus.Declined,
   });
-  const { mutate, isPending } = useDeleteFriend();
+
+  const { mutate: deleteMutate, isPending: isDeletePending } =
+    useDeleteFriend();
+  const { mutate: updateMutate, isPending: isUpdatePending } =
+    useUpdateFriend();
 
   if (isLoading)
     return (
       <>
-        <h2>My Friends</h2>
+        <h2>My Declined Requests</h2>
         <h3>Please wait</h3>
       </>
     );
@@ -30,13 +35,32 @@ const UserFriendTable = () => {
   if (!data?.friends)
     return (
       <>
-        <h2>My Friends</h2>
+        <h2>My Declined Requests</h2>
         <h3>Nothing to show here</h3>
       </>
     );
 
+  const isPending = isDeletePending || isUpdatePending;
+
   const onDeleteFriend = (userFriendId: string) => {
-    mutate(userFriendId, {
+    deleteMutate(userFriendId, {
+      onSuccess: () => {
+        if (page > 1 && data.totalCount <= (page - 1) * pageSize + 1) {
+          setPage(page - 1);
+        }
+      },
+    });
+  };
+
+  const onAcceptFriend = (friendId: string) => {
+    const request = {
+      friendId: friendId,
+      requestData: {
+        status: FriendshipStatus.Accepted,
+      },
+    };
+
+    updateMutate(request, {
       onSuccess: () => {
         if (page > 1 && data.totalCount <= (page - 1) * pageSize + 1) {
           setPage(page - 1);
@@ -47,7 +71,7 @@ const UserFriendTable = () => {
 
   return (
     <>
-      <h2>My Friends</h2>
+      <h2>My Declined Requests</h2>
       <Table striped="columns">
         <thead>
           <tr>
@@ -60,12 +84,20 @@ const UserFriendTable = () => {
             <tr key={x.userFriendId}>
               <td>{x.displayName}</td>
               <td>
-                <Button
-                  onClick={() => onDeleteFriend(x.userFriendId)}
-                  disabled={isPending}
-                >
-                  {isPending ? "Please Wait" : "Delete"}
-                </Button>
+                <>
+                  <Button
+                    onClick={() => onAcceptFriend(x.friendId)}
+                    disabled={isPending}
+                  >
+                    {isPending ? "Please Wait" : "Approve"}
+                  </Button>
+                  <Button
+                    onClick={() => onDeleteFriend(x.userFriendId)}
+                    disabled={isPending}
+                  >
+                    {isPending ? "Please Wait" : "Delete"}
+                  </Button>
+                </>
               </td>
             </tr>
           ))}
@@ -89,4 +121,4 @@ const UserFriendTable = () => {
   );
 };
 
-export default UserFriendTable;
+export default DeclinedFriendRequests;
