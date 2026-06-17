@@ -7,7 +7,9 @@ import AdminRoutes from "./layout/AdminRoutes";
 import ErrorPage from "./pages/ErrorPage";
 import LoginLayout from "./layout/LoginLayout";
 import Todo from "./components/Todo";
-import ManageFriendsPage from "./pages/ManageFriendsPage";
+import MyFriendsPage from "./pages/friends/MyFriendsPage";
+import FindFriendsPage from "./pages/friends/FindFriendsPage";
+import ManageRequestsPage from "./pages/friends/ManageRequestsPage";
 
 const router = createBrowserRouter([
   {
@@ -24,11 +26,31 @@ const router = createBrowserRouter([
           },
           {
             path: "friends",
-            element: <SectionLayout />,
+            element: (
+              <SectionLayout
+                tabs={[
+                  { label: "My Friends", to: "/friends", end: true },
+                  { label: "Find Friends", to: "/friends/find" },
+
+                  {
+                    label: "Manage Requests",
+                    to: "/friends/manage",
+                  },
+                ]}
+              />
+            ),
             children: [
               {
                 index: true,
-                element: <ManageFriendsPage />,
+                element: <MyFriendsPage />,
+              },
+              {
+                path: "find",
+                element: <FindFriendsPage />,
+              },
+              {
+                path: "manage",
+                element: <ManageRequestsPage />,
               },
             ],
           },

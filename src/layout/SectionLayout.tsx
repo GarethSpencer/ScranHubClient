@@ -9,7 +9,9 @@ const SectionLayout = ({ tabs = [] }: Props) => {
   return (
     <div className="content-wrapper">
       <SectionTabs tabs={tabs} />
-      <Outlet />
+      <div className="section-panel">
+        <Outlet />
+      </div>
     </div>
   );
 };

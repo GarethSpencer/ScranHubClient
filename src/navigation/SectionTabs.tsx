@@ -15,7 +15,7 @@ const SectionTabs = ({ tabs }: Props) => {
   if (tabs.length < 2) return null;
 
   return (
-    <Nav variant="tabs" className="section-tabs mb-3">
+    <Nav variant="tabs" className="section-tabs">
       {tabs.map((tab) => (
         <Nav.Item key={tab.to}>
           <Nav.Link as={NavLink} to={tab.to} end={tab.end}>
