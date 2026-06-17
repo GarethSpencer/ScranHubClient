@@ -182,6 +182,7 @@ export const useUpdateFriend = () => {
       ),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["friends"] });
+      queryClient.invalidateQueries({ queryKey: ["currentUser"] });
       if (data.message) showToast(data.message, "success");
     },
   });
