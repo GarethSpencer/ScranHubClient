@@ -42,7 +42,7 @@
 }
 
 .login-content-wrapper {
-  background-color: white;
+  background-color: var(--bs-body-bg);
   border-radius: 12px;
   padding: 2rem;
   max-width: 480px;
@@ -96,6 +96,10 @@
 
 .content-footer a {
   color: #eee;
+}
+
+[data-bs-theme="light"] {
+  --bs-body-bg: #f7f4ef;
 }
 
 [data-bs-theme="dark"] .login-content-wrapper {

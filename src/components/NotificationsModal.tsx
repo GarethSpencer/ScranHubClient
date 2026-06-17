@@ -21,7 +21,7 @@ function NotificationsModal({
         <Modal.Title>Pending Friend Requests</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <PendingFriendRequests showSentRequests={false} />
+        <PendingFriendRequests showSentRequests={false} showHeader={false} />
       </Modal.Body>
     </Modal>
   );

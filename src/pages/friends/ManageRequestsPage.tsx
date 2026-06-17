@@ -7,7 +7,7 @@ const ManageRequestsPage = () => {
   return (
     <Row className="g-3 align-items-stretch">
       <Col xs={12} md>
-        <PendingFriendRequests showSentRequests={true} />
+        <PendingFriendRequests showSentRequests={true} showHeader={true} />
       </Col>
       <Col xs={12} md="auto" className="section-divider" aria-hidden="true" />
       <Col xs={12} md>
