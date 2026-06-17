@@ -5,8 +5,10 @@ import {
 } from "../api/controllerHooks/useUserController";
 import type FriendResult from "../models/results/FriendResult";
 import Button from "react-bootstrap/Button";
-import Pagination from "react-bootstrap/Pagination";
+import Spinner from "react-bootstrap/Spinner";
 import TableStatus from "./TableStatus";
+import TablePagination from "./TablePagination";
+import useActingState from "../hooks/useActingState";
 import { useState } from "react";
 import { FriendshipStatus } from "../enums/FriendshipStatus";
 
@@ -20,17 +22,22 @@ const UserFriendTable = () => {
   });
   const { mutate, isPending } = useDeleteFriend();
 
+  const { isActing, mutationCallbacks } = useActingState();
+
   const friends = data?.friends ?? [];
   const totalCount = data?.totalCount ?? 0;
 
   const onDeleteFriend = (userFriendId: string) => {
-    mutate(userFriendId, {
-      onSuccess: () => {
-        if (page > 1 && totalCount <= (page - 1) * pageSize + 1) {
-          setPage(page - 1);
-        }
-      },
-    });
+    mutate(
+      userFriendId,
+      mutationCallbacks(userFriendId, "delete", {
+        onSuccess: () => {
+          if (page > 1 && totalCount <= (page - 1) * pageSize + 1) {
+            setPage(page - 1);
+          }
+        },
+      }),
+    );
   };
 
   return (
@@ -53,32 +60,27 @@ const UserFriendTable = () => {
                 <td className="w-50 text-start text-break">{x.displayName}</td>
                 <td className="w-50">
                   <Button
+                    variant="danger"
                     onClick={() => onDeleteFriend(x.userFriendId)}
                     disabled={isPending}
                   >
-                    {isPending ? "Please Wait" : "Delete"}
+                    {isActing(x.userFriendId, "delete") ? (
+                      <Spinner animation="border" size="sm" />
+                    ) : (
+                      "Delete"
+                    )}
                   </Button>
                 </td>
               </tr>
             ))}
           </tbody>
         </Table>
-        {Math.ceil(totalCount / pageSize) > 1 && (
-          <Pagination>
-            {Array.from(
-              { length: Math.ceil(totalCount / pageSize) },
-              (_, index) => index + 1,
-            ).map((pageNumber) => (
-              <Pagination.Item
-                key={pageNumber}
-                active={pageNumber === page}
-                onClick={() => setPage(pageNumber)}
-              >
-                {pageNumber}
-              </Pagination.Item>
-            ))}
-          </Pagination>
-        )}
+        <TablePagination
+          page={page}
+          totalCount={totalCount}
+          pageSize={pageSize}
+          onPageChange={setPage}
+        />
       </TableStatus>
     </>
   );

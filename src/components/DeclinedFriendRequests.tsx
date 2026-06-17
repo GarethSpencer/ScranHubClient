@@ -6,8 +6,10 @@ import {
 } from "../api/controllerHooks/useUserController";
 import type FriendResult from "../models/results/FriendResult";
 import Button from "react-bootstrap/Button";
-import Pagination from "react-bootstrap/Pagination";
+import Spinner from "react-bootstrap/Spinner";
 import TableStatus from "./TableStatus";
+import TablePagination from "./TablePagination";
+import useActingState from "../hooks/useActingState";
 import { useState } from "react";
 import { FriendshipStatus } from "../enums/FriendshipStatus";
 
@@ -25,18 +27,25 @@ const DeclinedFriendRequests = () => {
   const { mutate: updateMutate, isPending: isUpdatePending } =
     useUpdateFriend();
 
+  const { isActing, mutationCallbacks } = useActingState();
+
   const friends = data?.friends ?? [];
   const totalCount = data?.totalCount ?? 0;
   const isPending = isDeletePending || isUpdatePending;
 
+  const decrementPageIfNeeded = () => {
+    if (page > 1 && totalCount <= (page - 1) * pageSize + 1) {
+      setPage(page - 1);
+    }
+  };
+
   const onDeleteFriend = (userFriendId: string) => {
-    deleteMutate(userFriendId, {
-      onSuccess: () => {
-        if (page > 1 && totalCount <= (page - 1) * pageSize + 1) {
-          setPage(page - 1);
-        }
-      },
-    });
+    deleteMutate(
+      userFriendId,
+      mutationCallbacks(userFriendId, "delete", {
+        onSuccess: decrementPageIfNeeded,
+      }),
+    );
   };
 
   const onAcceptFriend = (friendId: string) => {
@@ -47,13 +56,12 @@ const DeclinedFriendRequests = () => {
       },
     };
 
-    updateMutate(request, {
-      onSuccess: () => {
-        if (page > 1 && totalCount <= (page - 1) * pageSize + 1) {
-          setPage(page - 1);
-        }
-      },
-    });
+    updateMutate(
+      request,
+      mutationCallbacks(friendId, "approve", {
+        onSuccess: decrementPageIfNeeded,
+      }),
+    );
   };
 
   return (
@@ -82,16 +90,26 @@ const DeclinedFriendRequests = () => {
                 <td className="w-50">
                   <div className="d-flex flex-wrap gap-2 justify-content-center">
                     <Button
+                      variant="success"
                       onClick={() => onAcceptFriend(x.friendId)}
                       disabled={isPending}
                     >
-                      {isPending ? "Please Wait" : "Approve"}
+                      {isActing(x.friendId, "approve") ? (
+                        <Spinner animation="border" size="sm" />
+                      ) : (
+                        "Approve"
+                      )}
                     </Button>
                     <Button
+                      variant="danger"
                       onClick={() => onDeleteFriend(x.userFriendId)}
                       disabled={isPending}
                     >
-                      {isPending ? "Please Wait" : "Delete"}
+                      {isActing(x.userFriendId, "delete") ? (
+                        <Spinner animation="border" size="sm" />
+                      ) : (
+                        "Delete"
+                      )}
                     </Button>
                   </div>
                 </td>
@@ -99,22 +117,12 @@ const DeclinedFriendRequests = () => {
             ))}
           </tbody>
         </Table>
-        {Math.ceil(totalCount / pageSize) > 1 && (
-          <Pagination>
-            {Array.from(
-              { length: Math.ceil(totalCount / pageSize) },
-              (_, index) => index + 1,
-            ).map((pageNumber) => (
-              <Pagination.Item
-                key={pageNumber}
-                active={pageNumber === page}
-                onClick={() => setPage(pageNumber)}
-              >
-                {pageNumber}
-              </Pagination.Item>
-            ))}
-          </Pagination>
-        )}
+        <TablePagination
+          page={page}
+          totalCount={totalCount}
+          pageSize={pageSize}
+          onPageChange={setPage}
+        />
       </TableStatus>
     </>
   );

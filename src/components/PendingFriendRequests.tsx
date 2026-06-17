@@ -8,11 +8,9 @@ import type FriendResult from "../models/results/FriendResult";
 import Button from "react-bootstrap/Button";
 import Spinner from "react-bootstrap/Spinner";
 import TableStatus from "./TableStatus";
-import { useEffect, useRef, useState } from "react";
+import useActingState from "../hooks/useActingState";
+import { useEffect, useRef } from "react";
 import { FriendshipStatus } from "../enums/FriendshipStatus";
-
-type ActingAction = "approve" | "decline" | "delete";
-type Acting = { id: string; action: ActingAction };
 
 interface Props {
   showSentRequests: boolean;
@@ -38,7 +36,7 @@ const PendingFriendRequests = ({ showSentRequests, showHeader }: Props) => {
   const { mutate: updateMutate, isPending: isUpdatePending } =
     useUpdateFriend();
 
-  const [acting, setActing] = useState<Acting | null>(null);
+  const { isActing, mutationCallbacks } = useActingState();
 
   const sentinelRef = useRef<HTMLTableRowElement>(null);
 
@@ -66,14 +64,10 @@ const PendingFriendRequests = ({ showSentRequests, showHeader }: Props) => {
   const isPending = isDeletePending || isUpdatePending;
 
   const onDeleteFriend = (userFriendId: string) => {
-    setActing({ id: userFriendId, action: "delete" });
-    deleteMutate(userFriendId, {
-      onSettled: () => setActing(null),
-    });
+    deleteMutate(userFriendId, mutationCallbacks(userFriendId, "delete"));
   };
 
   const onAcceptFriend = (friendId: string) => {
-    setActing({ id: friendId, action: "approve" });
     updateMutate(
       {
         friendId: friendId,
@@ -81,14 +75,11 @@ const PendingFriendRequests = ({ showSentRequests, showHeader }: Props) => {
           status: FriendshipStatus.Accepted,
         },
       },
-      {
-        onSettled: () => setActing(null),
-      },
+      mutationCallbacks(friendId, "approve"),
     );
   };
 
   const onDeclineFriend = (friendId: string) => {
-    setActing({ id: friendId, action: "decline" });
     updateMutate(
       {
         friendId: friendId,
@@ -96,14 +87,9 @@ const PendingFriendRequests = ({ showSentRequests, showHeader }: Props) => {
           status: FriendshipStatus.Declined,
         },
       },
-      {
-        onSettled: () => setActing(null),
-      },
+      mutationCallbacks(friendId, "decline"),
     );
   };
-
-  const isActing = (id: string, action: ActingAction) =>
-    acting?.id === id && acting.action === action;
 
   return (
     <>
@@ -133,6 +119,7 @@ const PendingFriendRequests = ({ showSentRequests, showHeader }: Props) => {
                 <td>
                   {x.initiator ? (
                     <Button
+                      variant="danger"
                       onClick={() => onDeleteFriend(x.userFriendId)}
                       disabled={isPending}
                     >
@@ -145,6 +132,7 @@ const PendingFriendRequests = ({ showSentRequests, showHeader }: Props) => {
                   ) : (
                     <div className="d-flex flex-wrap gap-2 justify-content-center">
                       <Button
+                        variant="success"
                         onClick={() => onAcceptFriend(x.friendId)}
                         disabled={isPending}
                       >
