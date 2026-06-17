@@ -60,7 +60,7 @@ function AddFriendByDisplayNameForm() {
             <tbody>
               {data.users.map((x: UserResult) => (
                 <tr key={x.userId}>
-                  <td className="w-50 text-start">{x.displayName}</td>
+                  <td className="w-50 text-start text-break">{x.displayName}</td>
                   <td className="w-50">
                     <Button
                       onClick={() => onAddFriend(x.userId)}

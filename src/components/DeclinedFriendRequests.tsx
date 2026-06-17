@@ -59,7 +59,8 @@ const DeclinedFriendRequests = () => {
 
   return (
     <>
-      <Table striped="columns">
+      <h2 className="mb-3 fw-bold lead">Declined Requests</h2>
+      <Table striped="columns" className="align-middle text-center">
         <thead>
           <tr>
             <th>Display Name</th>
@@ -69,9 +70,9 @@ const DeclinedFriendRequests = () => {
         <tbody>
           {data?.friends.map((x: FriendResult) => (
             <tr key={x.userFriendId}>
-              <td>{x.displayName}</td>
-              <td>
-                <>
+              <td className="w-50 text-start text-break">{x.displayName}</td>
+              <td className="w-50">
+                <div className="d-flex flex-wrap gap-2 justify-content-center">
                   <Button
                     onClick={() => onAcceptFriend(x.friendId)}
                     disabled={isPending}
@@ -84,7 +85,7 @@ const DeclinedFriendRequests = () => {
                   >
                     {isPending ? "Please Wait" : "Delete"}
                   </Button>
-                </>
+                </div>
               </td>
             </tr>
           ))}

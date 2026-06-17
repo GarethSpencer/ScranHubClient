@@ -108,67 +108,72 @@ const PendingFriendRequests = ({ showSentRequests }: Props) => {
     acting?.id === id && acting.action === action;
 
   return (
-    <Table striped="columns">
-      <thead>
-        <tr>
-          <th>Display Name</th>
-          {showSentRequests && <th>Sent / Received</th>}
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        {friends.map((x: FriendResult) => (
-          <tr key={x.userFriendId}>
-            <td>{x.displayName}</td>
-            {showSentRequests && <td>{x.initiator ? "Sent" : "Recieved"}</td>}
-            <td>
-              {x.initiator ? (
-                <Button
-                  onClick={() => onDeleteFriend(x.userFriendId)}
-                  disabled={isPending}
-                >
-                  {isActing(x.userFriendId, "delete") ? (
-                    <Spinner animation="border" size="sm" />
-                  ) : (
-                    "Delete"
-                  )}
-                </Button>
-              ) : (
-                <>
-                  <Button
-                    onClick={() => onAcceptFriend(x.friendId)}
-                    disabled={isPending}
-                  >
-                    {isActing(x.friendId, "approve") ? (
-                      <Spinner animation="border" size="sm" />
-                    ) : (
-                      "Approve"
-                    )}
-                  </Button>
-                  <Button
-                    onClick={() => onDeclineFriend(x.friendId)}
-                    disabled={isPending}
-                  >
-                    {isActing(x.friendId, "decline") ? (
-                      <Spinner animation="border" size="sm" />
-                    ) : (
-                      "Decline"
-                    )}
-                  </Button>
-                </>
+    <>
+      <h2 className="mb-3 fw-bold lead">Pending Requests</h2>
+      <Table striped="columns" className="align-middle text-center">
+        <thead>
+          <tr>
+            <th>Display Name</th>
+            {showSentRequests && <th>Sent / Received</th>}
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {friends.map((x: FriendResult) => (
+            <tr key={x.userFriendId}>
+              <td className="text-start text-break">{x.displayName}</td>
+              {showSentRequests && (
+                <td>{x.initiator ? "Sent" : "Recieved"}</td>
               )}
-            </td>
-          </tr>
-        ))}
-        {hasNextPage && (
-          <tr ref={sentinelRef}>
-            <td colSpan={3} className="text-center">
-              {isFetchingNextPage && <Spinner animation="border" size="sm" />}
-            </td>
-          </tr>
-        )}
-      </tbody>
-    </Table>
+              <td>
+                {x.initiator ? (
+                  <Button
+                    onClick={() => onDeleteFriend(x.userFriendId)}
+                    disabled={isPending}
+                  >
+                    {isActing(x.userFriendId, "delete") ? (
+                      <Spinner animation="border" size="sm" />
+                    ) : (
+                      "Delete"
+                    )}
+                  </Button>
+                ) : (
+                  <div className="d-flex flex-wrap gap-2 justify-content-center">
+                    <Button
+                      onClick={() => onAcceptFriend(x.friendId)}
+                      disabled={isPending}
+                    >
+                      {isActing(x.friendId, "approve") ? (
+                        <Spinner animation="border" size="sm" />
+                      ) : (
+                        "Approve"
+                      )}
+                    </Button>
+                    <Button
+                      onClick={() => onDeclineFriend(x.friendId)}
+                      disabled={isPending}
+                    >
+                      {isActing(x.friendId, "decline") ? (
+                        <Spinner animation="border" size="sm" />
+                      ) : (
+                        "Decline"
+                      )}
+                    </Button>
+                  </div>
+                )}
+              </td>
+            </tr>
+          ))}
+          {hasNextPage && (
+            <tr ref={sentinelRef}>
+              <td colSpan={3} className="text-center">
+                {isFetchingNextPage && <Spinner animation="border" size="sm" />}
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </Table>
+    </>
   );
 };
 
