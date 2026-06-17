@@ -1,13 +1,19 @@
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
 import AddFriendByDisplayNameForm from "../../components/AddFriendByDisplayNameForm";
 import AddFriendByEmailForm from "../../components/AddFriendByEmailForm";
 
 const FindFriendsPage = () => {
   return (
-    <>
-      <h2>Find Friends</h2>
-      <AddFriendByDisplayNameForm />
-      <AddFriendByEmailForm />
-    </>
+    <Row className="g-3 align-items-stretch">
+      <Col xs={12} md>
+        <AddFriendByEmailForm />
+      </Col>
+      <Col xs={12} md="auto" className="section-divider" aria-hidden="true" />
+      <Col xs={12} md>
+        <AddFriendByDisplayNameForm />
+      </Col>
+    </Row>
   );
 };
 

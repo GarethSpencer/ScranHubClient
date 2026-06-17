@@ -73,7 +73,7 @@
 @include media-breakpoint-up(md) {
   .content-wrapper {
     padding: 2rem;
-    max-width: 800px;
+    max-width: map-get($container-max-widths, xl);
   }
 }
 
@@ -273,5 +273,38 @@
 @include media-breakpoint-up(md) {
   .section-panel {
     padding: 2rem;
+  }
+}
+
+// Divider between stacked/side-by-side sections: a horizontal rule on mobile
+// (sections stacked) and a vertical rule from md up (sections side by side).
+.section-divider {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  // Extra breathing room between the divider and each section. Vertical on
+  // mobile (sections stacked); switched to horizontal from md up (side by side).
+  margin: 1rem 0;
+}
+
+@include media-breakpoint-up(md) {
+  .section-divider {
+    margin: 0 1rem;
+  }
+}
+
+.section-divider::before {
+  content: "";
+  background-color: var(--bs-border-color);
+  // Mobile: full-width horizontal line.
+  width: 100%;
+  height: 1px;
+}
+
+@include media-breakpoint-up(md) {
+  .section-divider::before {
+    // Wide: thin vertical line spanning the row height.
+    width: 1px;
+    height: 100%;
   }
 }

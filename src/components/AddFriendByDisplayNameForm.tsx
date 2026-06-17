@@ -28,12 +28,12 @@ function AddFriendByDisplayNameForm() {
 
   return (
     <>
+      <h2 className="mb-3 fw-bold lead">By Display Name</h2>
       <Form onSubmit={(e) => e.preventDefault()}>
         <Form.Group className="mb-3" controlId="formGroupName">
-          <Form.Label>
-            Enter the full or partial display name of another ScranHub user to
-            show a list of matching users. Then you can send them a friend
-            request
+          <Form.Label className="mb-3">
+            Start typing the display name of another ScranHub user to show a
+            list of matching users, then send them a friend request.
           </Form.Label>
           <Form.Control
             type="text"
@@ -49,43 +49,48 @@ function AddFriendByDisplayNameForm() {
           </Alert>
         )}
       </Form>
-      <Table striped="columns">
-        <thead>
-          <tr>
-            <th>Display Name</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data?.users?.map((x: UserResult) => (
-            <tr key={x.userId}>
-              <td>{x.displayName}</td>
-              <td>
-                <Button
-                  onClick={() => onAddFriend(x.userId)}
-                  disabled={isPending}
+      {data?.users && (
+        <>
+          <Table striped="columns" className="align-middle text-center">
+            <thead>
+              <tr>
+                <th colSpan={2}>Display Name</th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.users.map((x: UserResult) => (
+                <tr key={x.userId}>
+                  <td className="w-50 text-start">{x.displayName}</td>
+                  <td className="w-50">
+                    <Button
+                      onClick={() => onAddFriend(x.userId)}
+                      disabled={isPending}
+                    >
+                      {isPending ? "Please Wait" : "Send Friend Request"}
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+          {Math.ceil((data.totalCount ?? 0) / pageSize) > 1 && (
+            <Pagination>
+              {Array.from(
+                { length: Math.ceil((data.totalCount ?? 0) / pageSize) },
+                (_, index) => index + 1,
+              ).map((pageNumber) => (
+                <Pagination.Item
+                  key={pageNumber}
+                  active={pageNumber === page}
+                  onClick={() => setPage(pageNumber)}
                 >
-                  {isPending ? "Please Wait" : "Send Friend Request"}
-                </Button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </Table>
-      <Pagination>
-        {Array.from(
-          { length: Math.ceil((data?.totalCount ?? 0) / pageSize) },
-          (_, index) => index + 1,
-        ).map((pageNumber) => (
-          <Pagination.Item
-            key={pageNumber}
-            active={pageNumber === page}
-            onClick={() => setPage(pageNumber)}
-          >
-            {pageNumber}
-          </Pagination.Item>
-        ))}
-      </Pagination>
+                  {pageNumber}
+                </Pagination.Item>
+              ))}
+            </Pagination>
+          )}
+        </>
+      )}
     </>
   );
 }

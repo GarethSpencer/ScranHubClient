@@ -58,20 +58,22 @@ const UserFriendTable = () => {
           ))}
         </tbody>
       </Table>
-      <Pagination>
-        {Array.from(
-          { length: Math.ceil(data.totalCount / pageSize) },
-          (_, index) => index + 1,
-        ).map((pageNumber) => (
-          <Pagination.Item
-            key={pageNumber}
-            active={pageNumber === page}
-            onClick={() => setPage(pageNumber)}
-          >
-            {pageNumber}
-          </Pagination.Item>
-        ))}
-      </Pagination>
+      {Math.ceil(data.totalCount / pageSize) > 1 && (
+        <Pagination>
+          {Array.from(
+            { length: Math.ceil(data.totalCount / pageSize) },
+            (_, index) => index + 1,
+          ).map((pageNumber) => (
+            <Pagination.Item
+              key={pageNumber}
+              active={pageNumber === page}
+              onClick={() => setPage(pageNumber)}
+            >
+              {pageNumber}
+            </Pagination.Item>
+          ))}
+        </Pagination>
+      )}
     </>
   );
 };
