@@ -66,7 +66,11 @@ const DeclinedFriendRequests = () => {
 
   return (
     <>
-      <h2 className="mb-3 fw-bold lead">Declined Requests</h2>
+      <h2 className="mb-1 fw-bold lead">Declined Requests</h2>
+      <p className="text-muted small mb-3">
+        Requests you've previously declined. You can approve them here, or
+        delete the request (this will allow them to send another).
+      </p>
       <TableStatus
         isLoading={isLoading}
         isError={isError}
@@ -84,9 +88,7 @@ const DeclinedFriendRequests = () => {
           <tbody>
             {friends.map((x: FriendResult) => (
               <tr key={x.userFriendId}>
-                <td className="w-50 text-start text-break">
-                  {x.displayName}
-                </td>
+                <td className="w-50 text-start text-break">{x.displayName}</td>
                 <td className="w-50">
                   <div className="d-flex flex-wrap gap-2 justify-content-center">
                     <Button

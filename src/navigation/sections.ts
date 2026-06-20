@@ -15,14 +15,14 @@ export interface Section {
 export const sections: Section[] = [
   {
     label: "Friends",
-    cardText: "Manage My Friends",
+    cardText: "Manage Friends",
     path: "/friends",
     icon: FaUserFriends,
     variant: "menu1",
   },
   {
     label: "Groups",
-    cardText: "Manage My Groups",
+    cardText: "Manage Groups",
     path: "/groups",
     icon: RiGroup2Line,
     variant: "menu2",

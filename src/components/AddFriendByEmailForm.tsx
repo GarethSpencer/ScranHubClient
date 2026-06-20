@@ -25,13 +25,13 @@ function AddFriendByEmailForm() {
 
   return (
     <>
-      <h2 className="mb-3 fw-bold lead">By Email</h2>
+      <h2 className="mb-1 fw-bold lead">By Email</h2>
+      <p className="text-muted small mb-3">
+        Enter the full email address of another ScranHub user to send them a
+        friend request.
+      </p>
       <Form onSubmit={handleSubmit}>
         <Form.Group className="mb-3" controlId="formGroupEmail">
-          <Form.Label className="mb-3">
-            Enter the full email address of another ScranHub user to send them a
-            friend request.
-          </Form.Label>
           <Form.Control
             type="email"
             name="email"

@@ -93,7 +93,15 @@ const PendingFriendRequests = ({ showSentRequests, showHeader }: Props) => {
 
   return (
     <>
-      {showHeader && <h2 className="mb-3 fw-bold lead">Pending Requests</h2>}
+      {showHeader && (
+        <>
+          <h2 className="mb-1 fw-bold lead">Pending Requests</h2>
+          <p className="text-muted small mb-3">
+            Friend requests you've sent and received. Approve or decline
+            requests sent to you, or cancel requests you've sent.
+          </p>
+        </>
+      )}
       <TableStatus
         isLoading={isLoading}
         isError={isError}

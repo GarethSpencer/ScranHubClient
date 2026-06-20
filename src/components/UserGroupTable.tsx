@@ -1,15 +1,10 @@
-import Table from "react-bootstrap/Table";
 import {
   useGetUserGroups,
   useLeaveGroup,
 } from "../api/controllerHooks/useGroupController";
 import { useGetCurrentUser } from "../api/controllerHooks/useUserController";
-import Button from "react-bootstrap/Button";
-import Spinner from "react-bootstrap/Spinner";
-import TableStatus from "./TableStatus";
 import useActingState from "../hooks/useActingState";
-import type GroupResult from "../models/results/GroupResult";
-import { Link } from "react-router-dom";
+import GroupTable from "./GroupTable";
 
 const UserGroupTable = () => {
   const { data, isLoading, isError } = useGetUserGroups();
@@ -21,64 +16,41 @@ const UserGroupTable = () => {
   const groups = data?.userGroups ?? [];
   const currentUserId = currentUser?.user?.userId;
 
+  const activeGroups = groups.filter((x) => x.active);
+  const joinedGroups = activeGroups.filter(
+    (x) => x.createdBy !== currentUserId,
+  );
+  const createdGroups = activeGroups.filter(
+    (x) => x.createdBy === currentUserId,
+  );
+
   const onLeaveGroup = (groupId: string) => {
     mutate(groupId, mutationCallbacks(groupId, "delete"));
   };
 
   return (
     <>
-      <h2 className="mb-3 fw-bold lead">My Joined Groups</h2>
-      <TableStatus
+      <GroupTable
+        heading="Groups I've Joined"
+        helperText="Groups created by other users. You can leave these at any time."
+        groups={joinedGroups}
         isLoading={isLoading}
         isError={isError}
-        isEmpty={groups.length === 0}
-        loadingText="Loading your groups..."
-        errorText="Couldn't load your groups. Please try again."
-      >
-        <Table
-          striped="columns"
-          className="align-middle text-center border-top"
-        >
-          <thead>
-            <tr>
-              <th className="w-50">Group Name</th>
-              <th className="w-25">Created By</th>
-              <th className="w-25">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {groups
-              .filter((x) => x.active)
-              .map((x: GroupResult) => (
-                <tr key={x.groupId}>
-                  <td className="w-50 text-start text-break">
-                    <Link to={`/group/${x.groupId}`}>{x.groupName}</Link>
-                  </td>
-                  <td className="w-25 text-start text-break">
-                    {currentUserId && x.createdBy === currentUserId
-                      ? "Me"
-                      : x.displayName}
-                  </td>
-                  <td className="w-25">
-                    {currentUserId && x.createdBy !== currentUserId && (
-                      <Button
-                        variant="danger"
-                        onClick={() => onLeaveGroup(x.groupId)}
-                        disabled={isPending}
-                      >
-                        {isActing(x.groupId, "delete") ? (
-                          <Spinner animation="border" size="sm" />
-                        ) : (
-                          "Leave Group"
-                        )}
-                      </Button>
-                    )}
-                  </td>
-                </tr>
-              ))}
-          </tbody>
-        </Table>
-      </TableStatus>
+        emptyText="You haven't joined any groups created by others yet."
+        showActions
+        isLeaving={isPending}
+        isActing={isActing}
+        onLeaveGroup={onLeaveGroup}
+      />
+      <GroupTable
+        heading="Groups I've Created"
+        headingClassName="mt-5"
+        helperText="You're added to these automatically when you create them."
+        groups={createdGroups}
+        isLoading={isLoading}
+        isError={isError}
+        emptyText="You haven't created any groups yet."
+      />
     </>
   );
 };

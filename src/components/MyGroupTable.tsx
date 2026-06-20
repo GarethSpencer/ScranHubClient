@@ -93,7 +93,11 @@ const MyGroupTable = () => {
 
   return (
     <>
-      <h2 className="mb-3 fw-bold lead">My Created Groups</h2>
+      <h2 className="mb-1 fw-bold lead">My Created Groups</h2>
+      <p className="text-muted small mb-3">
+        Rename, deactivate, or delete the groups you've created. Deactivated
+        groups can't be accessed by other users.
+      </p>
       <TableStatus
         isLoading={isLoading}
         isError={isError}

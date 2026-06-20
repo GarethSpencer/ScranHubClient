@@ -9,10 +9,7 @@ const ManageCreatedGroupsPage = () => {
       <Col xs={12}>
         <CreateGroupForm />
       </Col>
-      <Col xs={12} className="d-none d-md-block">
-        <hr className="section-rule my-0" aria-hidden="true" />
-      </Col>
-      <Col xs={12}>
+      <Col xs={12} className="mt-4">
         <MyGroupTable />
       </Col>
     </Row>

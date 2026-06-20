@@ -21,7 +21,11 @@ const CreateGroupForm = () => {
 
   return (
     <>
-      <h2 className="mb-3 fw-bold lead">Create a Group</h2>
+      <h2 className="mb-1 fw-bold lead">Create a Group</h2>
+      <p className="text-muted small mb-3">
+        Enter a name for your new group, then create it to allow your friends to
+        join.
+      </p>
       <Form
         onSubmit={(e) => {
           e.preventDefault();
@@ -29,10 +33,6 @@ const CreateGroupForm = () => {
         }}
       >
         <Form.Group className="mb-3" controlId="formCreateGroupName">
-          <Form.Label className="mb-3">
-            Enter a name for your new group, then create it to make it public
-            and allow your friends to join.
-          </Form.Label>
           <div className="d-flex flex-column flex-md-row gap-2">
             <Form.Control
               type="text"

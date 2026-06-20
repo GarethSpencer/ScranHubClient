@@ -36,13 +36,13 @@ function AddFriendByDisplayNameForm() {
 
   return (
     <>
-      <h2 className="mb-3 fw-bold lead">By Display Name</h2>
+      <h2 className="mb-1 mt-3 fw-bold lead">By Display Name</h2>
+      <p className="text-muted small mb-3">
+        Start typing the display name of another ScranHub user to show a list of
+        matching users, then send them a friend request.
+      </p>
       <Form onSubmit={(e) => e.preventDefault()}>
         <Form.Group className="mb-3" controlId="formGroupName">
-          <Form.Label className="mb-3">
-            Start typing the display name of another ScranHub user to show a
-            list of matching users, then send them a friend request.
-          </Form.Label>
           <Form.Control
             type="text"
             name="displayName"
@@ -68,7 +68,9 @@ function AddFriendByDisplayNameForm() {
             <tbody>
               {data.users.map((x: UserResult) => (
                 <tr key={x.userId}>
-                  <td className="w-50 text-start text-break">{x.displayName}</td>
+                  <td className="w-50 text-start text-break">
+                    {x.displayName}
+                  </td>
                   <td className="w-50">
                     <Button
                       onClick={() => onAddFriend(x.userId)}

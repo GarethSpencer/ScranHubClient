@@ -36,13 +36,13 @@ function AddGroupByNameForm() {
 
   return (
     <>
-      <h2 className="mb-3 fw-bold lead">By Group Name</h2>
+      <h2 className="mb-1 fw-bold lead">By Group Name</h2>
+      <p className="text-muted small mb-3">
+        Start typing the name of a group to find groups created by your friends,
+        then join them.
+      </p>
       <Form onSubmit={(e) => e.preventDefault()}>
         <Form.Group className="mb-3" controlId="formGroupName">
-          <Form.Label className="mb-3">
-            Start typing the name of a group list of matching groups created by
-            your friends, then join them.
-          </Form.Label>
           <Form.Control
             type="text"
             name="groupName"

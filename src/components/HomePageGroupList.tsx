@@ -14,12 +14,14 @@ const HomePageGroupList = () => {
 
   return (
     <div className="mt-4">
-      <h2 className="text-white lead fw-bold mb-3">Your Groups</h2>
+      {groupResults.length !== 0 && (
+        <h2 className="text-white lead fw-bold mb-3">My Groups</h2>
+      )}
       <TableStatus
         isLoading={isLoading}
         isError={isError}
         isEmpty={groupResults.length === 0}
-        loadingText="Loading your groups..."
+        loadingText="Loading groups..."
         errorText="Couldn't load your groups. Please try again."
         emptyText="You're not in any groups yet."
       >
