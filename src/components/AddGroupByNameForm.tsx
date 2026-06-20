@@ -1,34 +1,34 @@
 import Alert from "react-bootstrap/Alert";
 import Form from "react-bootstrap/Form";
-import {
-  useAddFriend,
-  useSearchUsers,
-} from "../api/controllerHooks/useUserController";
 import { useState } from "react";
 import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
 import Spinner from "react-bootstrap/Spinner";
 import Pagination from "react-bootstrap/Pagination";
+import {
+  useJoinGroup,
+  useSearchGroups,
+} from "../api/controllerHooks/useGroupController";
 import useActingState from "../hooks/useActingState";
-import type UserResult from "../models/results/UserResult";
+import type GroupResult from "../models/results/GroupResult";
 
-function AddFriendByDisplayNameForm() {
+function AddGroupByNameForm() {
   const [searchText, setSearchText] = useState("");
   const [page, setPage] = useState(1);
   const pageSize = 10;
-  const { data, isError } = useSearchUsers({
+  const { data, isError } = useSearchGroups({
     searchText,
     pageNumber: page,
     pageSize,
   });
-  const { mutate, isPending } = useAddFriend();
+  const { mutate, isPending } = useJoinGroup();
 
   const { isActing, mutationCallbacks } = useActingState();
 
-  const onAddFriend = (userId: string) => {
+  const onJoinGroup = (groupId: string) => {
     mutate(
-      userId,
-      mutationCallbacks(userId, "add", {
+      groupId,
+      mutationCallbacks(groupId, "join", {
         onSuccess: () => setSearchText(""),
       }),
     );
@@ -36,17 +36,17 @@ function AddFriendByDisplayNameForm() {
 
   return (
     <>
-      <h2 className="mb-3 fw-bold lead">By Display Name</h2>
+      <h2 className="mb-3 fw-bold lead">By Group Name</h2>
       <Form onSubmit={(e) => e.preventDefault()}>
         <Form.Group className="mb-3" controlId="formGroupName">
           <Form.Label className="mb-3">
-            Start typing the display name of another ScranHub user to show a
-            list of matching users, then send them a friend request.
+            Start typing the name of a group list of matching groups created by
+            your friends, then join them.
           </Form.Label>
           <Form.Control
             type="text"
-            name="displayName"
-            placeholder="Enter display name"
+            name="groupName"
+            placeholder="Enter group name"
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
           />
@@ -57,27 +57,27 @@ function AddFriendByDisplayNameForm() {
           </Alert>
         )}
       </Form>
-      {data?.users && (
+      {data?.groups && (
         <>
           <Table striped="columns" className="align-middle text-center">
             <thead>
               <tr>
-                <th colSpan={2}>Display Name</th>
+                <th colSpan={2}>Group Name</th>
               </tr>
             </thead>
             <tbody>
-              {data.users.map((x: UserResult) => (
-                <tr key={x.userId}>
-                  <td className="w-50 text-start text-break">{x.displayName}</td>
+              {data.groups.map((x: GroupResult) => (
+                <tr key={x.groupId}>
+                  <td className="w-50 text-start text-break">{x.groupName}</td>
                   <td className="w-50">
                     <Button
-                      onClick={() => onAddFriend(x.userId)}
+                      onClick={() => onJoinGroup(x.groupId)}
                       disabled={isPending}
                     >
-                      {isActing(x.userId, "add") ? (
+                      {isActing(x.groupId, "join") ? (
                         <Spinner animation="border" size="sm" />
                       ) : (
-                        "Send Friend Request"
+                        "Join Group"
                       )}
                     </Button>
                   </td>
@@ -107,4 +107,4 @@ function AddFriendByDisplayNameForm() {
   );
 }
 
-export default AddFriendByDisplayNameForm;
+export default AddGroupByNameForm;
