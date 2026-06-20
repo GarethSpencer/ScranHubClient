@@ -41,7 +41,7 @@ export const useSearchUsers = (request: SearchUserRequest) => {
     queryKey: ["users", "search", request],
     queryFn: ({ signal }) =>
       userControllerService.get<GetUsersResponse>(
-        `?SearchText=${request.searchText}&PageNumber=${request.pageNumber}&PageSize=${request.pageSize}`,
+        `?SearchText=${encodeURIComponent(request.searchText)}&PageNumber=${request.pageNumber}&PageSize=${request.pageSize}`,
         signal,
       ),
     staleTime: 10 * 1000,
@@ -106,7 +106,7 @@ export const useGetFriends = (request: GetUserFriendRequest) => {
     queryKey: ["friends", request],
     queryFn: () =>
       userControllerService.get<UserFriendsResponse>(
-        `me/friends?PageNumber=${request.pageNumber}&PageSize=${request.pageSize}&status=${request.status}`,
+        `me/friends?PageNumber=${request.pageNumber}&PageSize=${request.pageSize}&status=${encodeURIComponent(request.status)}`,
       ),
     staleTime: 10 * 1000,
   });
@@ -120,7 +120,7 @@ export const useGetFriendsInfinite = (
     initialPageParam: 1,
     queryFn: ({ pageParam }) =>
       userControllerService.get<UserFriendsResponse>(
-        `me/friends?PageNumber=${pageParam}&PageSize=${request.pageSize}&status=${request.status}`,
+        `me/friends?PageNumber=${pageParam}&PageSize=${request.pageSize}&status=${encodeURIComponent(request.status)}`,
       ),
     getNextPageParam: (lastPage, allPages) => {
       const loaded = allPages.reduce(
