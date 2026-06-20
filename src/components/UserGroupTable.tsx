@@ -46,31 +46,33 @@ const UserGroupTable = () => {
             </tr>
           </thead>
           <tbody>
-            {groups.map((x: GroupResult) => (
-              <tr key={x.groupId}>
-                <td className="w-50 text-start text-break">{x.groupName}</td>
-                <td className="w-25 text-start text-break">
-                  {x.createdBy === currentUser?.user?.userId
-                    ? "Me"
-                    : x.displayName}
-                </td>
-                <td className="w-25">
-                  {currentUserId && x.createdBy !== currentUserId && (
-                    <Button
-                      variant="danger"
-                      onClick={() => onLeaveGroup(x.groupId)}
-                      disabled={isPending}
-                    >
-                      {isActing(x.groupId, "delete") ? (
-                        <Spinner animation="border" size="sm" />
-                      ) : (
-                        "Leave Group"
-                      )}
-                    </Button>
-                  )}
-                </td>
-              </tr>
-            ))}
+            {groups
+              .filter((x) => x.active)
+              .map((x: GroupResult) => (
+                <tr key={x.groupId}>
+                  <td className="w-50 text-start text-break">{x.groupName}</td>
+                  <td className="w-25 text-start text-break">
+                    {currentUserId && x.createdBy === currentUserId
+                      ? "Me"
+                      : x.displayName}
+                  </td>
+                  <td className="w-25">
+                    {currentUserId && x.createdBy !== currentUserId && (
+                      <Button
+                        variant="danger"
+                        onClick={() => onLeaveGroup(x.groupId)}
+                        disabled={isPending}
+                      >
+                        {isActing(x.groupId, "delete") ? (
+                          <Spinner animation="border" size="sm" />
+                        ) : (
+                          "Leave Group"
+                        )}
+                      </Button>
+                    )}
+                  </td>
+                </tr>
+              ))}
           </tbody>
         </Table>
       </TableStatus>

@@ -65,6 +65,7 @@ export const useUpdateGroup = () => {
       ),
     onSuccess: (data, { groupId }) => {
       queryClient.invalidateQueries({ queryKey: ["groups", groupId] });
+      queryClient.invalidateQueries({ queryKey: ["userGroups"] });
       if (data.message) showToast(data.message, "success");
     },
   });
