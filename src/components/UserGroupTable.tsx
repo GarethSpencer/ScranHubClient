@@ -36,7 +36,7 @@ const UserGroupTable = () => {
         groups={joinedGroups}
         isLoading={isLoading}
         isError={isError}
-        emptyText="You haven't joined any groups created by others yet."
+        emptyText="You haven't joined any groups yet"
         showActions
         isLeaving={isPending}
         isActing={isActing}
@@ -49,7 +49,7 @@ const UserGroupTable = () => {
         groups={createdGroups}
         isLoading={isLoading}
         isError={isError}
-        emptyText="You haven't created any groups yet."
+        emptyText="You haven't created any groups yet"
       />
     </>
   );
