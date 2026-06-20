@@ -262,6 +262,16 @@
   border-bottom: 0;
 }
 
+@include media-breakpoint-down(md) {
+  .section-tabs .nav-item {
+    flex: 1 1 auto;
+  }
+
+  .section-tabs .nav-link {
+    text-align: center;
+  }
+}
+
 .section-tabs .nav-link {
   text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
   background-color: rgba(0, 0, 0, 0.45);
@@ -289,6 +299,13 @@
 .content-wrapper:has(.section-tabs .nav-item:first-child .nav-link.active)
   .section-panel {
   border-top-left-radius: 0;
+}
+
+@include media-breakpoint-down(md) {
+  .content-wrapper:has(.section-tabs) .section-panel {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+  }
 }
 
 @include media-breakpoint-up(md) {
