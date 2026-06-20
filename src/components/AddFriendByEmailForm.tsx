@@ -3,22 +3,22 @@ import Button from "react-bootstrap/Button";
 import Spinner from "react-bootstrap/Spinner";
 import Form from "react-bootstrap/Form";
 import { useAddFriendByEmail } from "../api/controllerHooks/useUserController";
-import { useRef } from "react";
+import { useState } from "react";
 
 function AddFriendByEmailForm() {
   const { mutate, isPending, isError } = useAddFriendByEmail();
-  const formRef = useRef<HTMLFormElement>(null);
+  const [email, setEmail] = useState("");
+
+  const canSubmit = email.trim() !== "" && !isPending;
 
   const handleSubmit = (event: React.SyntheticEvent<HTMLFormElement>) => {
     event.preventDefault();
-
-    const formData = new FormData(event.currentTarget);
-    const emailAddress = formData.get("email") as string;
+    if (!canSubmit) return;
 
     mutate(
-      { email: emailAddress },
+      { email: email.trim() },
       {
-        onSuccess: () => formRef.current?.reset(),
+        onSuccess: () => setEmail(""),
       },
     );
   };
@@ -26,13 +26,20 @@ function AddFriendByEmailForm() {
   return (
     <>
       <h2 className="mb-3 fw-bold lead">By Email</h2>
-      <Form ref={formRef} onSubmit={handleSubmit}>
+      <Form onSubmit={handleSubmit}>
         <Form.Group className="mb-3" controlId="formGroupEmail">
           <Form.Label className="mb-3">
             Enter the full email address of another ScranHub user to send them a
             friend request.
           </Form.Label>
-          <Form.Control type="email" name="email" placeholder="Enter email" />
+          <Form.Control
+            type="email"
+            name="email"
+            placeholder="Enter email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            disabled={isPending}
+          />
         </Form.Group>
         {isError && (
           <Alert variant="danger">
@@ -40,7 +47,7 @@ function AddFriendByEmailForm() {
           </Alert>
         )}
         <div className="d-grid">
-          <Button variant="primary" type="submit" disabled={isPending}>
+          <Button variant="primary" type="submit" disabled={!canSubmit}>
             {isPending ? (
               <>
                 <Spinner

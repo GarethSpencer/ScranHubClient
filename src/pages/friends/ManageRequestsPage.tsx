@@ -9,7 +9,12 @@ const ManageRequestsPage = () => {
       <Col xs={12} md>
         <PendingFriendRequests showSentRequests={true} showHeader={true} />
       </Col>
-      <Col xs={12} md="auto" className="section-divider" aria-hidden="true" />
+      <Col
+        xs={12}
+        md="auto"
+        className="section-divider d-none d-md-flex"
+        aria-hidden="true"
+      />
       <Col xs={12} md>
         <DeclinedFriendRequests />
       </Col>
