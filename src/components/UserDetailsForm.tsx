@@ -23,9 +23,13 @@ const UserDetailsForm = ({
 }: Props) => {
   const { data, isLoading, isError } = useGetCurrentUser();
 
+  const user = data?.user;
+
   if (isLoading) return null;
 
   if (isError) return null;
+
+  if (!user) return null;
 
   const handleSubmit = (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -33,7 +37,7 @@ const UserDetailsForm = ({
     const formData = new FormData(event.currentTarget);
     const displayName = formData.get("displayName") as string;
 
-    if (displayName === data?.user?.displayName) {
+    if (displayName === user.displayName) {
       setShowUserDetailsModal(false);
       return;
     }
@@ -41,8 +45,8 @@ const UserDetailsForm = ({
     updateUserMutation.mutate(
       {
         displayName,
-        admin: data!.user!.admin,
-        active: data!.user!.active,
+        admin: user.admin,
+        active: user.active,
       },
       { onSuccess: () => setShowUserDetailsModal(false) },
     );
@@ -55,12 +59,12 @@ const UserDetailsForm = ({
         <Form.Control
           type="text"
           name="displayName"
-          defaultValue={data?.user?.displayName}
+          defaultValue={user.displayName}
         />
       </Form.Group>
       <Form.Group className="mb-3">
         <Form.Label>Email address</Form.Label>
-        <Form.Control placeholder={data?.user?.email} disabled />
+        <Form.Control placeholder={user.email} disabled />
         <Form.Text className="text-muted">
           Your email is never shared with anyone else.
         </Form.Text>

@@ -4,4 +4,5 @@ export default interface GroupResult {
   active: boolean;
   createdOn: Date;
   createdBy: string;
+  displayName: string;
 }

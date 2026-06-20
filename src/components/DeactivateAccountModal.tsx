@@ -22,7 +22,9 @@ function DeactivateAccountModal({
   const { logout } = useAuth();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-  const updateUserMutation = useUpdateUser(data?.user?.userId ?? "", {
+  const user = data?.user;
+
+  const updateUserMutation = useUpdateUser(user?.userId ?? "", {
     skipInvalidation: true,
   });
 
@@ -53,14 +55,16 @@ function DeactivateAccountModal({
       </Modal>
     );
 
+  if (!user) return null;
+
   const logoutAction = () =>
     logout({ logoutParams: { returnTo: window.location.origin } });
 
   const handleOnClick = () => {
     updateUserMutation.mutate(
       {
-        displayName: data!.user!.displayName,
-        admin: data!.user!.admin,
+        displayName: user.displayName,
+        admin: user.admin,
         active: false,
       },
       {

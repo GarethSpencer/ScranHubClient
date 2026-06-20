@@ -33,11 +33,15 @@ function UserDetailsModal({
           <Modal.Title>Loading</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <p>Username</p>
+          <Placeholder as="p" animation="glow">
+            <Placeholder xs={3} size="sm" />
+          </Placeholder>
           <Placeholder as="p" animation="glow">
             <Placeholder xs={12} size="lg" />
           </Placeholder>
-          <p>Email address</p>
+          <Placeholder as="p" animation="glow">
+            <Placeholder xs={3} size="sm" />
+          </Placeholder>
           <Placeholder as="p" animation="glow">
             <Placeholder xs={12} size="lg" />
           </Placeholder>

@@ -10,6 +10,9 @@ import Todo from "./components/Todo";
 import MyFriendsPage from "./pages/friends/MyFriendsPage";
 import FindFriendsPage from "./pages/friends/FindFriendsPage";
 import ManageRequestsPage from "./pages/friends/ManageRequestsPage";
+import FindGroupsPage from "./pages/groups/FindGroupsPage";
+import JoinedGroupsPage from "./pages/groups/JoinedGroupsPage";
+import ManageCreatedGroupsPage from "./pages/groups/ManageCreatedGroupsPage";
 
 const router = createBrowserRouter([
   {
@@ -31,11 +34,7 @@ const router = createBrowserRouter([
                 tabs={[
                   { label: "My Friends", to: "/friends", end: true },
                   { label: "Find Friends", to: "/friends/find" },
-
-                  {
-                    label: "Manage Requests",
-                    to: "/friends/manage",
-                  },
+                  { label: "Manage Requests", to: "/friends/manage" },
                 ]}
               />
             ),
@@ -56,11 +55,27 @@ const router = createBrowserRouter([
           },
           {
             path: "groups",
-            element: <SectionLayout />,
+            element: (
+              <SectionLayout
+                tabs={[
+                  { label: "My Groups", to: "/groups", end: true },
+                  { label: "Find Groups", to: "/groups/find" },
+                  { label: "Manage Created Groups", to: "/groups/manage" },
+                ]}
+              />
+            ),
             children: [
               {
                 index: true,
-                element: <Todo />,
+                element: <JoinedGroupsPage />,
+              },
+              {
+                path: "find",
+                element: <FindGroupsPage />,
+              },
+              {
+                path: "manage",
+                element: <ManageCreatedGroupsPage />,
               },
             ],
           },
