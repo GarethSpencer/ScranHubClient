@@ -9,6 +9,7 @@ import Spinner from "react-bootstrap/Spinner";
 import TableStatus from "./TableStatus";
 import useActingState from "../hooks/useActingState";
 import type GroupResult from "../models/results/GroupResult";
+import { Link } from "react-router-dom";
 
 const UserGroupTable = () => {
   const { data, isLoading, isError } = useGetUserGroups();
@@ -50,7 +51,9 @@ const UserGroupTable = () => {
               .filter((x) => x.active)
               .map((x: GroupResult) => (
                 <tr key={x.groupId}>
-                  <td className="w-50 text-start text-break">{x.groupName}</td>
+                  <td className="w-50 text-start text-break">
+                    <Link to={`/group/${x.groupId}`}>{x.groupName}</Link>
+                  </td>
                   <td className="w-25 text-start text-break">
                     {currentUserId && x.createdBy === currentUserId
                       ? "Me"

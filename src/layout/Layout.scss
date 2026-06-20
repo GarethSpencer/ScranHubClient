@@ -194,6 +194,41 @@
   height: 40px;
 }
 
+@include media-breakpoint-down(md) {
+  .home-group-list {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
+
+.group-card-name {
+  line-height: 1.2;
+}
+
+.group-card-stat {
+  white-space: nowrap;
+  padding: 0.15rem 0.5rem;
+  border-radius: 0.5rem;
+  background-color: rgba(255, 255, 255, 0.18);
+}
+
+.group-card-stat strong {
+  font-weight: 700;
+}
+
+.group-card-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.25);
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
 @include media-breakpoint-up(md) {
   .menu-card-icon {
     width: 80px;

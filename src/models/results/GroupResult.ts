@@ -5,4 +5,6 @@ export default interface GroupResult {
   createdOn: Date;
   createdBy: string;
   displayName: string;
+  userCount: number;
+  venueCount: number;
 }
