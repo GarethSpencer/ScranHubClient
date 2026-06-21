@@ -19,6 +19,7 @@ const GroupSectionLayout = () => {
         { label: "Overview", to: `/group/${id}`, end: true },
         { label: "Food Types", to: `/group/${id}/foodtypes` },
         { label: "Venue Types", to: `/group/${id}/venuetypes` },
+        { label: "Cost Ratings", to: `/group/${id}/costratings` },
       ]}
     />
   );

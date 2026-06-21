@@ -23,7 +23,7 @@ type OptionController =
   | "QualityOption"
   | "VenueTypeOption";
 
-type RatingOptionController = "CostOption" | "QualityOption";
+export type RatingOptionController = "CostOption" | "QualityOption";
 export type TypeOptionController = "FoodTypeOption" | "VenueTypeOption";
 
 const optionServices: Record<OptionController, ApiClient> = {

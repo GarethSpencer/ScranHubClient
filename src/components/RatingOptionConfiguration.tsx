@@ -1,0 +1,252 @@
+import { useState } from "react";
+import Table from "react-bootstrap/Table";
+import Button from "react-bootstrap/Button";
+import Spinner from "react-bootstrap/Spinner";
+import Form from "react-bootstrap/Form";
+import TableStatus from "./TableStatus";
+import ConfirmModal from "./ConfirmModal";
+import OptionRow from "./options/OptionRow";
+import OptionEditorPanel from "./options/OptionEditorPanel";
+import AddOptionControls from "./options/AddOptionControls";
+import {
+  useAddCustomOption,
+  useGetRatingOptionsForGroup,
+  useRemoveCustomOption,
+  useRemoveCustomOptions,
+  useSetCustomOptions,
+  useUpdateCustomOption,
+  type RatingOptionController,
+} from "../api/controllerHooks/useOptionController";
+import type RatingOptionResult from "../models/results/generic/RatingOptionResult";
+
+interface Props {
+  controller: RatingOptionController;
+  groupId: string;
+  heading: string;
+  helperText: string;
+  itemNamePlural: string;
+}
+
+const RatingOptionConfiguration = ({
+  controller,
+  groupId,
+  heading,
+  helperText,
+  itemNamePlural,
+}: Props) => {
+  const { data, isLoading, isError } = useGetRatingOptionsForGroup(
+    controller,
+    groupId,
+  );
+
+  const setCustomOptions = useSetCustomOptions(controller, groupId);
+  const removeCustomOptions = useRemoveCustomOptions(controller, groupId);
+  const addCustomOption = useAddCustomOption(controller, groupId);
+  const removeCustomOption = useRemoveCustomOption(controller, groupId);
+  const updateCustomOption = useUpdateCustomOption(controller, groupId);
+
+  // Editor key is bumped each time the editor opens so it re-seeds its labels.
+  const [editorKey, setEditorKey] = useState(0);
+  const [isEditing, setIsEditing] = useState(false);
+
+  const [isAdding, setIsAdding] = useState(false);
+  const [newLabel, setNewLabel] = useState("");
+
+  const [optionToDelete, setOptionToDelete] =
+    useState<RatingOptionResult | null>(null);
+  const [showRemoveAll, setShowRemoveAll] = useState(false);
+
+  const options = data?.options ?? [];
+
+  const sortedOptions = options
+    .slice()
+    .sort((a, b) => a.displayOrder - b.displayOrder);
+
+  const hasCustomOptions = options.some((option) => option.groupId === groupId);
+
+  const isToggling =
+    setCustomOptions.isPending || removeCustomOptions.isPending;
+
+  const handleOpenEditor = () => {
+    setEditorKey((key) => key + 1);
+    setIsEditing(true);
+  };
+
+  const handleStartAdding = () => {
+    setNewLabel("");
+    setIsAdding(true);
+  };
+
+  const handleResetAdding = () => {
+    setNewLabel("");
+    setIsAdding(false);
+  };
+
+  const handleSaveNewOption = () => {
+    const cleanedLabel = newLabel.trim();
+
+    if (cleanedLabel.length === 0) return;
+
+    addCustomOption.mutate(
+      { groupId, label: cleanedLabel },
+      { onSuccess: handleResetAdding },
+    );
+  };
+
+  const handleConfirmDelete = () => {
+    if (!optionToDelete) return;
+
+    removeCustomOption.mutate(optionToDelete.optionId, {
+      onSuccess: () => setOptionToDelete(null),
+    });
+  };
+
+  const handleRemoveCustomOptions = () => {
+    removeCustomOptions.mutate(undefined, {
+      onSuccess: () => setShowRemoveAll(false),
+    });
+  };
+
+  return (
+    <>
+      <h2 className="fw-bold lead mb-1">{heading}</h2>
+      <p className="text-muted small mb-3">{helperText}</p>
+
+      <div className="mb-3">
+        {hasCustomOptions ? (
+          <Button
+            variant="danger"
+            onClick={() => setShowRemoveAll(true)}
+            disabled={isToggling}
+          >
+            {isToggling ? (
+              <Spinner animation="border" size="sm" />
+            ) : (
+              "Remove Custom Options"
+            )}
+          </Button>
+        ) : (
+          <Button
+            variant="primary"
+            onClick={isEditing ? () => setIsEditing(false) : handleOpenEditor}
+            disabled={isToggling}
+            aria-expanded={isEditing}
+          >
+            {isEditing ? "Cancel" : "Set Custom Options"}
+          </Button>
+        )}
+      </div>
+
+      <OptionEditorPanel
+        key={editorKey}
+        show={isEditing}
+        heading={heading}
+        groupId={groupId}
+        initialLabels={
+          sortedOptions.length > 0
+            ? sortedOptions.map((option) => option.label)
+            : [""]
+        }
+        setCustomOptions={setCustomOptions}
+        onClose={() => setIsEditing(false)}
+      />
+
+      <TableStatus
+        isLoading={isLoading}
+        isError={isError}
+        isEmpty={options.length === 0}
+        loadingText={`Loading ${itemNamePlural}...`}
+        errorText={`Couldn't load ${itemNamePlural}. Please try again.`}
+        emptyText={`No ${itemNamePlural} configured yet.`}
+      >
+        <Table
+          striped="columns"
+          className="align-middle border-top option-table"
+        >
+          <thead>
+            <tr>
+              <th>Options</th>
+              {hasCustomOptions && (
+                <th className="w-25 text-end option-actions-col">
+                  <AddOptionControls
+                    isAdding={isAdding}
+                    canSave={newLabel.trim().length > 0}
+                    isPending={addCustomOption.isPending}
+                    onStart={handleStartAdding}
+                    onReset={handleResetAdding}
+                    onSave={handleSaveNewOption}
+                  />
+                </th>
+              )}
+            </tr>
+          </thead>
+          <tbody>
+            {isAdding && (
+              <tr>
+                <td className="text-break">
+                  <Form.Control
+                    type="text"
+                    placeholder="New label"
+                    value={newLabel}
+                    onChange={(e) => setNewLabel(e.target.value)}
+                    autoFocus
+                  />
+                </td>
+                <td className="option-actions-col" />
+              </tr>
+            )}
+            {hasCustomOptions
+              ? sortedOptions.map((option) => (
+                  <OptionRow
+                    key={option.optionId}
+                    option={option}
+                    updateCustomOption={updateCustomOption}
+                    onRequestDelete={setOptionToDelete}
+                  />
+                ))
+              : sortedOptions.map((option) => (
+                  <tr key={option.optionId}>
+                    <td className="text-break">{option.label}</td>
+                  </tr>
+                ))}
+          </tbody>
+        </Table>
+      </TableStatus>
+
+      <ConfirmModal
+        show={optionToDelete !== null}
+        title="Delete Option"
+        body={
+          <p className="mb-0">
+            Are you sure you want to delete the{" "}
+            <strong>{optionToDelete?.label}</strong> option? This can only be
+            done if the option is not in use.
+          </p>
+        }
+        confirmLabel="Delete"
+        pendingLabel="Deleting..."
+        isPending={removeCustomOption.isPending}
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setOptionToDelete(null)}
+      />
+
+      <ConfirmModal
+        show={showRemoveAll}
+        title="Remove Custom Options"
+        body={
+          <p className="mb-0">
+            Are you sure you want to delete the custom options? This will unset
+            all venues in the group.
+          </p>
+        }
+        confirmLabel="Remove Custom Options"
+        pendingLabel="Removing..."
+        isPending={removeCustomOptions.isPending}
+        onConfirm={handleRemoveCustomOptions}
+        onCancel={() => setShowRemoveAll(false)}
+      />
+    </>
+  );
+};
+
+export default RatingOptionConfiguration;

@@ -7,14 +7,21 @@ import { FaPencilAlt, FaTrash } from "react-icons/fa";
 import { RxReset } from "react-icons/rx";
 import type { useUpdateCustomOption } from "../../api/controllerHooks/useOptionController";
 import type TypeOptionResult from "../../models/results/generic/TypeOptionResult";
+import type RatingOptionResult from "../../models/results/generic/RatingOptionResult";
 
-interface Props {
-  option: TypeOptionResult;
+type OptionResult = TypeOptionResult | RatingOptionResult;
+
+interface Props<T extends OptionResult> {
+  option: T;
   updateCustomOption: ReturnType<typeof useUpdateCustomOption>;
-  onRequestDelete: (option: TypeOptionResult) => void;
+  onRequestDelete: (option: T) => void;
 }
 
-const OptionRow = ({ option, updateCustomOption, onRequestDelete }: Props) => {
+const OptionRow = <T extends OptionResult>({
+  option,
+  updateCustomOption,
+  onRequestDelete,
+}: Props<T>) => {
   const [draftLabel, setDraftLabel] = useState(option.label);
 
   const trimmed = draftLabel.trim();
