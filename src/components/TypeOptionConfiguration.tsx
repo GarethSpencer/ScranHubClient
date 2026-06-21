@@ -2,15 +2,12 @@ import { useState } from "react";
 import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
 import Spinner from "react-bootstrap/Spinner";
-import Collapse from "react-bootstrap/Collapse";
 import Form from "react-bootstrap/Form";
-import InputGroup from "react-bootstrap/InputGroup";
-import OverlayTrigger from "react-bootstrap/OverlayTrigger";
-import Tooltip from "react-bootstrap/Tooltip";
-import { FaPencilAlt, FaTrash } from "react-icons/fa";
-import { RxReset } from "react-icons/rx";
 import TableStatus from "./TableStatus";
 import ConfirmModal from "./ConfirmModal";
+import OptionRow from "./options/OptionRow";
+import OptionEditorPanel from "./options/OptionEditorPanel";
+import AddOptionControls from "./options/AddOptionControls";
 import {
   useAddCustomOption,
   useGetTypeOptionsForGroup,
@@ -48,8 +45,9 @@ const TypeOptionConfiguration = ({
   const removeCustomOption = useRemoveCustomOption(controller, groupId);
   const updateCustomOption = useUpdateCustomOption(controller, groupId);
 
+  // Editor key is bumped each time the editor opens so it re-seeds its labels.
+  const [editorKey, setEditorKey] = useState(0);
   const [isEditing, setIsEditing] = useState(false);
-  const [labels, setLabels] = useState<string[]>([]);
 
   const [isAdding, setIsAdding] = useState(false);
   const [newLabel, setNewLabel] = useState("");
@@ -57,10 +55,7 @@ const TypeOptionConfiguration = ({
   const [optionToDelete, setOptionToDelete] = useState<TypeOptionResult | null>(
     null,
   );
-
   const [showRemoveAll, setShowRemoveAll] = useState(false);
-
-  const [draftLabels, setDraftLabels] = useState<Record<string, string>>({});
 
   const options = data?.options ?? [];
 
@@ -74,46 +69,8 @@ const TypeOptionConfiguration = ({
     setCustomOptions.isPending || removeCustomOptions.isPending;
 
   const handleOpenEditor = () => {
-    const prefill = sortedOptions.map((option) => option.label);
-    setLabels(prefill.length > 0 ? prefill : [""]);
+    setEditorKey((key) => key + 1);
     setIsEditing(true);
-  };
-
-  const handleCancelEditor = () => {
-    setIsEditing(false);
-  };
-
-  const handleLabelChange = (index: number, value: string) => {
-    setLabels((current) =>
-      current.map((label, i) => (i === index ? value : label)),
-    );
-  };
-
-  const handleAddLabel = () => {
-    setLabels((current) => [...current, ""]);
-  };
-
-  const handleRemoveLabel = (index: number) => {
-    setLabels((current) => current.filter((_, i) => i !== index));
-  };
-
-  const handleSaveCustomOptions = () => {
-    const cleanedLabels = labels
-      .map((label) => label.trim())
-      .filter((label) => label.length > 0);
-
-    if (cleanedLabels.length === 0) return;
-
-    setCustomOptions.mutate(
-      { groupId, labels: cleanedLabels },
-      { onSuccess: () => setIsEditing(false) },
-    );
-  };
-
-  const handleRemoveCustomOptions = () => {
-    removeCustomOptions.mutate(undefined, {
-      onSuccess: () => setShowRemoveAll(false),
-    });
   };
 
   const handleStartAdding = () => {
@@ -133,12 +90,7 @@ const TypeOptionConfiguration = ({
 
     addCustomOption.mutate(
       { groupId, label: cleanedLabel },
-      {
-        onSuccess: () => {
-          setNewLabel("");
-          setIsAdding(false);
-        },
-      },
+      { onSuccess: handleResetAdding },
     );
   };
 
@@ -150,40 +102,11 @@ const TypeOptionConfiguration = ({
     });
   };
 
-  const getDraftLabel = (option: TypeOptionResult) =>
-    draftLabels[option.optionId] ?? option.label;
-
-  const hasLabelChanged = (option: TypeOptionResult) => {
-    const draft = getDraftLabel(option).trim();
-    return draft !== "" && draft !== option.label;
-  };
-
-  const handleLabelEdit = (optionId: string, value: string) => {
-    setDraftLabels((prev) => ({ ...prev, [optionId]: value }));
-  };
-
-  const handleResetLabel = (optionId: string) => {
-    setDraftLabels((prev) => {
-      const next = { ...prev };
-      delete next[optionId];
-      return next;
+  const handleRemoveCustomOptions = () => {
+    removeCustomOptions.mutate(undefined, {
+      onSuccess: () => setShowRemoveAll(false),
     });
   };
-
-  const handleUpdateOption = (option: TypeOptionResult) => {
-    updateCustomOption.mutate(
-      {
-        optionId: option.optionId,
-        request: { label: getDraftLabel(option).trim() },
-      },
-      { onSuccess: () => handleResetLabel(option.optionId) },
-    );
-  };
-
-  const canSaveNewOption = newLabel.trim().length > 0;
-
-  const canSave =
-    labels.length > 0 && labels.every((label) => label.trim().length > 0);
 
   return (
     <>
@@ -204,7 +127,7 @@ const TypeOptionConfiguration = ({
         ) : (
           <Button
             variant="primary"
-            onClick={isEditing ? handleCancelEditor : handleOpenEditor}
+            onClick={isEditing ? () => setIsEditing(false) : handleOpenEditor}
             disabled={isToggling}
             aria-expanded={isEditing}
           >
@@ -214,52 +137,19 @@ const TypeOptionConfiguration = ({
       </div>
       <p className="text-muted small mb-3">{helperText}</p>
 
-      <Collapse in={isEditing}>
-        <div>
-          <div className="section-panel option-editor-panel mb-3">
-            <h3 className="fw-bold lead mb-1">Custom {heading}</h3>
-            <p className="text-muted small mb-3">
-              Add the labels you want this group to use. These will replace the
-              default options and unset all venues in the group.
-            </p>
-            <Form onSubmit={(e) => e.preventDefault()}>
-              {labels.map((label, index) => (
-                <InputGroup className="mb-2" key={index}>
-                  <Form.Control
-                    type="text"
-                    placeholder={`Option ${index + 1}`}
-                    value={label}
-                    onChange={(e) => handleLabelChange(index, e.target.value)}
-                  />
-                  <Button
-                    variant="outline-secondary"
-                    onClick={() => handleRemoveLabel(index)}
-                    aria-label={`Remove option ${index + 1}`}
-                  >
-                    ✕
-                  </Button>
-                </InputGroup>
-              ))}
-              <div className="d-flex justify-content-between gap-2 mt-3">
-                <Button variant="outline-secondary" onClick={handleAddLabel}>
-                  + Add option
-                </Button>
-                <Button
-                  variant="primary"
-                  onClick={handleSaveCustomOptions}
-                  disabled={!canSave || setCustomOptions.isPending}
-                >
-                  {setCustomOptions.isPending ? (
-                    <Spinner animation="border" size="sm" />
-                  ) : (
-                    "Save"
-                  )}
-                </Button>
-              </div>
-            </Form>
-          </div>
-        </div>
-      </Collapse>
+      <OptionEditorPanel
+        key={editorKey}
+        show={isEditing}
+        heading={heading}
+        groupId={groupId}
+        initialLabels={
+          sortedOptions.length > 0
+            ? sortedOptions.map((option) => option.label)
+            : [""]
+        }
+        setCustomOptions={setCustomOptions}
+        onClose={() => setIsEditing(false)}
+      />
 
       <TableStatus
         isLoading={isLoading}
@@ -275,41 +165,14 @@ const TypeOptionConfiguration = ({
               <th>Option</th>
               {hasCustomOptions && (
                 <th className="w-25 text-end option-actions-col">
-                  {isAdding ? (
-                    <div className="d-flex justify-content-end gap-2">
-                      <Button
-                        variant="outline-secondary"
-                        size="sm"
-                        onClick={handleResetAdding}
-                        disabled={addCustomOption.isPending}
-                      >
-                        Reset
-                      </Button>
-                      <Button
-                        variant="primary"
-                        size="sm"
-                        onClick={handleSaveNewOption}
-                        disabled={
-                          !canSaveNewOption || addCustomOption.isPending
-                        }
-                      >
-                        {addCustomOption.isPending ? (
-                          <Spinner animation="border" size="sm" />
-                        ) : (
-                          "Save"
-                        )}
-                      </Button>
-                    </div>
-                  ) : (
-                    <Button
-                      variant="outline-success"
-                      size="sm"
-                      onClick={handleStartAdding}
-                      aria-label="Add option"
-                    >
-                      + Add
-                    </Button>
-                  )}
+                  <AddOptionControls
+                    isAdding={isAdding}
+                    canSave={newLabel.trim().length > 0}
+                    isPending={addCustomOption.isPending}
+                    onStart={handleStartAdding}
+                    onReset={handleResetAdding}
+                    onSave={handleSaveNewOption}
+                  />
                 </th>
               )}
             </tr>
@@ -329,78 +192,20 @@ const TypeOptionConfiguration = ({
                 <td className="option-actions-col" />
               </tr>
             )}
-            {sortedOptions.map((option: TypeOptionResult) => (
-              <tr key={option.optionId}>
-                <td className="text-break">
-                  {hasCustomOptions ? (
-                    <div className="d-flex align-items-center gap-2">
-                      <Form.Control
-                        type="text"
-                        value={getDraftLabel(option)}
-                        onChange={(e) =>
-                          handleLabelEdit(option.optionId, e.target.value)
-                        }
-                        disabled={updateCustomOption.isPending}
-                      />
-                      <Button
-                        variant="link"
-                        className={`p-0${hasLabelChanged(option) ? "" : " invisible"}`}
-                        onClick={() => handleResetLabel(option.optionId)}
-                        disabled={
-                          updateCustomOption.isPending ||
-                          !hasLabelChanged(option)
-                        }
-                        title="Reset label"
-                        aria-label="Reset label"
-                      >
-                        <RxReset size={22} />
-                      </Button>
-                    </div>
-                  ) : (
-                    option.label
-                  )}
-                </td>
-                {hasCustomOptions && (
-                  <td className="option-actions-col text-end">
-                    <div className="d-flex justify-content-end gap-2">
-                      <OverlayTrigger overlay={<Tooltip>Update label</Tooltip>}>
-                        <span
-                          className={
-                            hasLabelChanged(option)
-                              ? "d-inline-block"
-                              : "d-none"
-                          }
-                        >
-                          <Button
-                            variant="outline-secondary"
-                            size="sm"
-                            onClick={() => handleUpdateOption(option)}
-                            disabled={updateCustomOption.isPending}
-                            aria-label={`Update ${option.label}`}
-                          >
-                            <FaPencilAlt />
-                          </Button>
-                        </span>
-                      </OverlayTrigger>
-                      <OverlayTrigger
-                        overlay={<Tooltip>Delete option</Tooltip>}
-                      >
-                        <span className="d-inline-block">
-                          <Button
-                            variant="outline-danger"
-                            size="sm"
-                            onClick={() => setOptionToDelete(option)}
-                            aria-label={`Delete ${option.label}`}
-                          >
-                            <FaTrash />
-                          </Button>
-                        </span>
-                      </OverlayTrigger>
-                    </div>
-                  </td>
-                )}
-              </tr>
-            ))}
+            {hasCustomOptions
+              ? sortedOptions.map((option) => (
+                  <OptionRow
+                    key={option.optionId}
+                    option={option}
+                    updateCustomOption={updateCustomOption}
+                    onRequestDelete={setOptionToDelete}
+                  />
+                ))
+              : sortedOptions.map((option) => (
+                  <tr key={option.optionId}>
+                    <td className="text-break">{option.label}</td>
+                  </tr>
+                ))}
           </tbody>
         </Table>
       </TableStatus>
