@@ -14,6 +14,8 @@ import type SetOptionsRequest from "../../models/requests/options/SetOptionsRequ
 import type SetOptionResponse from "../../models/responses/options/SetOptionResponse";
 import type SetOptionRequest from "../../models/requests/options/SetOptionRequest";
 import type UpdateOptionRequest from "../../models/requests/options/UpdateOptionRequest";
+import type GetTypeOptionResponse from "../../models/responses/options/GetTypeOptionResponse";
+import type GetTypeOptionsResponse from "../../models/responses/options/GetTypeOptionsResponse";
 
 type OptionController =
   | "CostOption"
@@ -21,7 +23,8 @@ type OptionController =
   | "QualityOption"
   | "VenueTypeOption";
 
-type OrderableOptionController = "CostOption" | "QualityOption";
+type RatingOptionController = "CostOption" | "QualityOption";
+export type TypeOptionController = "FoodTypeOption" | "VenueTypeOption";
 
 const optionServices: Record<OptionController, ApiClient> = {
   CostOption: costOptionControllerService,
@@ -131,7 +134,7 @@ export const useRemoveCustomOption = (
 };
 
 export const useGetRatingOptionsForGroup = (
-  controller: OptionController,
+  controller: RatingOptionController,
   groupId: string,
 ) => {
   const service = optionServices[controller];
@@ -144,7 +147,7 @@ export const useGetRatingOptionsForGroup = (
 };
 
 export const useGetRatingOption = (
-  controller: OptionController,
+  controller: RatingOptionController,
   groupId: string,
   optionId: string,
 ) => {
@@ -157,8 +160,35 @@ export const useGetRatingOption = (
   });
 };
 
-export const useReorderCustomOptions = (
-  controller: OrderableOptionController,
+export const useGetTypeOptionsForGroup = (
+  controller: TypeOptionController,
+  groupId: string,
+) => {
+  const service = optionServices[controller];
+
+  return useQuery<GetTypeOptionsResponse, Error>({
+    queryKey: [controller, groupId],
+    queryFn: () => service.get<GetTypeOptionsResponse>(`?GroupId=${groupId}`),
+    staleTime: 10 * 1000,
+  });
+};
+
+export const useGetTypeOption = (
+  controller: TypeOptionController,
+  groupId: string,
+  optionId: string,
+) => {
+  const service = optionServices[controller];
+
+  return useQuery<GetTypeOptionResponse, Error>({
+    queryKey: [controller, groupId, optionId],
+    queryFn: () => service.get<GetTypeOptionResponse>(`custom/${optionId}`),
+    staleTime: 10 * 1000,
+  });
+};
+
+export const useReorderRatingOptions = (
+  controller: RatingOptionController,
   groupId: string,
 ) => {
   const service = optionServices[controller];

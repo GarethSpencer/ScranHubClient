@@ -342,6 +342,27 @@
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
 
+.table > :not(caption) > tr > .option-actions-col {
+  --bs-table-bg-type: transparent;
+  box-shadow: none;
+}
+
+.option-editor-panel {
+  background-image: linear-gradient(
+    rgba(0, 0, 0, 0.05),
+    rgba(0, 0, 0, 0.05)
+  );
+  border-color: rgba(0, 0, 0, 0.15);
+}
+
+[data-bs-theme="dark"] .option-editor-panel {
+  background-image: linear-gradient(
+    rgba(255, 255, 255, 0.05),
+    rgba(255, 255, 255, 0.05)
+  );
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
 .content-wrapper:has(.section-tabs .nav-item:first-child .nav-link.active)
   .section-panel {
   border-top-left-radius: 0;

@@ -11,7 +11,10 @@ const GroupSectionLayout = () => {
   return (
     <SectionLayout
       title={groupName}
-      tabs={[{ label: "Overview", to: `/group/${id}`, end: true }]}
+      tabs={[
+        { label: "Overview", to: `/group/${id}`, end: true },
+        { label: "Group Options", to: `/group/${id}/options` },
+      ]}
     />
   );
 };

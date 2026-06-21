@@ -149,13 +149,15 @@ const MyGroupTable = () => {
                   <td>
                     <div className="d-flex flex-column flex-md-row justify-content-center gap-2">
                       <OverlayTrigger overlay={<Tooltip>Update name</Tooltip>}>
-                        <span className="d-inline-block">
+                        <span
+                          className={
+                            hasNameChanged(x) ? "d-inline-block" : "d-none"
+                          }
+                        >
                           <Button
                             variant="secondary"
                             onClick={() => onUpdateGroupName(x)}
-                            disabled={
-                              isPending || isDeleting || !hasNameChanged(x)
-                            }
+                            disabled={isPending || isDeleting}
                             aria-label="Update name"
                           >
                             {isActing(x.groupId, "updateName") ? (
