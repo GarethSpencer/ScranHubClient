@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import SectionLayout from "./SectionLayout";
 import { useGetGroup } from "../api/controllerHooks/useGroupController";
 
@@ -10,7 +10,11 @@ const GroupSectionLayout = () => {
 
   return (
     <SectionLayout
-      title={groupName}
+      title={
+        <Link to={`/group/${id}`} className="section-title h1">
+          {groupName}
+        </Link>
+      }
       tabs={[
         { label: "Overview", to: `/group/${id}`, end: true },
         { label: "Group Options", to: `/group/${id}/options` },

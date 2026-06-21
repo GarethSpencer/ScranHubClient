@@ -10,7 +10,7 @@ interface Props {
 const SectionLayout = ({ tabs = [], title }: Props) => {
   return (
     <div className="content-wrapper">
-      {title && <h1 className="section-title">{title}</h1>}
+      {title}
       <SectionTabs tabs={tabs} />
       <div className="section-panel">
         <Outlet />

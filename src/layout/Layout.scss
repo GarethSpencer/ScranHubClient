@@ -294,6 +294,16 @@
   text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
   margin-bottom: 1rem;
   word-break: break-word;
+  text-align: center;
+}
+
+a.section-title {
+  display: block;
+  text-decoration: none;
+}
+
+a.section-title:hover {
+  text-decoration: underline;
 }
 
 .section-tabs {
