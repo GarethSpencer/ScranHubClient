@@ -1,4 +1,4 @@
-import TypeOptionConfiguration from "./TypeOptionConfiguration";
+import OptionConfiguration from "./OptionConfiguration";
 
 interface Props {
   groupId: string;
@@ -6,7 +6,7 @@ interface Props {
 
 const FoodTypeOptionConfiguration = ({ groupId }: Props) => {
   return (
-    <TypeOptionConfiguration
+    <OptionConfiguration
       controller="FoodTypeOption"
       groupId={groupId}
       heading="Food Types"

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
 import Spinner from "react-bootstrap/Spinner";
@@ -6,33 +6,38 @@ import Form from "react-bootstrap/Form";
 import TableStatus from "./TableStatus";
 import ConfirmModal from "./ConfirmModal";
 import OptionRow from "./options/OptionRow";
+import ReorderableOptionList from "./options/ReorderableOptionList";
 import OptionEditorPanel from "./options/OptionEditorPanel";
 import AddOptionControls from "./options/AddOptionControls";
+import useOptionReorder from "../hooks/useOptionReorder";
 import {
+  isRatingController,
   useAddCustomOption,
-  useGetTypeOptionsForGroup,
+  useGetOptionsForGroup,
   useRemoveCustomOption,
   useRemoveCustomOptions,
   useSetCustomOptions,
   useUpdateCustomOption,
-  type TypeOptionController,
+  type OptionController,
 } from "../api/controllerHooks/useOptionController";
-import type TypeOptionResult from "../models/results/generic/TypeOptionResult";
+import type RatingOptionResult from "../models/results/generic/RatingOptionResult";
 
 interface Props {
-  controller: TypeOptionController;
+  controller: OptionController;
   groupId: string;
   heading: string;
   helperText: string;
 }
 
-const TypeOptionConfiguration = ({
+const OptionConfiguration = ({
   controller,
   groupId,
   heading,
   helperText,
 }: Props) => {
-  const { data, isLoading, isError } = useGetTypeOptionsForGroup(
+  const reorderable = isRatingController(controller);
+
+  const { data, isLoading, isError } = useGetOptionsForGroup(
     controller,
     groupId,
   );
@@ -42,29 +47,58 @@ const TypeOptionConfiguration = ({
   const addCustomOption = useAddCustomOption(controller, groupId);
   const removeCustomOption = useRemoveCustomOption(controller, groupId);
   const updateCustomOption = useUpdateCustomOption(controller, groupId);
+  const reorder = useOptionReorder(controller, groupId);
 
-  // Editor key is bumped each time the editor opens so it re-seeds its labels.
   const [editorKey, setEditorKey] = useState(0);
   const [isEditing, setIsEditing] = useState(false);
 
   const [isAdding, setIsAdding] = useState(false);
   const [newLabel, setNewLabel] = useState("");
 
-  const [optionToDelete, setOptionToDelete] = useState<TypeOptionResult | null>(
-    null,
-  );
+  const [optionToDelete, setOptionToDelete] =
+    useState<RatingOptionResult | null>(null);
   const [showRemoveAll, setShowRemoveAll] = useState(false);
+
+  const [dirtyRows, setDirtyRows] = useState<Record<string, boolean>>({});
+
+  const handleRowDirtyChange = useCallback(
+    (optionId: string, isDirty: boolean) => {
+      setDirtyRows((current) => {
+        if (!!current[optionId] === isDirty) return current;
+        const next = { ...current };
+        if (isDirty) next[optionId] = true;
+        else delete next[optionId];
+        return next;
+      });
+    },
+    [],
+  );
 
   const options = data?.options ?? [];
 
   const sortedOptions = options
     .slice()
-    .sort((a, b) => a.label.localeCompare(b.label));
+    .sort((a, b) =>
+      reorderable
+        ? a.displayOrder - b.displayOrder
+        : a.label.localeCompare(b.label),
+    );
 
   const hasCustomOptions = options.some((option) => option.groupId === groupId);
 
   const isToggling =
     setCustomOptions.isPending || removeCustomOptions.isPending;
+
+  const hasOtherPendingWork =
+    isAdding ||
+    isEditing ||
+    optionToDelete !== null ||
+    showRemoveAll ||
+    Object.keys(dirtyRows).length > 0 ||
+    addCustomOption.isPending ||
+    removeCustomOption.isPending ||
+    updateCustomOption.isPending ||
+    isToggling;
 
   const handleOpenEditor = () => {
     setEditorKey((key) => key + 1);
@@ -111,34 +145,75 @@ const TypeOptionConfiguration = ({
       <h2 className="fw-bold lead mb-1">{heading}</h2>
       <p className="text-muted small mb-3">{helperText}</p>
 
-      <div className="mb-3">
-        {hasCustomOptions ? (
-          <Button
-            variant="danger"
-            onClick={() => setShowRemoveAll(true)}
-            disabled={isToggling}
-          >
-            {isToggling ? (
-              <Spinner animation="border" size="sm" />
-            ) : (
-              "Remove Custom Options"
-            )}
-          </Button>
+      <div className="mb-3 d-flex flex-wrap gap-2">
+        {reorder.isReordering ? (
+          <>
+            <Button
+              variant="primary"
+              onClick={reorder.save}
+              disabled={reorder.isSaving}
+            >
+              {reorder.isSaving ? (
+                <Spinner animation="border" size="sm" />
+              ) : (
+                "Save Order"
+              )}
+            </Button>
+            <Button
+              variant="outline-secondary"
+              onClick={reorder.cancel}
+              disabled={reorder.isSaving}
+            >
+              Cancel
+            </Button>
+          </>
         ) : (
-          <Button
-            variant="primary"
-            onClick={isEditing ? () => setIsEditing(false) : handleOpenEditor}
-            disabled={isToggling}
-            aria-expanded={isEditing}
-          >
-            {isEditing ? "Cancel" : "Set Custom Options"}
-          </Button>
+          <>
+            {hasCustomOptions ? (
+              <Button
+                variant="danger"
+                onClick={() => setShowRemoveAll(true)}
+                disabled={isToggling}
+              >
+                {isToggling ? (
+                  <Spinner animation="border" size="sm" />
+                ) : (
+                  "Remove Custom Options"
+                )}
+              </Button>
+            ) : (
+              <Button
+                variant="primary"
+                onClick={
+                  isEditing ? () => setIsEditing(false) : handleOpenEditor
+                }
+                disabled={isToggling}
+                aria-expanded={isEditing}
+              >
+                {isEditing ? "Cancel" : "Set Custom Options"}
+              </Button>
+            )}
+            {reorderable && hasCustomOptions && sortedOptions.length > 1 && (
+              <Button
+                variant="outline-secondary"
+                onClick={() => reorder.start(sortedOptions)}
+                disabled={hasOtherPendingWork}
+                title={
+                  hasOtherPendingWork
+                    ? "Finish or cancel your other changes before reordering"
+                    : undefined
+                }
+              >
+                Reorder Options
+              </Button>
+            )}
+          </>
         )}
       </div>
 
       <OptionEditorPanel
         key={editorKey}
-        show={isEditing}
+        show={isEditing && !reorder.isReordering}
         heading={heading}
         groupId={groupId}
         initialLabels={
@@ -165,7 +240,7 @@ const TypeOptionConfiguration = ({
           <thead>
             <tr>
               <th>Options</th>
-              {hasCustomOptions && (
+              {hasCustomOptions && !reorder.isReordering && (
                 <th className="w-25 text-end option-actions-col">
                   <AddOptionControls
                     isAdding={isAdding}
@@ -180,34 +255,46 @@ const TypeOptionConfiguration = ({
             </tr>
           </thead>
           <tbody>
-            {isAdding && (
-              <tr>
-                <td className="text-break">
-                  <Form.Control
-                    type="text"
-                    placeholder="New label"
-                    value={newLabel}
-                    onChange={(e) => setNewLabel(e.target.value)}
-                    autoFocus
-                  />
-                </td>
-                <td className="option-actions-col" />
-              </tr>
-            )}
-            {hasCustomOptions
-              ? sortedOptions.map((option) => (
-                  <OptionRow
-                    key={option.optionId}
-                    option={option}
-                    updateCustomOption={updateCustomOption}
-                    onRequestDelete={setOptionToDelete}
-                  />
-                ))
-              : sortedOptions.map((option) => (
-                  <tr key={option.optionId}>
-                    <td className="text-break">{option.label}</td>
+            {reorder.isReordering ? (
+              <ReorderableOptionList
+                items={reorder.items}
+                sensors={reorder.sensors}
+                disabled={reorder.isSaving}
+                onDragEnd={reorder.handleDragEnd}
+              />
+            ) : (
+              <>
+                {isAdding && (
+                  <tr>
+                    <td className="text-break">
+                      <Form.Control
+                        type="text"
+                        placeholder="New label"
+                        value={newLabel}
+                        onChange={(e) => setNewLabel(e.target.value)}
+                        autoFocus
+                      />
+                    </td>
+                    <td className="option-actions-col" />
                   </tr>
-                ))}
+                )}
+                {hasCustomOptions
+                  ? sortedOptions.map((option) => (
+                      <OptionRow
+                        key={option.optionId}
+                        option={option}
+                        updateCustomOption={updateCustomOption}
+                        onRequestDelete={setOptionToDelete}
+                        onDirtyChange={handleRowDirtyChange}
+                      />
+                    ))
+                  : sortedOptions.map((option) => (
+                      <tr key={option.optionId}>
+                        <td className="text-break">{option.label}</td>
+                      </tr>
+                    ))}
+              </>
+            )}
           </tbody>
         </Table>
       </TableStatus>
@@ -248,4 +335,4 @@ const TypeOptionConfiguration = ({
   );
 };
 
-export default TypeOptionConfiguration;
+export default OptionConfiguration;

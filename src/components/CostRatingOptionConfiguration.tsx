@@ -1,4 +1,4 @@
-import RatingOptionConfiguration from "./RatingOptionConfiguration";
+import OptionConfiguration from "./OptionConfiguration";
 
 interface Props {
   groupId: string;
@@ -6,7 +6,7 @@ interface Props {
 
 const CostRatingOptionConfiguration = ({ groupId }: Props) => {
   return (
-    <RatingOptionConfiguration
+    <OptionConfiguration
       controller="CostOption"
       groupId={groupId}
       heading="Cost Ratings"

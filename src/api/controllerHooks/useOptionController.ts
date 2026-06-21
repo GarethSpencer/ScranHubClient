@@ -15,9 +15,8 @@ import type SetOptionResponse from "../../models/responses/options/SetOptionResp
 import type SetOptionRequest from "../../models/requests/options/SetOptionRequest";
 import type UpdateOptionRequest from "../../models/requests/options/UpdateOptionRequest";
 import type GetTypeOptionResponse from "../../models/responses/options/GetTypeOptionResponse";
-import type GetTypeOptionsResponse from "../../models/responses/options/GetTypeOptionsResponse";
 
-type OptionController =
+export type OptionController =
   | "CostOption"
   | "FoodTypeOption"
   | "QualityOption"
@@ -25,6 +24,16 @@ type OptionController =
 
 export type RatingOptionController = "CostOption" | "QualityOption";
 export type TypeOptionController = "FoodTypeOption" | "VenueTypeOption";
+
+const ratingControllers: RatingOptionController[] = [
+  "CostOption",
+  "QualityOption",
+];
+
+export const isRatingController = (
+  controller: OptionController,
+): controller is RatingOptionController =>
+  (ratingControllers as OptionController[]).includes(controller);
 
 const optionServices: Record<OptionController, ApiClient> = {
   CostOption: costOptionControllerService,
@@ -133,8 +142,8 @@ export const useRemoveCustomOption = (
   });
 };
 
-export const useGetRatingOptionsForGroup = (
-  controller: RatingOptionController,
+export const useGetOptionsForGroup = (
+  controller: OptionController,
   groupId: string,
 ) => {
   const service = optionServices[controller];
@@ -160,19 +169,6 @@ export const useGetRatingOption = (
   });
 };
 
-export const useGetTypeOptionsForGroup = (
-  controller: TypeOptionController,
-  groupId: string,
-) => {
-  const service = optionServices[controller];
-
-  return useQuery<GetTypeOptionsResponse, Error>({
-    queryKey: [controller, groupId],
-    queryFn: () => service.get<GetTypeOptionsResponse>(`?GroupId=${groupId}`),
-    staleTime: 10 * 1000,
-  });
-};
-
 export const useGetTypeOption = (
   controller: TypeOptionController,
   groupId: string,
@@ -188,7 +184,7 @@ export const useGetTypeOption = (
 };
 
 export const useReorderRatingOptions = (
-  controller: RatingOptionController,
+  controller: OptionController,
   groupId: string,
 ) => {
   const service = optionServices[controller];
