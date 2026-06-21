@@ -289,6 +289,13 @@
   font-weight: 600;
 }
 
+.section-title {
+  color: #fff;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
+  margin-bottom: 1rem;
+  word-break: break-word;
+}
+
 .section-tabs {
   --bs-nav-tabs-border-color: rgba(255, 255, 255, 0.25);
   --bs-nav-link-color: rgba(255, 255, 255, 0.75);

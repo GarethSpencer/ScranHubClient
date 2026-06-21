@@ -11,10 +11,21 @@ import type CommonResponse from "../../models/responses/generic/CommonResponse";
 import type UserGroupsResponse from "../../models/responses/groups/UserGroupsResponse";
 
 export const useGetGroup = (groupId: string) => {
+  const queryClient = useQueryClient();
+
   return useQuery<GetGroupResponse, Error>({
     queryKey: ["groups", groupId],
     queryFn: () => groupControllerService.get<GetGroupResponse>(groupId),
     staleTime: 10 * 1000,
+    placeholderData: () => {
+      const cachedGroup = queryClient
+        .getQueryData<UserGroupsResponse>(["userGroups"])
+        ?.userGroups?.find((g) => g.groupId === groupId);
+
+      return cachedGroup
+        ? { statusCode: 200, group: cachedGroup }
+        : undefined;
+    },
   });
 };
 

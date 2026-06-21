@@ -14,6 +14,7 @@ import FindGroupsPage from "./pages/groups/FindGroupsPage";
 import JoinedGroupsPage from "./pages/groups/JoinedGroupsPage";
 import ManageCreatedGroupsPage from "./pages/groups/ManageCreatedGroupsPage";
 import GroupDetailsPage from "./pages/groups/GroupDetailsPage";
+import GroupSectionLayout from "./layout/GroupSectionLayout";
 
 const router = createBrowserRouter([
   {
@@ -30,7 +31,13 @@ const router = createBrowserRouter([
           },
           {
             path: "group/:id",
-            element: <GroupDetailsPage />,
+            element: <GroupSectionLayout />,
+            children: [
+              {
+                index: true,
+                element: <GroupDetailsPage />,
+              },
+            ],
           },
           {
             path: "friends",
