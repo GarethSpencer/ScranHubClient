@@ -3,25 +3,11 @@ import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
 import Spinner from "react-bootstrap/Spinner";
 import Form from "react-bootstrap/Form";
-import {
-  DndContext,
-  PointerSensor,
-  KeyboardSensor,
-  closestCenter,
-  useSensor,
-  useSensors,
-  type DragEndEvent,
-} from "@dnd-kit/core";
-import {
-  SortableContext,
-  arrayMove,
-  sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
 import TableStatus from "./TableStatus";
 import ConfirmModal from "./ConfirmModal";
 import OptionRow from "./options/OptionRow";
-import SortableOptionRow from "./options/SortableOptionRow";
+import ReorderableOptionList from "./options/ReorderableOptionList";
+import useOptionReorder from "../hooks/useOptionReorder";
 import OptionEditorPanel from "./options/OptionEditorPanel";
 import AddOptionControls from "./options/AddOptionControls";
 import {
@@ -29,7 +15,6 @@ import {
   useGetRatingOptionsForGroup,
   useRemoveCustomOption,
   useRemoveCustomOptions,
-  useReorderRatingOptions,
   useSetCustomOptions,
   useUpdateCustomOption,
   type RatingOptionController,
@@ -59,9 +44,8 @@ const RatingOptionConfiguration = ({
   const addCustomOption = useAddCustomOption(controller, groupId);
   const removeCustomOption = useRemoveCustomOption(controller, groupId);
   const updateCustomOption = useUpdateCustomOption(controller, groupId);
-  const reorderOptions = useReorderRatingOptions(controller, groupId);
+  const reorder = useOptionReorder(controller, groupId);
 
-  // Editor key is bumped each time the editor opens so it re-seeds its labels.
   const [editorKey, setEditorKey] = useState(0);
   const [isEditing, setIsEditing] = useState(false);
 
@@ -71,9 +55,6 @@ const RatingOptionConfiguration = ({
   const [optionToDelete, setOptionToDelete] =
     useState<RatingOptionResult | null>(null);
   const [showRemoveAll, setShowRemoveAll] = useState(false);
-
-  const [isReordering, setIsReordering] = useState(false);
-  const [reorderItems, setReorderItems] = useState<RatingOptionResult[]>([]);
 
   const [dirtyRows, setDirtyRows] = useState<Record<string, boolean>>({});
 
@@ -111,44 +92,6 @@ const RatingOptionConfiguration = ({
     removeCustomOption.isPending ||
     updateCustomOption.isPending ||
     isToggling;
-
-  const isLockedForReorder = isReordering;
-
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    }),
-  );
-
-  const handleStartReordering = () => {
-    setReorderItems(sortedOptions);
-    setIsReordering(true);
-  };
-
-  const handleCancelReordering = () => {
-    setIsReordering(false);
-    setReorderItems([]);
-  };
-
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
-    if (!over || active.id === over.id) return;
-
-    setReorderItems((current) => {
-      const oldIndex = current.findIndex((o) => o.optionId === active.id);
-      const newIndex = current.findIndex((o) => o.optionId === over.id);
-      if (oldIndex === -1 || newIndex === -1) return current;
-      return arrayMove(current, oldIndex, newIndex);
-    });
-  };
-
-  const handleSaveReordering = () => {
-    reorderOptions.mutate(
-      { groupId, optionsIds: reorderItems.map((o) => o.optionId) },
-      { onSuccess: handleCancelReordering },
-    );
-  };
 
   const handleOpenEditor = () => {
     setEditorKey((key) => key + 1);
@@ -196,14 +139,14 @@ const RatingOptionConfiguration = ({
       <p className="text-muted small mb-3">{helperText}</p>
 
       <div className="mb-3 d-flex flex-wrap gap-2">
-        {isReordering ? (
+        {reorder.isReordering ? (
           <>
             <Button
               variant="primary"
-              onClick={handleSaveReordering}
-              disabled={reorderOptions.isPending}
+              onClick={reorder.save}
+              disabled={reorder.isSaving}
             >
-              {reorderOptions.isPending ? (
+              {reorder.isSaving ? (
                 <Spinner animation="border" size="sm" />
               ) : (
                 "Save Order"
@@ -211,8 +154,8 @@ const RatingOptionConfiguration = ({
             </Button>
             <Button
               variant="outline-secondary"
-              onClick={handleCancelReordering}
-              disabled={reorderOptions.isPending}
+              onClick={reorder.cancel}
+              disabled={reorder.isSaving}
             >
               Cancel
             </Button>
@@ -246,7 +189,7 @@ const RatingOptionConfiguration = ({
             {hasCustomOptions && sortedOptions.length > 1 && (
               <Button
                 variant="outline-secondary"
-                onClick={handleStartReordering}
+                onClick={() => reorder.start(sortedOptions)}
                 disabled={hasOtherPendingWork}
                 title={
                   hasOtherPendingWork
@@ -263,7 +206,7 @@ const RatingOptionConfiguration = ({
 
       <OptionEditorPanel
         key={editorKey}
-        show={isEditing && !isLockedForReorder}
+        show={isEditing && !reorder.isReordering}
         heading={heading}
         groupId={groupId}
         initialLabels={
@@ -290,7 +233,7 @@ const RatingOptionConfiguration = ({
           <thead>
             <tr>
               <th>Options</th>
-              {hasCustomOptions && !isReordering && (
+              {hasCustomOptions && !reorder.isReordering && (
                 <th className="w-25 text-end option-actions-col">
                   <AddOptionControls
                     isAdding={isAdding}
@@ -305,26 +248,13 @@ const RatingOptionConfiguration = ({
             </tr>
           </thead>
           <tbody>
-            {isReordering ? (
-              <DndContext
-                sensors={sensors}
-                collisionDetection={closestCenter}
-                onDragEnd={handleDragEnd}
-              >
-                <SortableContext
-                  items={reorderItems.map((option) => option.optionId)}
-                  strategy={verticalListSortingStrategy}
-                >
-                  {reorderItems.map((option) => (
-                    <SortableOptionRow
-                      key={option.optionId}
-                      optionId={option.optionId}
-                      label={option.label}
-                      disabled={reorderOptions.isPending}
-                    />
-                  ))}
-                </SortableContext>
-              </DndContext>
+            {reorder.isReordering ? (
+              <ReorderableOptionList
+                items={reorder.items}
+                sensors={reorder.sensors}
+                disabled={reorder.isSaving}
+                onDragEnd={reorder.handleDragEnd}
+              />
             ) : (
               <>
                 {isAdding && (
