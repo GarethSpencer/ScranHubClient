@@ -11,7 +11,6 @@ const FoodTypeOptionConfiguration = ({ groupId }: Props) => {
       groupId={groupId}
       heading="Food Types"
       helperText="The food type options which can be applied to each of the venues in this group."
-      itemNamePlural="food types"
     />
   );
 };

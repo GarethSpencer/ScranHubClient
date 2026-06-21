@@ -10,8 +10,7 @@ const CostRatingOptionConfiguration = ({ groupId }: Props) => {
       controller="CostOption"
       groupId={groupId}
       heading="Cost Ratings"
-      helperText="The cost rating options which can be applied to each of the venues in this group."
-      itemNamePlural="cost ratings"
+      helperText="The cost rating options which can be applied to each of the venues in this group. The options should be ordered from 'best' to 'worst'."
     />
   );
 };

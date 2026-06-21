@@ -1,11 +1,27 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
 import Spinner from "react-bootstrap/Spinner";
 import Form from "react-bootstrap/Form";
+import {
+  DndContext,
+  PointerSensor,
+  KeyboardSensor,
+  closestCenter,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  arrayMove,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
 import TableStatus from "./TableStatus";
 import ConfirmModal from "./ConfirmModal";
 import OptionRow from "./options/OptionRow";
+import SortableOptionRow from "./options/SortableOptionRow";
 import OptionEditorPanel from "./options/OptionEditorPanel";
 import AddOptionControls from "./options/AddOptionControls";
 import {
@@ -13,6 +29,7 @@ import {
   useGetRatingOptionsForGroup,
   useRemoveCustomOption,
   useRemoveCustomOptions,
+  useReorderRatingOptions,
   useSetCustomOptions,
   useUpdateCustomOption,
   type RatingOptionController,
@@ -24,7 +41,6 @@ interface Props {
   groupId: string;
   heading: string;
   helperText: string;
-  itemNamePlural: string;
 }
 
 const RatingOptionConfiguration = ({
@@ -32,7 +48,6 @@ const RatingOptionConfiguration = ({
   groupId,
   heading,
   helperText,
-  itemNamePlural,
 }: Props) => {
   const { data, isLoading, isError } = useGetRatingOptionsForGroup(
     controller,
@@ -44,6 +59,7 @@ const RatingOptionConfiguration = ({
   const addCustomOption = useAddCustomOption(controller, groupId);
   const removeCustomOption = useRemoveCustomOption(controller, groupId);
   const updateCustomOption = useUpdateCustomOption(controller, groupId);
+  const reorderOptions = useReorderRatingOptions(controller, groupId);
 
   // Editor key is bumped each time the editor opens so it re-seeds its labels.
   const [editorKey, setEditorKey] = useState(0);
@@ -56,6 +72,24 @@ const RatingOptionConfiguration = ({
     useState<RatingOptionResult | null>(null);
   const [showRemoveAll, setShowRemoveAll] = useState(false);
 
+  const [isReordering, setIsReordering] = useState(false);
+  const [reorderItems, setReorderItems] = useState<RatingOptionResult[]>([]);
+
+  const [dirtyRows, setDirtyRows] = useState<Record<string, boolean>>({});
+
+  const handleRowDirtyChange = useCallback(
+    (optionId: string, isDirty: boolean) => {
+      setDirtyRows((current) => {
+        if (!!current[optionId] === isDirty) return current;
+        const next = { ...current };
+        if (isDirty) next[optionId] = true;
+        else delete next[optionId];
+        return next;
+      });
+    },
+    [],
+  );
+
   const options = data?.options ?? [];
 
   const sortedOptions = options
@@ -66,6 +100,55 @@ const RatingOptionConfiguration = ({
 
   const isToggling =
     setCustomOptions.isPending || removeCustomOptions.isPending;
+
+  const hasOtherPendingWork =
+    isAdding ||
+    isEditing ||
+    optionToDelete !== null ||
+    showRemoveAll ||
+    Object.keys(dirtyRows).length > 0 ||
+    addCustomOption.isPending ||
+    removeCustomOption.isPending ||
+    updateCustomOption.isPending ||
+    isToggling;
+
+  const isLockedForReorder = isReordering;
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
+  );
+
+  const handleStartReordering = () => {
+    setReorderItems(sortedOptions);
+    setIsReordering(true);
+  };
+
+  const handleCancelReordering = () => {
+    setIsReordering(false);
+    setReorderItems([]);
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+
+    setReorderItems((current) => {
+      const oldIndex = current.findIndex((o) => o.optionId === active.id);
+      const newIndex = current.findIndex((o) => o.optionId === over.id);
+      if (oldIndex === -1 || newIndex === -1) return current;
+      return arrayMove(current, oldIndex, newIndex);
+    });
+  };
+
+  const handleSaveReordering = () => {
+    reorderOptions.mutate(
+      { groupId, optionsIds: reorderItems.map((o) => o.optionId) },
+      { onSuccess: handleCancelReordering },
+    );
+  };
 
   const handleOpenEditor = () => {
     setEditorKey((key) => key + 1);
@@ -112,34 +195,75 @@ const RatingOptionConfiguration = ({
       <h2 className="fw-bold lead mb-1">{heading}</h2>
       <p className="text-muted small mb-3">{helperText}</p>
 
-      <div className="mb-3">
-        {hasCustomOptions ? (
-          <Button
-            variant="danger"
-            onClick={() => setShowRemoveAll(true)}
-            disabled={isToggling}
-          >
-            {isToggling ? (
-              <Spinner animation="border" size="sm" />
-            ) : (
-              "Remove Custom Options"
-            )}
-          </Button>
+      <div className="mb-3 d-flex flex-wrap gap-2">
+        {isReordering ? (
+          <>
+            <Button
+              variant="primary"
+              onClick={handleSaveReordering}
+              disabled={reorderOptions.isPending}
+            >
+              {reorderOptions.isPending ? (
+                <Spinner animation="border" size="sm" />
+              ) : (
+                "Save Order"
+              )}
+            </Button>
+            <Button
+              variant="outline-secondary"
+              onClick={handleCancelReordering}
+              disabled={reorderOptions.isPending}
+            >
+              Cancel
+            </Button>
+          </>
         ) : (
-          <Button
-            variant="primary"
-            onClick={isEditing ? () => setIsEditing(false) : handleOpenEditor}
-            disabled={isToggling}
-            aria-expanded={isEditing}
-          >
-            {isEditing ? "Cancel" : "Set Custom Options"}
-          </Button>
+          <>
+            {hasCustomOptions ? (
+              <Button
+                variant="danger"
+                onClick={() => setShowRemoveAll(true)}
+                disabled={isToggling}
+              >
+                {isToggling ? (
+                  <Spinner animation="border" size="sm" />
+                ) : (
+                  "Remove Custom Options"
+                )}
+              </Button>
+            ) : (
+              <Button
+                variant="primary"
+                onClick={
+                  isEditing ? () => setIsEditing(false) : handleOpenEditor
+                }
+                disabled={isToggling}
+                aria-expanded={isEditing}
+              >
+                {isEditing ? "Cancel" : "Set Custom Options"}
+              </Button>
+            )}
+            {hasCustomOptions && sortedOptions.length > 1 && (
+              <Button
+                variant="outline-secondary"
+                onClick={handleStartReordering}
+                disabled={hasOtherPendingWork}
+                title={
+                  hasOtherPendingWork
+                    ? "Finish or cancel your other changes before reordering"
+                    : undefined
+                }
+              >
+                Reorder Options
+              </Button>
+            )}
+          </>
         )}
       </div>
 
       <OptionEditorPanel
         key={editorKey}
-        show={isEditing}
+        show={isEditing && !isLockedForReorder}
         heading={heading}
         groupId={groupId}
         initialLabels={
@@ -155,9 +279,9 @@ const RatingOptionConfiguration = ({
         isLoading={isLoading}
         isError={isError}
         isEmpty={options.length === 0}
-        loadingText={`Loading ${itemNamePlural}...`}
-        errorText={`Couldn't load ${itemNamePlural}. Please try again.`}
-        emptyText={`No ${itemNamePlural} configured yet.`}
+        loadingText={`Loading ${heading.toLowerCase()}...`}
+        errorText={`Couldn't load ${heading.toLowerCase()}. Please try again.`}
+        emptyText={`No ${heading.toLowerCase()} configured yet.`}
       >
         <Table
           striped="columns"
@@ -166,7 +290,7 @@ const RatingOptionConfiguration = ({
           <thead>
             <tr>
               <th>Options</th>
-              {hasCustomOptions && (
+              {hasCustomOptions && !isReordering && (
                 <th className="w-25 text-end option-actions-col">
                   <AddOptionControls
                     isAdding={isAdding}
@@ -181,34 +305,59 @@ const RatingOptionConfiguration = ({
             </tr>
           </thead>
           <tbody>
-            {isAdding && (
-              <tr>
-                <td className="text-break">
-                  <Form.Control
-                    type="text"
-                    placeholder="New label"
-                    value={newLabel}
-                    onChange={(e) => setNewLabel(e.target.value)}
-                    autoFocus
-                  />
-                </td>
-                <td className="option-actions-col" />
-              </tr>
-            )}
-            {hasCustomOptions
-              ? sortedOptions.map((option) => (
-                  <OptionRow
-                    key={option.optionId}
-                    option={option}
-                    updateCustomOption={updateCustomOption}
-                    onRequestDelete={setOptionToDelete}
-                  />
-                ))
-              : sortedOptions.map((option) => (
-                  <tr key={option.optionId}>
-                    <td className="text-break">{option.label}</td>
+            {isReordering ? (
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleDragEnd}
+              >
+                <SortableContext
+                  items={reorderItems.map((option) => option.optionId)}
+                  strategy={verticalListSortingStrategy}
+                >
+                  {reorderItems.map((option) => (
+                    <SortableOptionRow
+                      key={option.optionId}
+                      optionId={option.optionId}
+                      label={option.label}
+                      disabled={reorderOptions.isPending}
+                    />
+                  ))}
+                </SortableContext>
+              </DndContext>
+            ) : (
+              <>
+                {isAdding && (
+                  <tr>
+                    <td className="text-break">
+                      <Form.Control
+                        type="text"
+                        placeholder="New label"
+                        value={newLabel}
+                        onChange={(e) => setNewLabel(e.target.value)}
+                        autoFocus
+                      />
+                    </td>
+                    <td className="option-actions-col" />
                   </tr>
-                ))}
+                )}
+                {hasCustomOptions
+                  ? sortedOptions.map((option) => (
+                      <OptionRow
+                        key={option.optionId}
+                        option={option}
+                        updateCustomOption={updateCustomOption}
+                        onRequestDelete={setOptionToDelete}
+                        onDirtyChange={handleRowDirtyChange}
+                      />
+                    ))
+                  : sortedOptions.map((option) => (
+                      <tr key={option.optionId}>
+                        <td className="text-break">{option.label}</td>
+                      </tr>
+                    ))}
+              </>
+            )}
           </tbody>
         </Table>
       </TableStatus>

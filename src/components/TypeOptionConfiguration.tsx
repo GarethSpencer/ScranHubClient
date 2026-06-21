@@ -24,7 +24,6 @@ interface Props {
   groupId: string;
   heading: string;
   helperText: string;
-  itemNamePlural: string;
 }
 
 const TypeOptionConfiguration = ({
@@ -32,7 +31,6 @@ const TypeOptionConfiguration = ({
   groupId,
   heading,
   helperText,
-  itemNamePlural,
 }: Props) => {
   const { data, isLoading, isError } = useGetTypeOptionsForGroup(
     controller,
@@ -156,9 +154,9 @@ const TypeOptionConfiguration = ({
         isLoading={isLoading}
         isError={isError}
         isEmpty={options.length === 0}
-        loadingText={`Loading ${itemNamePlural}...`}
-        errorText={`Couldn't load ${itemNamePlural}. Please try again.`}
-        emptyText={`No ${itemNamePlural} configured yet.`}
+        loadingText={`Loading ${heading.toLowerCase()}...`}
+        errorText={`Couldn't load ${heading.toLowerCase()}. Please try again.`}
+        emptyText={`No ${heading.toLowerCase()} configured yet.`}
       >
         <Table
           striped="columns"

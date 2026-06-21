@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
@@ -15,18 +15,31 @@ interface Props<T extends OptionResult> {
   option: T;
   updateCustomOption: ReturnType<typeof useUpdateCustomOption>;
   onRequestDelete: (option: T) => void;
+  onDirtyChange?: (optionId: string, isDirty: boolean) => void;
+  disabled?: boolean;
 }
 
 const OptionRow = <T extends OptionResult>({
   option,
   updateCustomOption,
   onRequestDelete,
+  onDirtyChange,
+  disabled = false,
 }: Props<T>) => {
   const [draftLabel, setDraftLabel] = useState(option.label);
 
   const trimmed = draftLabel.trim();
   const hasChanged = trimmed !== "" && trimmed !== option.label;
   const isPending = updateCustomOption.isPending;
+  const isLocked = isPending || disabled;
+
+  useEffect(() => {
+    onDirtyChange?.(option.optionId, hasChanged);
+  }, [onDirtyChange, option.optionId, hasChanged]);
+
+  useEffect(() => {
+    return () => onDirtyChange?.(option.optionId, false);
+  }, [onDirtyChange, option.optionId]);
 
   const handleReset = () => setDraftLabel(option.label);
 
@@ -45,13 +58,13 @@ const OptionRow = <T extends OptionResult>({
             type="text"
             value={draftLabel}
             onChange={(e) => setDraftLabel(e.target.value)}
-            disabled={isPending}
+            disabled={isLocked}
           />
           <Button
             variant="link"
             className={`p-0${hasChanged ? "" : " invisible"}`}
             onClick={handleReset}
-            disabled={isPending || !hasChanged}
+            disabled={isLocked || !hasChanged}
             title="Reset label"
             aria-label="Reset label"
           >
@@ -67,7 +80,7 @@ const OptionRow = <T extends OptionResult>({
                 variant="outline-secondary"
                 size="sm"
                 onClick={handleUpdate}
-                disabled={isPending}
+                disabled={isLocked}
                 aria-label={`Update ${option.label}`}
               >
                 <FaPencilAlt />
@@ -80,6 +93,7 @@ const OptionRow = <T extends OptionResult>({
                 variant="outline-danger"
                 size="sm"
                 onClick={() => onRequestDelete(option)}
+                disabled={isLocked}
                 aria-label={`Delete ${option.label}`}
               >
                 <FaTrash />

@@ -11,7 +11,6 @@ const VenueTypeOptionConfiguration = ({ groupId }: Props) => {
       groupId={groupId}
       heading="Venue Types"
       helperText="The venue type options which can be applied to each of the venues in this group."
-      itemNamePlural="venue types"
     />
   );
 };
