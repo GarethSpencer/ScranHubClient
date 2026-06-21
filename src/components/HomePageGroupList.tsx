@@ -12,11 +12,28 @@ const HomePageGroupList = () => {
 
   const groupResults = (groups?.userGroups ?? []).filter((x) => x.active);
 
+  const showStatus = isLoading || isError || groupResults.length === 0;
+
+  if (showStatus) {
+    return (
+      <div className="mt-4 section-panel">
+        <TableStatus
+          isLoading={isLoading}
+          isError={isError}
+          isEmpty={groupResults.length === 0}
+          loadingText="Loading groups..."
+          errorText="Couldn't load your groups. Please try again."
+          emptyText="You're not in any groups yet."
+        >
+          {null}
+        </TableStatus>
+      </div>
+    );
+  }
+
   return (
     <div className="mt-4">
-      {groupResults.length !== 0 && (
-        <h2 className="text-white lead fw-bold mb-3">My Groups</h2>
-      )}
+      <h2 className="home-group-heading lead fw-bold mb-3">My Groups</h2>
       <TableStatus
         isLoading={isLoading}
         isError={isError}

@@ -28,9 +28,9 @@ const TableStatus = ({
       </div>
     );
 
-  if (isError) return <p className="text-muted">{errorText}</p>;
+  if (isError) return <p className="text-muted text-center mb-0">{errorText}</p>;
 
-  if (isEmpty) return <p>{emptyText}</p>;
+  if (isEmpty) return <p className="text-center mb-0">{emptyText}</p>;
 
   return <>{children}</>;
 };
