@@ -110,8 +110,10 @@ const TypeOptionConfiguration = ({
 
   return (
     <>
-      <div className="d-flex justify-content-between align-items-start gap-3 mb-1">
-        <h2 className="fw-bold lead mb-0">{heading}</h2>
+      <h2 className="fw-bold lead mb-1">{heading}</h2>
+      <p className="text-muted small mb-3">{helperText}</p>
+
+      <div className="mb-3">
         {hasCustomOptions ? (
           <Button
             variant="danger"
@@ -135,7 +137,6 @@ const TypeOptionConfiguration = ({
           </Button>
         )}
       </div>
-      <p className="text-muted small mb-3">{helperText}</p>
 
       <OptionEditorPanel
         key={editorKey}
@@ -161,7 +162,7 @@ const TypeOptionConfiguration = ({
       >
         <Table
           striped="columns"
-          className="align-middle border-top mt-4 option-table"
+          className="align-middle border-top option-table"
         >
           <thead>
             <tr>
