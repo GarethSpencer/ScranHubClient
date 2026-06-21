@@ -18,6 +18,7 @@ import GroupSectionLayout from "./layout/GroupSectionLayout";
 import FoodTypeOptionsPage from "./pages/group/FoodTypeOptionsPage";
 import VenueTypeOptionsPage from "./pages/group/VenueTypeOptionsPage";
 import CostRatingOptionsPage from "./pages/group/CostRatingOptionsPage";
+import QualityRatingOptionsPage from "./pages/group/QualityRatingOptionsPage";
 
 const router = createBrowserRouter([
   {
@@ -51,6 +52,10 @@ const router = createBrowserRouter([
               {
                 path: "costratings",
                 element: <CostRatingOptionsPage />,
+              },
+              {
+                path: "qualityratings",
+                element: <QualityRatingOptionsPage />,
               },
             ],
           },
