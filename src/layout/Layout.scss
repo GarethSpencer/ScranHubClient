@@ -21,9 +21,14 @@
   transition: opacity 0.15s ease-in-out;
 }
 
-.navbar-fixed .navbar-brand:hover,
 .navbar-fixed .navbar-brand:focus-visible {
   opacity: 0.75;
+}
+
+@media (hover: hover) {
+  .navbar-fixed .navbar-brand:hover {
+    opacity: 0.75;
+  }
 }
 
 .main-layout-container {
@@ -302,8 +307,10 @@ a.section-title {
   text-decoration: none;
 }
 
-a.section-title:hover {
-  text-decoration: underline;
+@media (hover: hover) {
+  a.section-title:hover {
+    text-decoration: underline;
+  }
 }
 
 .section-tabs {
