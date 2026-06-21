@@ -159,10 +159,13 @@ const TypeOptionConfiguration = ({
         errorText={`Couldn't load ${itemNamePlural}. Please try again.`}
         emptyText={`No ${itemNamePlural} configured yet.`}
       >
-        <Table striped="columns" className="align-middle border-top">
+        <Table
+          striped="columns"
+          className="align-middle border-top mt-4 option-table"
+        >
           <thead>
             <tr>
-              <th>Option</th>
+              <th>Options</th>
               {hasCustomOptions && (
                 <th className="w-25 text-end option-actions-col">
                   <AddOptionControls

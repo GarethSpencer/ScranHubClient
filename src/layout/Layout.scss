@@ -363,6 +363,27 @@
   border-color: rgba(255, 255, 255, 0.35);
 }
 
+.option-table > thead > tr > th {
+  --bs-table-bg-type: transparent;
+  background-image: linear-gradient(
+    rgba(0, 0, 0, 0.05),
+    rgba(0, 0, 0, 0.05)
+  );
+  box-shadow: none;
+  vertical-align: middle;
+}
+
+.option-table > thead > tr > th:first-child {
+  text-align: center;
+}
+
+[data-bs-theme="dark"] .option-table > thead > tr > th {
+  background-image: linear-gradient(
+    rgba(255, 255, 255, 0.05),
+    rgba(255, 255, 255, 0.05)
+  );
+}
+
 .content-wrapper:has(.section-tabs .nav-item:first-child .nav-link.active)
   .section-panel {
   border-top-left-radius: 0;
