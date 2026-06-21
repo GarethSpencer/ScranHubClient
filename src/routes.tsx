@@ -15,7 +15,8 @@ import JoinedGroupsPage from "./pages/groups/JoinedGroupsPage";
 import ManageCreatedGroupsPage from "./pages/groups/ManageCreatedGroupsPage";
 import GroupDetailsPage from "./pages/group/GroupDetailsPage";
 import GroupSectionLayout from "./layout/GroupSectionLayout";
-import GroupOptionsPage from "./pages/group/GroupOptionsPage";
+import FoodTypeOptionsPage from "./pages/group/FoodTypeOptionsPage";
+import VenueTypeOptionsPage from "./pages/group/VenueTypeOptionsPage";
 
 const router = createBrowserRouter([
   {
@@ -39,8 +40,12 @@ const router = createBrowserRouter([
                 element: <GroupDetailsPage />,
               },
               {
-                path: "options",
-                element: <GroupOptionsPage />,
+                path: "foodtypes",
+                element: <FoodTypeOptionsPage />,
+              },
+              {
+                path: "venuetypes",
+                element: <VenueTypeOptionsPage />,
               },
             ],
           },
