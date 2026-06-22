@@ -30,11 +30,8 @@ const COLUMNS: SortableColumn[] = [
   { label: "Visited", sortBy: GroupVenueSortParameters.Visited },
   { label: "Venue Type", sortBy: GroupVenueSortParameters.VenueType },
   { label: "Food Type", sortBy: GroupVenueSortParameters.FoodType },
-  {
-    label: "Average Quality",
-    sortBy: GroupVenueSortParameters.AvgQualityRating,
-  },
-  { label: "Average Cost", sortBy: GroupVenueSortParameters.AvgCostRating },
+  { label: "Avg Quality", sortBy: GroupVenueSortParameters.AvgQualityRating },
+  { label: "Avg Cost", sortBy: GroupVenueSortParameters.AvgCostRating },
 ];
 
 const GroupVenuesPage = () => {
@@ -119,7 +116,10 @@ const GroupVenuesPage = () => {
   return (
     <>
       <h2 className="mb-1 fw-bold lead">Venues</h2>
-      <p className="text-muted small mb-3">The venues added to this group.</p>
+      <p className="text-muted small mb-3">
+        The venues added to this group. Press a row to check the venue details
+        and enter your ratings.
+      </p>
 
       <div className="d-grid mx-auto mb-3">
         <Button variant="primary" onClick={() => setShowCreateModal(true)}>
@@ -165,7 +165,7 @@ const GroupVenuesPage = () => {
           <Table
             responsive
             striped="columns"
-            className="align-middle text-center border-top"
+            className="align-middle text-center border-top group-venue-table"
           >
             <thead>
               <tr>
@@ -204,7 +204,7 @@ const GroupVenuesPage = () => {
           <Table
             responsive
             striped="columns"
-            className="align-middle text-center border-top"
+            className="align-middle text-center border-top group-venue-table"
           >
             <thead>
               <tr>

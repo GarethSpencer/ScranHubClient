@@ -176,6 +176,17 @@
   opacity: 1;
 }
 
+.group-venue-table > thead > tr > th:not(:first-child),
+.group-venue-table > tbody > tr > td:not(:first-child) {
+  width: 1%;
+  white-space: nowrap;
+}
+
+.group-venue-table > thead > tr > th:first-child,
+.group-venue-table > tbody > tr > td:first-child {
+  min-width: 9rem;
+}
+
 .group-venue-row > td {
   cursor: pointer;
   transition: background-color 0.15s ease-in-out;
