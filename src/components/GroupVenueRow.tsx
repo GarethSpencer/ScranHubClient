@@ -1,3 +1,4 @@
+import { FaCheck, FaXmark } from "react-icons/fa6";
 import type GroupVenueResult from "../models/results/GroupVenueResult";
 
 interface Props {
@@ -12,7 +13,23 @@ const GroupVenueRow = ({ venue, onSelect }: Props) => (
     onClick={() => onSelect(venue)}
   >
     <td>{venue.venueName}</td>
-    <td>{venue.visited ? "Yes" : "No"}</td>
+    <td>
+      {venue.visited ? (
+        <FaCheck
+          className="text-success"
+          size={18}
+          aria-label="Visited"
+          role="img"
+        />
+      ) : (
+        <FaXmark
+          className="text-danger"
+          size={18}
+          aria-label="Not visited"
+          role="img"
+        />
+      )}
+    </td>
     <td>{venue.venueType}</td>
     <td>{venue.foodType}</td>
   </tr>
