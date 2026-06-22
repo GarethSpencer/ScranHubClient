@@ -1,15 +1,21 @@
 import { FaCheck, FaXmark } from "react-icons/fa6";
 import type GroupVenueResult from "../models/results/GroupVenueResult";
+import type RatingOptionResult from "../models/results/generic/RatingOptionResult";
+import RatingBar from "./RatingBar";
 
 interface Props {
   venue: GroupVenueResult;
+  qualityOptions: RatingOptionResult[];
+  costOptions: RatingOptionResult[];
   onSelect: (venue: GroupVenueResult) => void;
 }
 
-const formatRating = (rating?: number) =>
-  rating == null ? "—" : rating.toFixed(1);
-
-const GroupVenueRow = ({ venue, onSelect }: Props) => (
+const GroupVenueRow = ({
+  venue,
+  qualityOptions,
+  costOptions,
+  onSelect,
+}: Props) => (
   <tr
     role="button"
     className="user-select-none group-venue-row"
@@ -35,8 +41,15 @@ const GroupVenueRow = ({ venue, onSelect }: Props) => (
     </td>
     <td>{venue.venueType}</td>
     <td>{venue.foodType}</td>
-    <td>{formatRating(venue.averageQualityRating)}</td>
-    <td>{formatRating(venue.averageCostRating)}</td>
+    <td>
+      <RatingBar
+        average={venue.averageQualityRating}
+        options={qualityOptions}
+      />
+    </td>
+    <td>
+      <RatingBar average={venue.averageCostRating} options={costOptions} />
+    </td>
   </tr>
 );
 

@@ -8,6 +8,7 @@ import {
   useGetVenuesForGroup,
   useSearchGroupVenues,
 } from "../../api/controllerHooks/useGroupVenueController";
+import { useGetOptionsForGroup } from "../../api/controllerHooks/useOptionController";
 import TableStatus from "../../components/TableStatus";
 import TablePagination from "../../components/TablePagination";
 import GroupVenueRow from "../../components/GroupVenueRow";
@@ -89,6 +90,14 @@ const GroupVenuesPage = () => {
   });
 
   const isVenuesPending = isVenuesLoading || isVenuesPlaceholder;
+
+  const { data: qualityOptionData } = useGetOptionsForGroup(
+    "QualityOption",
+    id,
+  );
+  const { data: costOptionData } = useGetOptionsForGroup("CostOption", id);
+  const qualityOptions = qualityOptionData?.options ?? [];
+  const costOptions = costOptionData?.options ?? [];
 
   const {
     data: searchData,
@@ -179,6 +188,8 @@ const GroupVenuesPage = () => {
                 <GroupVenueRow
                   key={x.groupVenueId}
                   venue={x}
+                  qualityOptions={qualityOptions}
+                  costOptions={costOptions}
                   onSelect={setSelectedVenue}
                 />
               ))}
@@ -245,6 +256,8 @@ const GroupVenuesPage = () => {
                     <GroupVenueRow
                       key={x.groupVenueId}
                       venue={x}
+                      qualityOptions={qualityOptions}
+                      costOptions={costOptions}
                       onSelect={setSelectedVenue}
                     />
                   ))}

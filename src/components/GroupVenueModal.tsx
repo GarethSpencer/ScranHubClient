@@ -266,6 +266,11 @@ const GroupVenueModal = ({ groupId, venue, onClose }: Props) => {
             }}
           >
             <Form.Group className="mb-3" controlId="updateVenueName">
+              <h6 className="fw-bold mb-1">Venue Details</h6>
+              <p className="text-muted small mb-3">
+                These are generic values and can be amended by anybody in your
+                group.
+              </p>
               <Form.Label>Venue Name</Form.Label>
               <Form.Control
                 type="text"
