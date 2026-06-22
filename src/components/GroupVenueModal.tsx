@@ -45,7 +45,9 @@ const GroupVenueModal = ({ groupId, venue, onClose }: Props) => {
   const { mutate: updateVenue, isPending: isUpdating } =
     useUpdateGroupVenue(groupId);
 
-  const isPending = isDeleting || isUpdating;
+  const [isDeletingVenue, setIsDeletingVenue] = useState(false);
+
+  const isPending = isDeleting || isUpdating || isDeletingVenue;
 
   const initialiseForm = () => {
     setVenueName(venue?.venueName ?? "");
@@ -81,7 +83,11 @@ const GroupVenueModal = ({ groupId, venue, onClose }: Props) => {
   const handleDelete = () => {
     if (!venue) return;
 
-    deleteVenue(venue.groupVenueId, { onSuccess: onClose });
+    setIsDeletingVenue(true);
+    deleteVenue(venue.groupVenueId, {
+      onSuccess: onClose,
+      onSettled: () => setIsDeletingVenue(false),
+    });
   };
 
   return (
@@ -178,7 +184,7 @@ const GroupVenueModal = ({ groupId, venue, onClose }: Props) => {
               onClick={handleDelete}
               disabled={isPending}
             >
-              {isDeleting ? (
+              {isDeletingVenue ? (
                 <>
                   <Spinner
                     as="span"

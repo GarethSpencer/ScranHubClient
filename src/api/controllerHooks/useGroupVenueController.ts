@@ -129,8 +129,8 @@ export const useDeleteGroupVenue = (groupId: string) => {
   return useMutation<CommonResponse, Error, string>({
     mutationFn: (groupVenueId: string) =>
       groupVenueControllerService.delete<CommonResponse>(groupVenueId),
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({
+    onSuccess: async (data) => {
+      await queryClient.invalidateQueries({
         queryKey: ["groups", groupId, "venues"],
       });
       if (data.message) showToast(data.message, "success");
