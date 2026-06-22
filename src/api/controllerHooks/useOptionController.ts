@@ -52,7 +52,10 @@ export const useSetCustomOptions = (
 
   return useMutation<SetOptionsResponse, Error, SetOptionsRequest>({
     mutationFn: (request: SetOptionsRequest) =>
-      service.post<SetOptionsResponse, SetOptionsRequest>(undefined, request),
+      service.post<SetOptionsResponse, SetOptionsRequest>(undefined, {
+        ...request,
+        groupId,
+      }),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: [controller, groupId] });
       if (data.message) showToast(data.message, "success");
@@ -87,7 +90,10 @@ export const useAddCustomOption = (
 
   return useMutation<SetOptionResponse, Error, SetOptionRequest>({
     mutationFn: (request: SetOptionRequest) =>
-      service.post<SetOptionResponse, SetOptionRequest>("custom", request),
+      service.post<SetOptionResponse, SetOptionRequest>("custom", {
+        ...request,
+        groupId,
+      }),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: [controller, groupId] });
       if (data.message) showToast(data.message, "success");
@@ -193,7 +199,10 @@ export const useReorderRatingOptions = (
 
   return useMutation<CommonResponse, Error, OrderOptionsRequest>({
     mutationFn: (request: OrderOptionsRequest) =>
-      service.patch<CommonResponse, OrderOptionsRequest>(undefined, request),
+      service.patch<CommonResponse, OrderOptionsRequest>(undefined, {
+        ...request,
+        groupId,
+      }),
     onSuccess: (data) => {
       queryClient.invalidateQueries({
         queryKey: [controller, groupId],
