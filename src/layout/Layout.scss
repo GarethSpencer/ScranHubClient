@@ -200,6 +200,16 @@
   }
 }
 
+.group-venue-modal-footer {
+  display: grid;
+  grid-template-columns: 1fr;
+}
+
+.group-venue-modal-footer > .btn {
+  width: 100%;
+  margin: 0;
+}
+
 .rating-bar {
   position: relative;
   width: 8rem;

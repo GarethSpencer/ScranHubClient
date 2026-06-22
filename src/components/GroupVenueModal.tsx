@@ -377,16 +377,9 @@ const GroupVenueModal = ({ groupId, venue, onClose }: Props) => {
           </Form>
         )}
       </Modal.Body>
-      <Modal.Footer>
+      <Modal.Footer className="group-venue-modal-footer gap-2">
         {confirmingDelete ? (
           <>
-            <Button
-              variant="outline-secondary"
-              onClick={() => setConfirmingDelete(false)}
-              disabled={isPending}
-            >
-              Cancel
-            </Button>
             <Button
               variant="danger"
               onClick={handleDelete}
@@ -408,17 +401,16 @@ const GroupVenueModal = ({ groupId, venue, onClose }: Props) => {
                 "Delete"
               )}
             </Button>
+            <Button
+              variant="outline-secondary"
+              onClick={() => setConfirmingDelete(false)}
+              disabled={isPending}
+            >
+              Cancel
+            </Button>
           </>
         ) : (
           <>
-            <Button
-              variant="danger"
-              className="me-auto"
-              onClick={() => setConfirmingDelete(true)}
-              disabled={isPending}
-            >
-              Delete Venue
-            </Button>
             <Button
               variant="primary"
               onClick={handleSave}
@@ -439,6 +431,13 @@ const GroupVenueModal = ({ groupId, venue, onClose }: Props) => {
               ) : (
                 "Save Changes"
               )}
+            </Button>
+            <Button
+              variant="outline-danger"
+              onClick={() => setConfirmingDelete(true)}
+              disabled={isPending}
+            >
+              Delete Venue
             </Button>
           </>
         )}
