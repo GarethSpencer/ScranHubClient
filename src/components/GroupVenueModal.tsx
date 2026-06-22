@@ -377,7 +377,7 @@ const GroupVenueModal = ({ groupId, venue, onClose }: Props) => {
           </Form>
         )}
       </Modal.Body>
-      <Modal.Footer className="group-venue-modal-footer gap-2">
+      <Modal.Footer className="modal-footer-stacked gap-2">
         {confirmingDelete ? (
           <>
             <Button

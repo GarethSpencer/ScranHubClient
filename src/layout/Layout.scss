@@ -200,12 +200,12 @@
   }
 }
 
-.group-venue-modal-footer {
+.modal-footer-stacked {
   display: grid;
   grid-template-columns: 1fr;
 }
 
-.group-venue-modal-footer > .btn {
+.modal-footer-stacked > .btn {
   width: 100%;
   margin: 0;
 }

@@ -119,14 +119,7 @@ const CreateGroupVenueModal = ({ show, groupId, onClose }: Props) => {
           </Form.Group>
         </Form>
       </Modal.Body>
-      <Modal.Footer>
-        <Button
-          variant="outline-secondary"
-          onClick={onClose}
-          disabled={isPending}
-        >
-          Cancel
-        </Button>
+      <Modal.Footer className="modal-footer-stacked gap-2">
         <Button
           variant="primary"
           onClick={handleSave}
@@ -147,6 +140,13 @@ const CreateGroupVenueModal = ({ show, groupId, onClose }: Props) => {
           ) : (
             "Add Venue"
           )}
+        </Button>
+        <Button
+          variant="outline-secondary"
+          onClick={onClose}
+          disabled={isPending}
+        >
+          Cancel
         </Button>
       </Modal.Footer>
     </Modal>
