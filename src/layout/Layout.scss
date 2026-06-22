@@ -188,7 +188,13 @@
 }
 
 @include media-breakpoint-down(md) {
-  .group-venue-modal.modal-dialog {
+  .group-venue-modal.modal-dialog-scrollable {
+    height: auto;
+    max-height: 80vh;
+    max-height: 80dvh;
+  }
+
+  .group-venue-modal.modal-dialog-scrollable .modal-content {
     max-height: 80vh;
     max-height: 80dvh;
   }

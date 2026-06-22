@@ -36,8 +36,8 @@ const GroupVenueModal = ({ groupId, venue, onClose }: Props) => {
   const [visited, setVisited] = useState(false);
   const [venueTypeOptionId, setVenueTypeOptionId] = useState("");
   const [foodTypeOptionId, setFoodTypeOptionId] = useState("");
-  const [qualityOptionId, setQualityOptionId] = useState("");
-  const [costOptionId, setCostOptionId] = useState("");
+  const [qualityOptionId, setQualityOptionId] = useState<string | null>(null);
+  const [costOptionId, setCostOptionId] = useState<string | null>(null);
 
   const groupVenueId = venue?.groupVenueId ?? "";
 
@@ -68,17 +68,11 @@ const GroupVenueModal = ({ groupId, venue, onClose }: Props) => {
   const { data: currentUserData } = useGetCurrentUser();
   const currentUserId = currentUserData?.user?.userId;
 
-  const { data: qualityRatingsData } = useGetRatingsForGroupVenue(
-    "QualityRating",
-    groupId,
-    groupVenueId,
-  );
+  const { data: qualityRatingsData, isLoading: isQualityRatingLoading } =
+    useGetRatingsForGroupVenue("QualityRating", groupId, groupVenueId);
 
-  const { data: costRatingsData } = useGetRatingsForGroupVenue(
-    "CostRating",
-    groupId,
-    groupVenueId,
-  );
+  const { data: costRatingsData, isLoading: isCostRatingLoading } =
+    useGetRatingsForGroupVenue("CostRating", groupId, groupVenueId);
 
   const currentQualityRating = qualityRatingsData?.ratings?.find(
     (rating) => rating.userId === currentUserId,
@@ -86,6 +80,8 @@ const GroupVenueModal = ({ groupId, venue, onClose }: Props) => {
   const currentCostRating = costRatingsData?.ratings?.find(
     (rating) => rating.userId === currentUserId,
   );
+
+  const areRatingsLoading = isQualityRatingLoading || isCostRatingLoading;
 
   const { mutate: deleteVenue, isPending: isDeleting } =
     useDeleteGroupVenue(groupId);
@@ -134,9 +130,11 @@ const GroupVenueModal = ({ groupId, venue, onClose }: Props) => {
     setVisited(venue?.visited ?? false);
     setVenueTypeOptionId(optionIdForLabel(venueTypeOptions, venue?.venueType));
     setFoodTypeOptionId(optionIdForLabel(foodTypeOptions, venue?.foodType));
-    setQualityOptionId(currentQualityRating?.optionId ?? "");
-    setCostOptionId(currentCostRating?.optionId ?? "");
   };
+
+  const qualitySelection =
+    qualityOptionId ?? currentQualityRating?.optionId ?? "";
+  const costSelection = costOptionId ?? currentCostRating?.optionId ?? "";
 
   const canSave = venueName.trim().length > 0;
 
@@ -207,14 +205,14 @@ const GroupVenueModal = ({ groupId, venue, onClose }: Props) => {
         }),
         persistRating(
           currentQualityRating,
-          qualityOptionId,
+          qualitySelection,
           createQualityRating,
           updateQualityRating,
           deleteQualityRating,
         ),
         persistRating(
           currentCostRating,
-          costOptionId,
+          costSelection,
           createCostRating,
           updateCostRating,
           deleteCostRating,
@@ -244,7 +242,11 @@ const GroupVenueModal = ({ groupId, venue, onClose }: Props) => {
       show={venue !== null}
       onHide={handleClose}
       onEntered={initialiseForm}
-      onExited={() => setConfirmingDelete(false)}
+      onExited={() => {
+        setConfirmingDelete(false);
+        setQualityOptionId(null);
+        setCostOptionId(null);
+      }}
       backdrop={isPending ? "static" : true}
       keyboard={!isPending}
       scrollable
@@ -333,31 +335,43 @@ const GroupVenueModal = ({ groupId, venue, onClose }: Props) => {
             <Form.Group className="mb-3" controlId="updateQualityRating">
               <Form.Label>Quality Rating</Form.Label>
               <Form.Select
-                value={qualityOptionId}
+                value={areRatingsLoading ? "" : qualitySelection}
                 onChange={(e) => setQualityOptionId(e.target.value)}
-                disabled={isPending || areOptionsLoading}
+                disabled={isPending || areOptionsLoading || areRatingsLoading}
               >
-                <option value="">None</option>
-                {qualityOptions.map((option) => (
-                  <option key={option.optionId} value={option.optionId}>
-                    {option.label}
-                  </option>
-                ))}
+                {areRatingsLoading ? (
+                  <option value="">Loading...</option>
+                ) : (
+                  <>
+                    <option value="">None</option>
+                    {qualityOptions.map((option) => (
+                      <option key={option.optionId} value={option.optionId}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </>
+                )}
               </Form.Select>
             </Form.Group>
             <Form.Group className="mb-3" controlId="updateCostRating">
               <Form.Label>Cost Rating</Form.Label>
               <Form.Select
-                value={costOptionId}
+                value={areRatingsLoading ? "" : costSelection}
                 onChange={(e) => setCostOptionId(e.target.value)}
-                disabled={isPending || areOptionsLoading}
+                disabled={isPending || areOptionsLoading || areRatingsLoading}
               >
-                <option value="">None</option>
-                {costOptions.map((option) => (
-                  <option key={option.optionId} value={option.optionId}>
-                    {option.label}
-                  </option>
-                ))}
+                {areRatingsLoading ? (
+                  <option value="">Loading...</option>
+                ) : (
+                  <>
+                    <option value="">None</option>
+                    {costOptions.map((option) => (
+                      <option key={option.optionId} value={option.optionId}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </>
+                )}
               </Form.Select>
             </Form.Group>
           </Form>
