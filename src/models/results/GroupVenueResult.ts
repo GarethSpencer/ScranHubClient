@@ -5,4 +5,6 @@ export default interface GroupVenueResult {
   venueType?: string;
   foodType?: string;
   visited: boolean;
+  averageCostRating?: number;
+  averageQualityRating?: number;
 }

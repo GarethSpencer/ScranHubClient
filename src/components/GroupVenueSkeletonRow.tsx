@@ -10,6 +10,8 @@ const GroupVenueSkeletonRow = () => (
     <td></td>
     <td></td>
     <td></td>
+    <td></td>
+    <td></td>
   </tr>
 );
 

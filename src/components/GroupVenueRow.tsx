@@ -6,6 +6,9 @@ interface Props {
   onSelect: (venue: GroupVenueResult) => void;
 }
 
+const formatRating = (rating?: number) =>
+  rating == null ? "—" : rating.toFixed(1);
+
 const GroupVenueRow = ({ venue, onSelect }: Props) => (
   <tr
     role="button"
@@ -32,6 +35,8 @@ const GroupVenueRow = ({ venue, onSelect }: Props) => (
     </td>
     <td>{venue.venueType}</td>
     <td>{venue.foodType}</td>
+    <td>{formatRating(venue.averageQualityRating)}</td>
+    <td>{formatRating(venue.averageCostRating)}</td>
   </tr>
 );
 

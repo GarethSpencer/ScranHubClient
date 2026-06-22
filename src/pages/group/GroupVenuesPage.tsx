@@ -30,6 +30,8 @@ const COLUMNS: SortableColumn[] = [
   { label: "Visited", sortBy: GroupVenueSortParameters.Visited },
   { label: "Type", sortBy: GroupVenueSortParameters.VenueType },
   { label: "Cuisine", sortBy: GroupVenueSortParameters.FoodType },
+  { label: "Quality", sortBy: GroupVenueSortParameters.AvgQualityRating },
+  { label: "Cost", sortBy: GroupVenueSortParameters.AvgCostRating },
 ];
 
 const GroupVenuesPage = () => {
@@ -158,6 +160,7 @@ const GroupVenuesPage = () => {
           emptyText="No venues match your search"
         >
           <Table
+            responsive
             striped="columns"
             className="align-middle text-center border-top"
           >
@@ -196,6 +199,7 @@ const GroupVenuesPage = () => {
       ) : (
         <>
           <Table
+            responsive
             striped="columns"
             className="align-middle text-center border-top"
           >
