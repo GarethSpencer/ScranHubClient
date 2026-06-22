@@ -63,7 +63,7 @@ export const useSearchGroupVenues = (
     queryKey: ["groups", groupId, "venues", "search", request],
     queryFn: () =>
       groupVenueControllerService.get<GetGroupVenuesResponse>(
-        `group/${groupId}?SearchText=${encodeURIComponent(request.searchText)}&PageNumber=${request.pageNumber}&PageSize=${request.pageSize}`,
+        `search/${groupId}?SearchText=${encodeURIComponent(request.searchText)}&PageNumber=${request.pageNumber}&PageSize=${request.pageSize}`,
       ),
     staleTime: 10 * 1000,
     enabled: request.searchText.length >= 3,
