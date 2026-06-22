@@ -4,24 +4,12 @@ const GroupVenueSkeletonRow = () => (
   <tr aria-hidden="true">
     <td>
       <Placeholder animation="glow">
-        <Placeholder xs={6} />
+        <Placeholder xs={10} />
       </Placeholder>
     </td>
-    <td>
-      <Placeholder animation="glow">
-        <Placeholder xs={1} />
-      </Placeholder>
-    </td>
-    <td>
-      <Placeholder animation="glow">
-        <Placeholder xs={3} />
-      </Placeholder>
-    </td>
-    <td>
-      <Placeholder animation="glow">
-        <Placeholder xs={3} />
-      </Placeholder>
-    </td>
+    <td></td>
+    <td></td>
+    <td></td>
   </tr>
 );
 
