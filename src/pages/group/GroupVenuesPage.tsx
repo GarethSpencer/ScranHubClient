@@ -96,6 +96,8 @@ const GroupVenuesPage = () => {
   const searchResults = searchData?.groupVenues ?? [];
   const searchTotalCount = searchData?.totalCount ?? 0;
 
+  const showSearch = totalCount > 0 || isSearching;
+
   return (
     <>
       <h2 className="mb-1 fw-bold lead">Venues</h2>
@@ -113,16 +115,18 @@ const GroupVenuesPage = () => {
         onClose={() => setShowCreateModal(false)}
       />
 
-      <Form onSubmit={(e) => e.preventDefault()}>
-        <Form.Group className="mb-3" controlId="venuesSearch">
-          <Form.Control
-            type="text"
-            placeholder="Search venues by name or type"
-            value={searchText}
-            onChange={(e) => onSearchTextChange(e.target.value)}
-          />
-        </Form.Group>
-      </Form>
+      {showSearch && (
+        <Form onSubmit={(e) => e.preventDefault()}>
+          <Form.Group className="mb-3" controlId="venuesSearch">
+            <Form.Control
+              type="text"
+              placeholder="Search venues by name or type"
+              value={searchText}
+              onChange={(e) => onSearchTextChange(e.target.value)}
+            />
+          </Form.Group>
+        </Form>
+      )}
 
       {isSearching ? (
         <TableStatus
