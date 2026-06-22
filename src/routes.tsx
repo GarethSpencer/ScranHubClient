@@ -13,7 +13,7 @@ import ManageRequestsPage from "./pages/friends/ManageRequestsPage";
 import FindGroupsPage from "./pages/groups/FindGroupsPage";
 import JoinedGroupsPage from "./pages/groups/JoinedGroupsPage";
 import ManageCreatedGroupsPage from "./pages/groups/ManageCreatedGroupsPage";
-import GroupDetailsPage from "./pages/group/GroupDetailsPage";
+import GroupVenuesPage from "./pages/group/GroupVenuesPage";
 import GroupSectionLayout from "./layout/GroupSectionLayout";
 import FoodTypeOptionsPage from "./pages/group/FoodTypeOptionsPage";
 import VenueTypeOptionsPage from "./pages/group/VenueTypeOptionsPage";
@@ -39,7 +39,7 @@ const router = createBrowserRouter([
             children: [
               {
                 index: true,
-                element: <GroupDetailsPage />,
+                element: <GroupVenuesPage />,
               },
               {
                 path: "foodtypes",

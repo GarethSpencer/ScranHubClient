@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import groupVenueControllerService from "../controllerServices/groupVenueControllerService";
 import type GetGroupVenueResponse from "../../models/responses/groupVenues/GetGroupVenueResponse";
 import type GetGroupVenuesResponse from "../../models/responses/groupVenues/GetGroupVenuesResponse";
-import type PaginationBaseRequest from "../../models/requests/generic/PaginationBaseRequest";
+import type SortablePaginationRequest from "../../models/requests/generic/SortablePaginationRequest";
 import type SearchGroupVenueRequest from "../../models/requests/groupVenues/SearchGroupVenueRequest";
 import type CreateGroupVenueRequest from "../../models/requests/groupVenues/CreateGroupVenueRequest";
 import type AddGroupVenueResponse from "../../models/responses/groupVenues/AddGroupVenueResponse";
@@ -20,8 +20,11 @@ export const useGetGroupVenue = (groupId: string, groupVenueId: string) => {
     staleTime: 10 * 1000,
     placeholderData: () => {
       const cachedVenue = queryClient
-        .getQueryData<GetGroupVenuesResponse>(["groups", groupId, "venues"])
-        ?.groupVenues?.find((g) => g.groupVenueId === groupVenueId);
+        .getQueriesData<GetGroupVenuesResponse>({
+          queryKey: ["groups", groupId, "venues"],
+        })
+        .flatMap(([, response]) => response?.groupVenues ?? [])
+        .find((g) => g.groupVenueId === groupVenueId);
 
       return cachedVenue
         ? { statusCode: 200, groupVenue: cachedVenue }
@@ -32,13 +35,21 @@ export const useGetGroupVenue = (groupId: string, groupVenueId: string) => {
 
 export const useGetVenuesForGroup = (
   groupId: string,
-  request: PaginationBaseRequest,
+  request: SortablePaginationRequest,
 ) => {
   return useQuery<GetGroupVenuesResponse, Error>({
-    queryKey: ["groups", groupId, "venues"],
+    queryKey: [
+      "groups",
+      groupId,
+      "venues",
+      request.pageNumber,
+      request.pageSize,
+      request.sortBy,
+      request.sortDescending,
+    ],
     queryFn: () =>
       groupVenueControllerService.get<GetGroupVenuesResponse>(
-        `group/${groupId}?PageNumber=${request.pageNumber}&PageSize=${request.pageSize}`,
+        `group/${groupId}?PageNumber=${request.pageNumber}&PageSize=${request.pageSize}&SortBy=${request.sortBy}&SortDescending=${request.sortDescending}`,
       ),
     staleTime: 10 * 1000,
   });
