@@ -11,7 +11,9 @@ import {
 import TableStatus from "../../components/TableStatus";
 import TablePagination from "../../components/TablePagination";
 import GroupVenueRow from "../../components/GroupVenueRow";
+import GroupVenueSkeletonRow from "../../components/GroupVenueSkeletonRow";
 import CreateGroupVenueModal from "../../components/CreateGroupVenueModal";
+import GroupVenueModal from "../../components/GroupVenueModal";
 import type GroupVenueResult from "../../models/results/GroupVenueResult";
 import { GroupVenueSortParameters } from "../../enums/GroupVenueSortParameters";
 
@@ -24,10 +26,10 @@ type SortableColumn = {
 };
 
 const COLUMNS: SortableColumn[] = [
-  { label: "Venue Name", sortBy: GroupVenueSortParameters.VenueName },
+  { label: "Name", sortBy: GroupVenueSortParameters.VenueName },
   { label: "Visited", sortBy: GroupVenueSortParameters.Visited },
-  { label: "Venue Type", sortBy: GroupVenueSortParameters.VenueType },
-  { label: "Food Type", sortBy: GroupVenueSortParameters.FoodType },
+  { label: "Type", sortBy: GroupVenueSortParameters.VenueType },
+  { label: "Cuisine", sortBy: GroupVenueSortParameters.FoodType },
 ];
 
 const GroupVenuesPage = () => {
@@ -35,6 +37,9 @@ const GroupVenuesPage = () => {
 
   const [searchText, setSearchText] = useState("");
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [selectedVenue, setSelectedVenue] = useState<GroupVenueResult | null>(
+    null,
+  );
 
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -72,6 +77,7 @@ const GroupVenuesPage = () => {
   const {
     data: venuesData,
     isLoading: isVenuesLoading,
+    isPlaceholderData: isVenuesPlaceholder,
     isError: isVenuesError,
   } = useGetVenuesForGroup(id, {
     pageNumber: page,
@@ -79,6 +85,8 @@ const GroupVenuesPage = () => {
     sortBy: sortBy,
     sortDescending: sortDescending,
   });
+
+  const isVenuesPending = isVenuesLoading || isVenuesPlaceholder;
 
   const {
     data: searchData,
@@ -96,7 +104,12 @@ const GroupVenuesPage = () => {
   const searchResults = searchData?.groupVenues ?? [];
   const searchTotalCount = searchData?.totalCount ?? 0;
 
-  const showSearch = totalCount > 0 || isSearching;
+  const showSearch = totalCount > 0 || isVenuesPending || isSearching;
+
+  const skeletonRowCount =
+    totalCount > 0
+      ? Math.min(pageSize, Math.max(1, totalCount - (page - 1) * pageSize))
+      : pageSize;
 
   return (
     <>
@@ -115,6 +128,12 @@ const GroupVenuesPage = () => {
         onClose={() => setShowCreateModal(false)}
       />
 
+      <GroupVenueModal
+        groupId={id}
+        venue={selectedVenue}
+        onClose={() => setSelectedVenue(null)}
+      />
+
       {showSearch && (
         <Form onSubmit={(e) => e.preventDefault()}>
           <Form.Group className="mb-3" controlId="venuesSearch">
@@ -123,6 +142,7 @@ const GroupVenuesPage = () => {
               placeholder="Search venues by name or type"
               value={searchText}
               onChange={(e) => onSearchTextChange(e.target.value)}
+              disabled={isVenuesLoading}
             />
           </Form.Group>
         </Form>
@@ -150,7 +170,11 @@ const GroupVenuesPage = () => {
             </thead>
             <tbody>
               {searchResults.map((x: GroupVenueResult) => (
-                <GroupVenueRow key={x.groupVenueId} venue={x} />
+                <GroupVenueRow
+                  key={x.groupVenueId}
+                  venue={x}
+                  onSelect={setSelectedVenue}
+                />
               ))}
             </tbody>
           </Table>
@@ -163,88 +187,90 @@ const GroupVenuesPage = () => {
             />
           </div>
         </TableStatus>
+      ) : isVenuesError ? (
+        <p className="text-muted text-center mb-0">
+          Couldn't load venues. Please try again.
+        </p>
+      ) : !isVenuesPending && venues.length === 0 ? (
+        <p className="text-center mb-0">No venues yet</p>
       ) : (
         <>
-          <TableStatus
-            isLoading={isVenuesLoading}
-            isError={isVenuesError}
-            isEmpty={venues.length === 0}
-            loadingText="Loading venues..."
-            errorText="Couldn't load venues. Please try again."
-            emptyText="No venues yet"
+          <Table
+            striped="columns"
+            className="align-middle text-center border-top"
           >
-            <Table
-              striped="columns"
-              className="align-middle text-center border-top"
-            >
-              <thead>
-                <tr>
-                  {COLUMNS.map((column) => (
-                    <th
-                      key={column.sortBy}
-                      role="button"
-                      aria-sort={
-                        sortBy === column.sortBy
-                          ? sortDescending
-                            ? "descending"
-                            : "ascending"
-                          : "none"
-                      }
-                      onClick={() => onSort(column.sortBy)}
-                      className="user-select-none"
-                    >
-                      {column.label}{" "}
-                      {sortBy === column.sortBy ? (
-                        sortDescending ? (
-                          <FaSortDown />
-                        ) : (
-                          <FaSortUp />
-                        )
+            <thead>
+              <tr>
+                {COLUMNS.map((column) => (
+                  <th
+                    key={column.sortBy}
+                    role="button"
+                    aria-sort={
+                      sortBy === column.sortBy
+                        ? sortDescending
+                          ? "descending"
+                          : "ascending"
+                        : "none"
+                    }
+                    onClick={() => onSort(column.sortBy)}
+                    className="user-select-none"
+                  >
+                    {column.label}{" "}
+                    {sortBy === column.sortBy ? (
+                      sortDescending ? (
+                        <FaSortDown />
                       ) : (
-                        <FaSort className="text-muted" />
-                      )}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {venues.map((x: GroupVenueResult) => (
-                  <GroupVenueRow key={x.groupVenueId} venue={x} />
+                        <FaSortUp />
+                      )
+                    ) : (
+                      <FaSort className="text-muted" />
+                    )}
+                  </th>
                 ))}
-              </tbody>
-            </Table>
-            <div
-              className="position-relative d-flex justify-content-center align-items-center"
-              style={{ minHeight: "38px" }}
-            >
-              <TablePagination
-                page={page}
-                totalCount={totalCount}
-                pageSize={pageSize}
-                onPageChange={setPage}
-              />
-              <div className="position-absolute end-0 d-flex align-items-center gap-2">
-                <Form.Label
-                  htmlFor="venuesPageSize"
-                  className="mb-0 text-nowrap"
-                >
-                  Show
-                </Form.Label>
-                <Form.Select
-                  id="venuesPageSize"
-                  value={pageSize}
-                  onChange={(e) => onPageSizeChange(Number(e.target.value))}
-                  style={{ width: "auto" }}
-                >
-                  {PAGE_SIZE_OPTIONS.map((size) => (
-                    <option key={size} value={size}>
-                      {size}
-                    </option>
+              </tr>
+            </thead>
+            <tbody>
+              {isVenuesPending
+                ? Array.from({ length: skeletonRowCount }, (_, index) => (
+                    <GroupVenueSkeletonRow key={index} />
+                  ))
+                : venues.map((x: GroupVenueResult) => (
+                    <GroupVenueRow
+                      key={x.groupVenueId}
+                      venue={x}
+                      onSelect={setSelectedVenue}
+                    />
                   ))}
-                </Form.Select>
-              </div>
+            </tbody>
+          </Table>
+          <div
+            className="position-relative d-flex justify-content-center align-items-center"
+            style={{ minHeight: "38px" }}
+          >
+            <TablePagination
+              page={page}
+              totalCount={totalCount}
+              pageSize={pageSize}
+              onPageChange={setPage}
+            />
+            <div className="position-absolute end-0 d-flex align-items-center gap-2">
+              <Form.Label htmlFor="venuesPageSize" className="mb-0 text-nowrap">
+                Show
+              </Form.Label>
+              <Form.Select
+                id="venuesPageSize"
+                value={pageSize}
+                onChange={(e) => onPageSizeChange(Number(e.target.value))}
+                style={{ width: "auto" }}
+              >
+                {PAGE_SIZE_OPTIONS.map((size) => (
+                  <option key={size} value={size}>
+                    {size}
+                  </option>
+                ))}
+              </Form.Select>
             </div>
-          </TableStatus>
+          </div>
         </>
       )}
     </>

@@ -1,4 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import groupVenueControllerService from "../controllerServices/groupVenueControllerService";
 import type GetGroupVenueResponse from "../../models/responses/groupVenues/GetGroupVenueResponse";
 import type GetGroupVenuesResponse from "../../models/responses/groupVenues/GetGroupVenuesResponse";
@@ -52,6 +57,7 @@ export const useGetVenuesForGroup = (
         `group/${groupId}?PageNumber=${request.pageNumber}&PageSize=${request.pageSize}&SortBy=${request.sortBy}&SortDescending=${request.sortDescending}`,
       ),
     staleTime: 10 * 1000,
+    placeholderData: keepPreviousData,
   });
 };
 

@@ -176,6 +176,37 @@
   opacity: 1;
 }
 
+.group-venue-row > td {
+  cursor: pointer;
+  transition: background-color 0.15s ease-in-out;
+}
+
+@media (hover: hover) {
+  .group-venue-row:hover > td {
+    --bs-table-bg-type: transparent;
+    box-shadow: none;
+    background-color: rgba(var(--bs-primary-rgb), 0.18);
+  }
+}
+
+.group-venue-row:active > td {
+  --bs-table-bg-type: transparent;
+  box-shadow: none;
+  background-color: rgba(var(--bs-primary-rgb), 0.28);
+}
+
+[data-bs-theme="dark"] {
+  @media (hover: hover) {
+    .group-venue-row:hover > td {
+      background-color: rgba(var(--bs-primary-rgb), 0.3);
+    }
+  }
+
+  .group-venue-row:active > td {
+    background-color: rgba(var(--bs-primary-rgb), 0.42);
+  }
+}
+
 .btn:disabled,
 .btn.disabled {
   opacity: 0.4;
@@ -365,10 +396,7 @@ a.section-title {
 }
 
 .option-editor-panel {
-  background-image: linear-gradient(
-    rgba(0, 0, 0, 0.05),
-    rgba(0, 0, 0, 0.05)
-  );
+  background-image: linear-gradient(rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.05));
   border-color: rgba(0, 0, 0, 0.15);
 }
 
@@ -382,10 +410,7 @@ a.section-title {
 
 .option-table > thead > tr > th {
   --bs-table-bg-type: transparent;
-  background-image: linear-gradient(
-    rgba(0, 0, 0, 0.05),
-    rgba(0, 0, 0, 0.05)
-  );
+  background-image: linear-gradient(rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.05));
   box-shadow: none;
   vertical-align: middle;
 }
