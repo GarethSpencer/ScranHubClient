@@ -2,6 +2,7 @@ import { useParams } from "react-router-dom";
 import { useState } from "react";
 import Table from "react-bootstrap/Table";
 import Form from "react-bootstrap/Form";
+import Button from "react-bootstrap/Button";
 import { FaSortUp, FaSortDown, FaSort } from "react-icons/fa";
 import {
   useGetVenuesForGroup,
@@ -10,6 +11,7 @@ import {
 import TableStatus from "../../components/TableStatus";
 import TablePagination from "../../components/TablePagination";
 import GroupVenueRow from "../../components/GroupVenueRow";
+import CreateGroupVenueModal from "../../components/CreateGroupVenueModal";
 import type GroupVenueResult from "../../models/results/GroupVenueResult";
 import { GroupVenueSortParameters } from "../../enums/GroupVenueSortParameters";
 
@@ -32,6 +34,7 @@ const GroupVenuesPage = () => {
   const { id = "" } = useParams();
 
   const [searchText, setSearchText] = useState("");
+  const [showCreateModal, setShowCreateModal] = useState(false);
 
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -98,6 +101,18 @@ const GroupVenuesPage = () => {
       <h2 className="mb-1 fw-bold lead">Venues</h2>
       <p className="text-muted small mb-3">The venues added to this group.</p>
 
+      <div className="d-grid mx-auto mb-3">
+        <Button variant="primary" onClick={() => setShowCreateModal(true)}>
+          Add Venue
+        </Button>
+      </div>
+
+      <CreateGroupVenueModal
+        show={showCreateModal}
+        groupId={id}
+        onClose={() => setShowCreateModal(false)}
+      />
+
       <Form onSubmit={(e) => e.preventDefault()}>
         <Form.Group className="mb-3" controlId="venuesSearch">
           <Form.Control
@@ -118,12 +133,6 @@ const GroupVenuesPage = () => {
           errorText="Couldn't search venues. Please try again."
           emptyText="No venues match your search"
         >
-          <TablePagination
-            page={searchPage}
-            totalCount={searchTotalCount}
-            pageSize={searchPageSize}
-            onPageChange={setSearchPage}
-          />
           <Table
             striped="columns"
             className="align-middle text-center border-top"
@@ -141,26 +150,17 @@ const GroupVenuesPage = () => {
               ))}
             </tbody>
           </Table>
+          <div className="d-flex justify-content-center">
+            <TablePagination
+              page={searchPage}
+              totalCount={searchTotalCount}
+              pageSize={searchPageSize}
+              onPageChange={setSearchPage}
+            />
+          </div>
         </TableStatus>
       ) : (
         <>
-          <div className="d-flex align-items-center gap-2 mb-3">
-            <Form.Label htmlFor="venuesPageSize" className="mb-0 text-nowrap">
-              Show
-            </Form.Label>
-            <Form.Select
-              id="venuesPageSize"
-              value={pageSize}
-              onChange={(e) => onPageSizeChange(Number(e.target.value))}
-              style={{ width: "auto" }}
-            >
-              {PAGE_SIZE_OPTIONS.map((size) => (
-                <option key={size} value={size}>
-                  {size}
-                </option>
-              ))}
-            </Form.Select>
-          </div>
           <TableStatus
             isLoading={isVenuesLoading}
             isError={isVenuesError}
@@ -169,12 +169,6 @@ const GroupVenuesPage = () => {
             errorText="Couldn't load venues. Please try again."
             emptyText="No venues yet"
           >
-            <TablePagination
-              page={page}
-              totalCount={totalCount}
-              pageSize={pageSize}
-              onPageChange={setPage}
-            />
             <Table
               striped="columns"
               className="align-middle text-center border-top"
@@ -215,6 +209,37 @@ const GroupVenuesPage = () => {
                 ))}
               </tbody>
             </Table>
+            <div
+              className="position-relative d-flex justify-content-center align-items-center"
+              style={{ minHeight: "38px" }}
+            >
+              <TablePagination
+                page={page}
+                totalCount={totalCount}
+                pageSize={pageSize}
+                onPageChange={setPage}
+              />
+              <div className="position-absolute end-0 d-flex align-items-center gap-2">
+                <Form.Label
+                  htmlFor="venuesPageSize"
+                  className="mb-0 text-nowrap"
+                >
+                  Show
+                </Form.Label>
+                <Form.Select
+                  id="venuesPageSize"
+                  value={pageSize}
+                  onChange={(e) => onPageSizeChange(Number(e.target.value))}
+                  style={{ width: "auto" }}
+                >
+                  {PAGE_SIZE_OPTIONS.map((size) => (
+                    <option key={size} value={size}>
+                      {size}
+                    </option>
+                  ))}
+                </Form.Select>
+              </div>
+            </div>
           </TableStatus>
         </>
       )}

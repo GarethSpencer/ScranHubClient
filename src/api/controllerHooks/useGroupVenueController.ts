@@ -74,8 +74,12 @@ export const useCreateGroupVenue = (groupId: string) => {
   const queryClient = useQueryClient();
   const { showToast } = useToast();
 
-  return useMutation<AddGroupVenueResponse, Error, CreateGroupVenueRequest>({
-    mutationFn: (request: CreateGroupVenueRequest) =>
+  return useMutation<
+    AddGroupVenueResponse,
+    Error,
+    Omit<CreateGroupVenueRequest, "groupId">
+  >({
+    mutationFn: (request: Omit<CreateGroupVenueRequest, "groupId">) =>
       groupVenueControllerService.post<
         AddGroupVenueResponse,
         CreateGroupVenueRequest
