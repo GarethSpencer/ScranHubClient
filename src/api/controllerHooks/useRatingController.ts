@@ -21,6 +21,7 @@ const ratingServices: Record<RatingController, ApiClient> = {
 export const useCreateRating = (
   controller: RatingController,
   groupId: string,
+  options?: { silent?: boolean },
 ) => {
   const service = ratingServices[controller];
   const queryClient = useQueryClient();
@@ -39,7 +40,7 @@ export const useCreateRating = (
       queryClient.invalidateQueries({
         queryKey: [controller, groupId, "group"],
       });
-      if (data.message) showToast(data.message, "success");
+      if (!options?.silent && data.message) showToast(data.message, "success");
     },
   });
 };
@@ -47,6 +48,7 @@ export const useCreateRating = (
 export const useUpdateRating = (
   controller: RatingController,
   groupId: string,
+  options?: { silent?: boolean },
 ) => {
   const service = ratingServices[controller];
   const queryClient = useQueryClient();
@@ -59,16 +61,9 @@ export const useUpdateRating = (
   >({
     mutationFn: ({ ratingId, request }) =>
       service.patch<CommonResponse, UpdateRatingRequest>(ratingId, request),
-    onSuccess: (data, { groupVenueId, ratingId }) => {
+    onSuccess: (data, { groupVenueId }) => {
       queryClient.invalidateQueries({
-        queryKey: [
-          controller,
-          groupId,
-          "venues",
-          groupVenueId,
-          "rating",
-          ratingId,
-        ],
+        queryKey: [controller, groupId, "venues", groupVenueId],
       });
       queryClient.invalidateQueries({
         queryKey: [controller, groupId, "me"],
@@ -76,7 +71,7 @@ export const useUpdateRating = (
       queryClient.invalidateQueries({
         queryKey: [controller, groupId, "group"],
       });
-      if (data.message) showToast(data.message, "success");
+      if (!options?.silent && data.message) showToast(data.message, "success");
     },
   });
 };
@@ -84,6 +79,7 @@ export const useUpdateRating = (
 export const useDeleteRating = (
   controller: RatingController,
   groupId: string,
+  options?: { silent?: boolean },
 ) => {
   const service = ratingServices[controller];
   const queryClient = useQueryClient();
@@ -105,7 +101,7 @@ export const useDeleteRating = (
       queryClient.invalidateQueries({
         queryKey: [controller, groupId, "group"],
       });
-      if (data.message) showToast(data.message, "success");
+      if (!options?.silent && data.message) showToast(data.message, "success");
     },
   });
 };
@@ -136,6 +132,7 @@ export const useGetRatingsForGroupVenue = (
     queryFn: () =>
       service.get<GetRatingsResponse>(`groupvenue/${groupVenueId}`),
     staleTime: 10 * 1000,
+    enabled: groupVenueId.length > 0,
   });
 };
 

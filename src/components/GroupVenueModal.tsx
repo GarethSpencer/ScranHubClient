@@ -8,6 +8,13 @@ import {
   useUpdateGroupVenue,
 } from "../api/controllerHooks/useGroupVenueController";
 import { useGetOptionsForGroup } from "../api/controllerHooks/useOptionController";
+import {
+  useCreateRating,
+  useUpdateRating,
+  useDeleteRating,
+  useGetRatingsForGroupVenue,
+} from "../api/controllerHooks/useRatingController";
+import { useGetCurrentUser } from "../api/controllerHooks/useUserController";
 import type GroupVenueResult from "../models/results/GroupVenueResult";
 import type RatingOptionResult from "../models/results/generic/RatingOptionResult";
 
@@ -29,31 +36,106 @@ const GroupVenueModal = ({ groupId, venue, onClose }: Props) => {
   const [visited, setVisited] = useState(false);
   const [venueTypeOptionId, setVenueTypeOptionId] = useState("");
   const [foodTypeOptionId, setFoodTypeOptionId] = useState("");
+  const [qualityOptionId, setQualityOptionId] = useState("");
+  const [costOptionId, setCostOptionId] = useState("");
+
+  const groupVenueId = venue?.groupVenueId ?? "";
 
   const { data: venueTypeData, isLoading: isVenueTypesLoading } =
     useGetOptionsForGroup("VenueTypeOption", groupId);
   const { data: foodTypeData, isLoading: isFoodTypesLoading } =
     useGetOptionsForGroup("FoodTypeOption", groupId);
+  const { data: qualityOptionData, isLoading: isQualityOptionsLoading } =
+    useGetOptionsForGroup("QualityOption", groupId);
+  const { data: costOptionData, isLoading: isCostOptionsLoading } =
+    useGetOptionsForGroup("CostOption", groupId);
 
   const venueTypeOptions = venueTypeData?.options ?? [];
   const foodTypeOptions = foodTypeData?.options ?? [];
+  const qualityOptions = [...(qualityOptionData?.options ?? [])].sort(
+    (a, b) => a.displayOrder - b.displayOrder,
+  );
+  const costOptions = [...(costOptionData?.options ?? [])].sort(
+    (a, b) => a.displayOrder - b.displayOrder,
+  );
 
-  const areOptionsLoading = isVenueTypesLoading || isFoodTypesLoading;
+  const areOptionsLoading =
+    isVenueTypesLoading ||
+    isFoodTypesLoading ||
+    isQualityOptionsLoading ||
+    isCostOptionsLoading;
+
+  const { data: currentUserData } = useGetCurrentUser();
+  const currentUserId = currentUserData?.user?.userId;
+
+  const { data: qualityRatingsData } = useGetRatingsForGroupVenue(
+    "QualityRating",
+    groupId,
+    groupVenueId,
+  );
+
+  const { data: costRatingsData } = useGetRatingsForGroupVenue(
+    "CostRating",
+    groupId,
+    groupVenueId,
+  );
+
+  const currentQualityRating = qualityRatingsData?.ratings?.find(
+    (rating) => rating.userId === currentUserId,
+  );
+  const currentCostRating = costRatingsData?.ratings?.find(
+    (rating) => rating.userId === currentUserId,
+  );
 
   const { mutate: deleteVenue, isPending: isDeleting } =
     useDeleteGroupVenue(groupId);
   const { mutate: updateVenue, isPending: isUpdating } =
     useUpdateGroupVenue(groupId);
 
-  const [isDeletingVenue, setIsDeletingVenue] = useState(false);
+  const { mutateAsync: createQualityRating } = useCreateRating(
+    "QualityRating",
+    groupId,
+    { silent: true },
+  );
+  const { mutateAsync: updateQualityRating } = useUpdateRating(
+    "QualityRating",
+    groupId,
+    { silent: true },
+  );
+  const { mutateAsync: deleteQualityRating } = useDeleteRating(
+    "QualityRating",
+    groupId,
+    { silent: true },
+  );
 
-  const isPending = isDeleting || isUpdating || isDeletingVenue;
+  const { mutateAsync: createCostRating } = useCreateRating(
+    "CostRating",
+    groupId,
+    { silent: true },
+  );
+  const { mutateAsync: updateCostRating } = useUpdateRating(
+    "CostRating",
+    groupId,
+    { silent: true },
+  );
+  const { mutateAsync: deleteCostRating } = useDeleteRating(
+    "CostRating",
+    groupId,
+    { silent: true },
+  );
+
+  const [isDeletingVenue, setIsDeletingVenue] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+
+  const isPending = isDeleting || isUpdating || isDeletingVenue || isSaving;
 
   const initialiseForm = () => {
     setVenueName(venue?.venueName ?? "");
     setVisited(venue?.visited ?? false);
     setVenueTypeOptionId(optionIdForLabel(venueTypeOptions, venue?.venueType));
     setFoodTypeOptionId(optionIdForLabel(foodTypeOptions, venue?.foodType));
+    setQualityOptionId(currentQualityRating?.optionId ?? "");
+    setCostOptionId(currentCostRating?.optionId ?? "");
   };
 
   const canSave = venueName.trim().length > 0;
@@ -63,21 +145,88 @@ const GroupVenueModal = ({ groupId, venue, onClose }: Props) => {
     onClose();
   };
 
-  const handleUpdate = () => {
-    if (!venue || !canSave) return;
+  const persistRating = (
+    previous: { ratingId: string; optionId: string } | undefined,
+    selectedOptionId: string,
+    create: (request: {
+      groupVenueId: string;
+      optionId: string;
+    }) => Promise<unknown>,
+    update: (request: {
+      groupVenueId: string;
+      ratingId: string;
+      request: { optionId: string };
+    }) => Promise<unknown>,
+    remove: (request: {
+      ratingId: string;
+      groupVenueId: string;
+    }) => Promise<unknown>,
+  ) => {
+    if (!venue) return Promise.resolve();
 
-    updateVenue(
-      {
+    if (!previous && selectedOptionId) {
+      return create({
         groupVenueId: venue.groupVenueId,
-        request: {
-          venueName: venueName.trim(),
-          visited,
-          venueTypeOptionId: venueTypeOptionId || undefined,
-          foodTypeOptionId: foodTypeOptionId || undefined,
-        },
-      },
-      { onSuccess: onClose },
-    );
+        optionId: selectedOptionId,
+      });
+    }
+    if (previous && !selectedOptionId) {
+      return remove({
+        ratingId: previous.ratingId,
+        groupVenueId: venue.groupVenueId,
+      });
+    }
+    if (
+      previous &&
+      selectedOptionId &&
+      previous.optionId !== selectedOptionId
+    ) {
+      return update({
+        groupVenueId: venue.groupVenueId,
+        ratingId: previous.ratingId,
+        request: { optionId: selectedOptionId },
+      });
+    }
+    return Promise.resolve();
+  };
+
+  const handleSave = async () => {
+    if (!venue || !canSave || isPending) return;
+
+    setIsSaving(true);
+    try {
+      await Promise.all([
+        updateVenue({
+          groupVenueId: venue.groupVenueId,
+          request: {
+            venueName: venueName.trim(),
+            visited,
+            venueTypeOptionId: venueTypeOptionId || undefined,
+            foodTypeOptionId: foodTypeOptionId || undefined,
+          },
+        }),
+        persistRating(
+          currentQualityRating,
+          qualityOptionId,
+          createQualityRating,
+          updateQualityRating,
+          deleteQualityRating,
+        ),
+        persistRating(
+          currentCostRating,
+          costOptionId,
+          createCostRating,
+          updateCostRating,
+          deleteCostRating,
+        ),
+      ]);
+      onClose();
+    } catch {
+      // A failed mutation already surfaces its own error toast; keep the modal
+      // open so the user can see what failed and retry.
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleDelete = () => {
@@ -113,7 +262,7 @@ const GroupVenueModal = ({ groupId, venue, onClose }: Props) => {
           <Form
             onSubmit={(e) => {
               e.preventDefault();
-              handleUpdate();
+              handleSave();
             }}
           >
             <Form.Group className="mb-3" controlId="updateVenueName">
@@ -163,8 +312,46 @@ const GroupVenueModal = ({ groupId, venue, onClose }: Props) => {
                 checked={visited}
                 onChange={(e) => setVisited(e.target.checked)}
                 disabled={isPending}
-                style={{ marginLeft: "0.75rem" }}
+                style={{ marginLeft: "0.25rem", fontSize: "1.5rem" }}
               />
+            </Form.Group>
+
+            <hr className="section-rule mt-4 mb-4" />
+            <h6 className="fw-bold mb-1">Your Ratings</h6>
+            <p className="text-muted small mb-3">
+              These are specific to you and cannot be amended by anybody else in
+              your group.
+            </p>
+
+            <Form.Group className="mb-3" controlId="updateQualityRating">
+              <Form.Label>Quality Rating</Form.Label>
+              <Form.Select
+                value={qualityOptionId}
+                onChange={(e) => setQualityOptionId(e.target.value)}
+                disabled={isPending || areOptionsLoading}
+              >
+                <option value="">None</option>
+                {qualityOptions.map((option) => (
+                  <option key={option.optionId} value={option.optionId}>
+                    {option.label}
+                  </option>
+                ))}
+              </Form.Select>
+            </Form.Group>
+            <Form.Group className="mb-3" controlId="updateCostRating">
+              <Form.Label>Cost Rating</Form.Label>
+              <Form.Select
+                value={costOptionId}
+                onChange={(e) => setCostOptionId(e.target.value)}
+                disabled={isPending || areOptionsLoading}
+              >
+                <option value="">None</option>
+                {costOptions.map((option) => (
+                  <option key={option.optionId} value={option.optionId}>
+                    {option.label}
+                  </option>
+                ))}
+              </Form.Select>
             </Form.Group>
           </Form>
         )}
@@ -213,10 +400,10 @@ const GroupVenueModal = ({ groupId, venue, onClose }: Props) => {
             </Button>
             <Button
               variant="primary"
-              onClick={handleUpdate}
+              onClick={handleSave}
               disabled={isPending || !canSave || areOptionsLoading}
             >
-              {isUpdating ? (
+              {isSaving ? (
                 <>
                   <Spinner
                     as="span"
