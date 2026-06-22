@@ -7,8 +7,8 @@ interface Props {
 }
 
 const variantForGoodness = (goodness: number) => {
-  if (goodness >= 2 / 3) return "success";
-  if (goodness >= 1 / 3) return "warning";
+  if (goodness > 2 / 3) return "success";
+  if (goodness > 1 / 3) return "warning";
   return "danger";
 };
 

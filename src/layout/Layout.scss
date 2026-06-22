@@ -187,6 +187,13 @@
   min-width: 9rem;
 }
 
+@include media-breakpoint-down(md) {
+  .group-venue-modal.modal-dialog {
+    max-height: 80vh;
+    max-height: 80dvh;
+  }
+}
+
 .rating-bar {
   position: relative;
   width: 8rem;

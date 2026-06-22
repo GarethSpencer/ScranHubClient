@@ -247,7 +247,9 @@ const GroupVenueModal = ({ groupId, venue, onClose }: Props) => {
       onExited={() => setConfirmingDelete(false)}
       backdrop={isPending ? "static" : true}
       keyboard={!isPending}
+      scrollable
       centered
+      dialogClassName="group-venue-modal"
     >
       <Modal.Header closeButton={!isPending}>
         <Modal.Title>{venue?.venueName}</Modal.Title>
