@@ -35,7 +35,7 @@ export const useSearchAllUsers = (request: SearchUserRequest) => {
     queryKey: ["admin", "users", "search", request],
     queryFn: ({ signal }) =>
       adminControllerService.get<GetUsersDetailedResponse>(
-        `users?SearchText=${encodeURIComponent(request.searchText)}&PageNumber=${request.pageNumber}&PageSize=${request.pageSize}`,
+        `users/search?SearchText=${encodeURIComponent(request.searchText)}&PageNumber=${request.pageNumber}&PageSize=${request.pageSize}`,
         signal,
       ),
     staleTime: 10 * 1000,
@@ -48,7 +48,7 @@ export const useSearchAllGroups = (request: SearchGroupRequest) => {
     queryKey: ["admin", "groups", "search", request],
     queryFn: ({ signal }) =>
       adminControllerService.get<GetGroupsDetailedResponse>(
-        `groups?SearchText=${encodeURIComponent(request.searchText)}&PageNumber=${request.pageNumber}&PageSize=${request.pageSize}`,
+        `groups/search?SearchText=${encodeURIComponent(request.searchText)}&PageNumber=${request.pageNumber}&PageSize=${request.pageSize}`,
         signal,
       ),
     staleTime: 10 * 1000,

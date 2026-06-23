@@ -1,14 +1,20 @@
 import { useState } from "react";
 import Table from "react-bootstrap/Table";
 import Form from "react-bootstrap/Form";
-import { useGetAllUsers } from "../../api/controllerHooks/useAdminController";
+import {
+  useGetAllUsers,
+  useSearchAllUsers,
+} from "../../api/controllerHooks/useAdminController";
 import { useGetCurrentUser } from "../../api/controllerHooks/useUserController";
+import TableStatus from "../../components/TableStatus";
 import TablePagination from "../../components/TablePagination";
 import AdminUserRow from "../../components/AdminUserRow";
 import AdminUserSkeletonRow from "../../components/AdminUserSkeletonRow";
 import type UserAdminResult from "../../models/results/UserAdminResult";
 
 const PAGE_SIZE_OPTIONS = [10, 20, 50, 100];
+const SEARCH_PAGE_SIZE = 10;
+const SEARCH_MIN_LENGTH = 3;
 
 const COLUMNS = [
   "Display Name",
@@ -20,9 +26,62 @@ const COLUMNS = [
   "Actions",
 ];
 
+interface UsersTableProps {
+  users: UserAdminResult[];
+  currentUserId?: string;
+  isPending: boolean;
+  skeletonRowCount: number;
+}
+
+const UsersTable = ({
+  users,
+  currentUserId,
+  isPending,
+  skeletonRowCount,
+}: UsersTableProps) => (
+  <Table
+    responsive
+    striped="columns"
+    className="align-middle text-center border-top"
+  >
+    <thead>
+      <tr>
+        {COLUMNS.map((column) => (
+          <th key={column} className="text-nowrap">
+            {column}
+          </th>
+        ))}
+      </tr>
+    </thead>
+    <tbody>
+      {isPending
+        ? Array.from({ length: skeletonRowCount }, (_, index) => (
+            <AdminUserSkeletonRow key={index} />
+          ))
+        : users.map((x) => (
+            <AdminUserRow
+              key={x.userId}
+              user={x}
+              isCurrentUser={x.userId === currentUserId}
+            />
+          ))}
+    </tbody>
+  </Table>
+);
+
 const AdminUsersPage = () => {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+
+  const [searchText, setSearchText] = useState("");
+  const [searchPage, setSearchPage] = useState(1);
+
+  const isSearching = searchText.length >= SEARCH_MIN_LENGTH;
+
+  const onSearchTextChange = (newSearchText: string) => {
+    setSearchText(newSearchText);
+    setSearchPage(1);
+  };
 
   const onPageSizeChange = (newPageSize: number) => {
     setPageSize(newPageSize);
@@ -38,11 +97,24 @@ const AdminUsersPage = () => {
 
   const isUsersPending = isUsersLoading || isUsersPlaceholder;
 
+  const {
+    data: searchData,
+    isLoading: isSearchLoading,
+    isError: isSearchError,
+  } = useSearchAllUsers({
+    searchText,
+    pageNumber: searchPage,
+    pageSize: SEARCH_PAGE_SIZE,
+  });
+
   const { data: currentUserData } = useGetCurrentUser();
   const currentUserId = currentUserData?.user?.userId;
 
   const users = usersData?.users ?? [];
   const totalCount = usersData?.totalCount ?? 0;
+
+  const searchResults = searchData?.users ?? [];
+  const searchTotalCount = searchData?.totalCount ?? 0;
 
   const skeletonRowCount =
     totalCount > 0
@@ -56,7 +128,42 @@ const AdminUsersPage = () => {
         All users registered on ScranHub, ordered by display name.
       </p>
 
-      {isUsersError ? (
+      <Form onSubmit={(e) => e.preventDefault()}>
+        <Form.Group className="mb-3" controlId="usersSearch">
+          <Form.Control
+            type="text"
+            placeholder="Search users by display name"
+            value={searchText}
+            onChange={(e) => onSearchTextChange(e.target.value)}
+          />
+        </Form.Group>
+      </Form>
+
+      {isSearching ? (
+        <TableStatus
+          isLoading={isSearchLoading}
+          isError={isSearchError}
+          isEmpty={searchResults.length === 0}
+          loadingText="Searching users..."
+          errorText="Couldn't search users. Please try again."
+          emptyText="No users match your search"
+        >
+          <UsersTable
+            users={searchResults}
+            currentUserId={currentUserId}
+            isPending={false}
+            skeletonRowCount={0}
+          />
+          <div className="d-flex justify-content-center">
+            <TablePagination
+              page={searchPage}
+              totalCount={searchTotalCount}
+              pageSize={SEARCH_PAGE_SIZE}
+              onPageChange={setSearchPage}
+            />
+          </div>
+        </TableStatus>
+      ) : isUsersError ? (
         <p className="text-muted text-center mb-0">
           Couldn't load users. Please try again.
         </p>
@@ -64,32 +171,12 @@ const AdminUsersPage = () => {
         <p className="text-center mb-0">No users yet</p>
       ) : (
         <>
-          <Table
-            responsive
-            striped="columns"
-            className="align-middle text-center border-top"
-          >
-            <thead>
-              <tr>
-                {COLUMNS.map((column) => (
-                  <th key={column}>{column}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {isUsersPending
-                ? Array.from({ length: skeletonRowCount }, (_, index) => (
-                    <AdminUserSkeletonRow key={index} />
-                  ))
-                : users.map((x: UserAdminResult) => (
-                    <AdminUserRow
-                      key={x.userId}
-                      user={x}
-                      isCurrentUser={x.userId === currentUserId}
-                    />
-                  ))}
-            </tbody>
-          </Table>
+          <UsersTable
+            users={users}
+            currentUserId={currentUserId}
+            isPending={isUsersPending}
+            skeletonRowCount={skeletonRowCount}
+          />
           <div
             className="position-relative d-flex justify-content-center align-items-center"
             style={{ minHeight: "38px" }}
