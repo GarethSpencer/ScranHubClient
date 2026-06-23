@@ -42,11 +42,11 @@ const router = createBrowserRouter([
             children: [
               {
                 index: true,
-                element: <GroupVenuesPage />,
+                element: <RatingDetailsPage />,
               },
               {
-                path: "details",
-                element: <RatingDetailsPage />,
+                path: "manage",
+                element: <GroupVenuesPage />,
               },
               {
                 path: "users",

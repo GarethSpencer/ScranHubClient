@@ -17,8 +17,8 @@ const GroupSectionLayout = () => {
         </Link>
       }
       tabs={[
-        { label: "Management", to: `/group/${id}`, end: true },
-        { label: "Summary", to: `/group/${id}/details`, end: true },
+        { label: "Management", to: `/group/${id}/manage`, end: true },
+        { label: "Summary", to: `/group/${id}`, end: true },
         { label: "Users", to: `/group/${id}/users`, end: true },
         { label: "Food Types", to: `/group/${id}/foodtypes` },
         { label: "Venue Types", to: `/group/${id}/venuetypes` },
