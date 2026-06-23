@@ -17,13 +17,13 @@ const GroupSectionLayout = () => {
         </Link>
       }
       tabs={[
-        { label: "Management", to: `/group/${id}/manage`, end: true },
         { label: "Summary", to: `/group/${id}`, end: true },
+        { label: "Management", to: `/group/${id}/manage`, end: true },
         { label: "Users", to: `/group/${id}/users`, end: true },
         { label: "Food Types", to: `/group/${id}/foodtypes` },
         { label: "Venue Types", to: `/group/${id}/venuetypes` },
-        { label: "Quality Ranks", to: `/group/${id}/qualityratings` },
-        { label: "Cost Ranks", to: `/group/${id}/costratings` },
+        { label: "Quality Ratings", to: `/group/${id}/qualityratings` },
+        { label: "Cost Ratings", to: `/group/${id}/costratings` },
       ]}
     />
   );

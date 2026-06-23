@@ -9,7 +9,7 @@ const CostRatingOptionConfiguration = ({ groupId }: Props) => {
     <OptionConfiguration
       controller="CostOption"
       groupId={groupId}
-      heading="Cost Ranks"
+      heading="Cost Ratings"
       helperText="The cost rating options which can be applied to rank each of the venues in this group. The options should be ordered from 'best' to 'worst'."
     />
   );
