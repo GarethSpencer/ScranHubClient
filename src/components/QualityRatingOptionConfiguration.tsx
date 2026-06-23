@@ -10,7 +10,7 @@ const QualityRatingOptionConfiguration = ({ groupId }: Props) => {
       controller="QualityOption"
       groupId={groupId}
       heading="Quality Ratings"
-      helperText="The quality rating options which can be applied to each of the venues in this group. The options should be ordered from 'best' to 'worst'."
+      helperText="The quality rating options which can be applied to rank each of the venues in this group. The options should be ordered from 'best' to 'worst'."
     />
   );
 };

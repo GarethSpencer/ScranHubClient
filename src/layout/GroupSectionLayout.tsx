@@ -10,6 +10,7 @@ const GroupSectionLayout = () => {
 
   return (
     <SectionLayout
+      tabsClassName="section-tabs-grid"
       title={
         <Link to={`/group/${id}`} className="section-title h1">
           {groupName}
@@ -17,10 +18,11 @@ const GroupSectionLayout = () => {
       }
       tabs={[
         { label: "Venues", to: `/group/${id}`, end: true },
+        { label: "Rating Details", to: `/group/${id}/details`, end: true },
         { label: "Food Types", to: `/group/${id}/foodtypes` },
         { label: "Venue Types", to: `/group/${id}/venuetypes` },
-        { label: "Quality Ratings", to: `/group/${id}/qualityratings` },
-        { label: "Cost Ratings", to: `/group/${id}/costratings` },
+        { label: "Quality Rank", to: `/group/${id}/qualityratings` },
+        { label: "Cost Rank", to: `/group/${id}/costratings` },
       ]}
     />
   );

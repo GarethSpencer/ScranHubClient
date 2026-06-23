@@ -438,6 +438,30 @@ a.section-title {
   .section-tabs .nav-link {
     text-align: center;
   }
+
+  .section-tabs-grid .nav-item:nth-child(-n + 2) {
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+
+  .section-tabs-grid .nav-item:nth-child(n + 3) {
+    flex: 1 1 25%;
+    max-width: 25%;
+    min-width: 0;
+  }
+
+  .section-tabs-grid .nav-link {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    white-space: nowrap;
+  }
+
+  .section-tabs-grid .nav-item:nth-child(n + 3) .nav-link {
+    padding-left: 0;
+    padding-right: 0;
+    text-align: center;
+    white-space: normal;
+  }
 }
 
 .section-tabs .nav-link {
@@ -453,6 +477,19 @@ a.section-title {
   text-shadow: none;
   background-color: var(--bs-nav-tabs-link-active-bg);
   margin-bottom: -1px;
+}
+
+.section-tabs-grid .nav-item:nth-child(-n + 2) .nav-link:not(.active) {
+  background-color: rgba(var(--bs-primary-rgb), 0.35);
+}
+
+.section-tabs-grid .nav-item:nth-child(-n + 2) .nav-link:not(.active):hover {
+  background-color: rgba(var(--bs-primary-rgb), 0.5);
+}
+
+.section-tabs-grid .nav-item:nth-child(-n + 2) .nav-link.active {
+  background-color: var(--bs-primary);
+  color: #fff;
 }
 
 .section-panel {

@@ -20,6 +20,7 @@ import CostRatingOptionsPage from "./pages/group/CostRatingOptionsPage";
 import QualityRatingOptionsPage from "./pages/group/QualityRatingOptionsPage";
 import AdminUsersPage from "./pages/admin/AdminUsersPage";
 import AdminGroupsPage from "./pages/admin/AdminGroupsPage";
+import RatingDetailsPage from "./pages/group/RatingDetailsPage";
 
 const router = createBrowserRouter([
   {
@@ -41,6 +42,10 @@ const router = createBrowserRouter([
               {
                 index: true,
                 element: <GroupVenuesPage />,
+              },
+              {
+                path: "details",
+                element: <RatingDetailsPage />,
               },
               {
                 path: "foodtypes",
