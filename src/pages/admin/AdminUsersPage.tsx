@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Table from "react-bootstrap/Table";
 import Form from "react-bootstrap/Form";
+import Button from "react-bootstrap/Button";
 import {
   useGetAllUsers,
   useSearchAllUsers,
@@ -10,6 +11,7 @@ import TableStatus from "../../components/TableStatus";
 import TablePagination from "../../components/TablePagination";
 import AdminUserRow from "../../components/AdminUserRow";
 import AdminUserSkeletonRow from "../../components/AdminUserSkeletonRow";
+import CreateUserModal from "../../components/CreateUserModal";
 import type UserAdminResult from "../../models/results/UserAdminResult";
 
 const PAGE_SIZE_OPTIONS = [10, 20, 50, 100];
@@ -76,6 +78,8 @@ const AdminUsersPage = () => {
   const [searchText, setSearchText] = useState("");
   const [searchPage, setSearchPage] = useState(1);
 
+  const [showCreateModal, setShowCreateModal] = useState(false);
+
   const isSearching = searchText.length >= SEARCH_MIN_LENGTH;
 
   const onSearchTextChange = (newSearchText: string) => {
@@ -127,6 +131,17 @@ const AdminUsersPage = () => {
       <p className="text-muted small mb-3">
         All users registered on ScranHub, ordered by display name.
       </p>
+
+      <div className="d-grid mx-auto mb-3">
+        <Button variant="primary" onClick={() => setShowCreateModal(true)}>
+          Create User
+        </Button>
+      </div>
+
+      <CreateUserModal
+        show={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+      />
 
       <Form onSubmit={(e) => e.preventDefault()}>
         <Form.Group className="mb-3" controlId="usersSearch">
