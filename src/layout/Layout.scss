@@ -457,14 +457,17 @@ a.section-title {
   }
 
   .section-tabs-grid .nav-item:nth-child(n + 3) .nav-link {
-    padding-left: 0;
-    padding-right: 0;
     text-align: center;
     white-space: normal;
+    line-height: 1.2;
+    min-height: 3.5rem;
   }
 }
 
 .section-tabs .nav-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
   background-color: rgba(0, 0, 0, 0.45);
 }
@@ -490,6 +493,8 @@ a.section-title {
 .section-tabs-grid .nav-item:nth-child(-n + 2) .nav-link.active {
   background-color: var(--bs-primary);
   color: #fff;
+  margin-bottom: 0;
+  border-bottom-color: var(--bs-primary);
 }
 
 .section-panel {
