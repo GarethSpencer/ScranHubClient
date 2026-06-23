@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 import Layout from "./layout/Layout";
 import SectionLayout from "./layout/SectionLayout";
 import HomePage from "./pages/HomePage";
@@ -6,7 +6,6 @@ import PrivateRoutes from "./layout/PrivateRoutes";
 import AdminRoutes from "./layout/AdminRoutes";
 import ErrorPage from "./pages/ErrorPage";
 import LoginLayout from "./layout/LoginLayout";
-import Todo from "./components/Todo";
 import MyFriendsPage from "./pages/friends/MyFriendsPage";
 import FindFriendsPage from "./pages/friends/FindFriendsPage";
 import ManageRequestsPage from "./pages/friends/ManageRequestsPage";
@@ -19,6 +18,8 @@ import FoodTypeOptionsPage from "./pages/group/FoodTypeOptionsPage";
 import VenueTypeOptionsPage from "./pages/group/VenueTypeOptionsPage";
 import CostRatingOptionsPage from "./pages/group/CostRatingOptionsPage";
 import QualityRatingOptionsPage from "./pages/group/QualityRatingOptionsPage";
+import AdminUsersPage from "./pages/admin/AdminUsersPage";
+import AdminGroupsPage from "./pages/admin/AdminGroupsPage";
 
 const router = createBrowserRouter([
   {
@@ -116,11 +117,26 @@ const router = createBrowserRouter([
             children: [
               {
                 path: "admin",
-                element: <SectionLayout />,
+                element: (
+                  <SectionLayout
+                    tabs={[
+                      { label: "Users", to: "/admin/users" },
+                      { label: "Groups", to: "/admin/groups" },
+                    ]}
+                  />
+                ),
                 children: [
                   {
                     index: true,
-                    element: <Todo />,
+                    element: <Navigate to="/admin/users" replace />,
+                  },
+                  {
+                    path: "users",
+                    element: <AdminUsersPage />,
+                  },
+                  {
+                    path: "groups",
+                    element: <AdminGroupsPage />,
                   },
                 ],
               },
