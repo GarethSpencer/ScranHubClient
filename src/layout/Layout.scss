@@ -44,7 +44,12 @@
 .main-layout-container::before {
   content: "";
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  width: 100lvw;
+  height: 100vh;
+  height: 100lvh;
   z-index: -1;
   background-image:
     linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
@@ -165,7 +170,7 @@
 
 .main-layout-container {
   min-height: 100vh;
-  min-height: 100dvh;
+  min-height: 100lvh;
 }
 
 .navbar-divider {
