@@ -1,4 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import useToast from "../../contexts/toast/useToast";
 import groupControllerService from "../controllerServices/groupControllerService";
 import type GetGroupResponse from "../../models/responses/groups/GetGroupResponse";
@@ -9,6 +14,8 @@ import type CreateGroupRequest from "../../models/requests/groups/CreateGroupReq
 import type UpdateGroupRequest from "../../models/requests/groups/UpdateGroupRequest";
 import type CommonResponse from "../../models/responses/generic/CommonResponse";
 import type UserGroupsResponse from "../../models/responses/groups/UserGroupsResponse";
+import type GetUsersResponse from "../../models/responses/users/GetUsersResponse";
+import type PaginationBaseRequest from "../../models/requests/generic/PaginationBaseRequest";
 
 export const useGetGroup = (groupId: string) => {
   const queryClient = useQueryClient();
@@ -26,6 +33,27 @@ export const useGetGroup = (groupId: string) => {
         ? { statusCode: 200, group: cachedGroup }
         : undefined;
     },
+  });
+};
+
+export const useGetGroupMembers = (
+  groupId: string,
+  request: PaginationBaseRequest,
+) => {
+  return useQuery<GetUsersResponse, Error>({
+    queryKey: [
+      "groups",
+      groupId,
+      "members",
+      request.pageNumber,
+      request.pageSize,
+    ],
+    queryFn: () =>
+      groupControllerService.get<GetUsersResponse>(
+        `${groupId}/members?PageNumber=${request.pageNumber}&PageSize=${request.pageSize}`,
+      ),
+    staleTime: 10 * 1000,
+    placeholderData: keepPreviousData,
   });
 };
 
