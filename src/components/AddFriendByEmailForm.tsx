@@ -25,7 +25,7 @@ function AddFriendByEmailForm() {
 
   return (
     <>
-      <h2 className="mb-1 fw-bold lead">By Email</h2>
+      <h2 className="mb-1 lead">By Email</h2>
       <p className="text-muted small mb-3">
         Enter the full email address of another ScranHub user to send them a
         friend request.

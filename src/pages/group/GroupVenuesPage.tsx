@@ -126,7 +126,7 @@ const GroupVenuesPage = () => {
 
   return (
     <>
-      <h2 className="mb-1 fw-bold lead">Venues</h2>
+      <h2 className="mb-1 lead">Venues</h2>
       <p className="text-muted small mb-3">
         The venues added to this group. Press a row to check the venue details
         and enter your ratings.

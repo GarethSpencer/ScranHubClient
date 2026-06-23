@@ -57,7 +57,7 @@ const OptionEditorPanel = ({
     <Collapse in={show}>
       <div>
         <div className="section-panel option-editor-panel mb-3">
-          <h3 className="fw-bold lead mb-1">Custom {heading}</h3>
+          <h3 className="lead mb-1">Custom {heading}</h3>
           <p className="text-muted small mb-3">
             Add the labels you want this group to use. These will replace the
             default options and unset all venues in the group.

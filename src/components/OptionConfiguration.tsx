@@ -142,7 +142,7 @@ const OptionConfiguration = ({
 
   return (
     <>
-      <h2 className="fw-bold lead mb-1">{heading}</h2>
+      <h2 className="lead mb-1">{heading}</h2>
       <p className="text-muted small mb-3">{helperText}</p>
 
       <div className="mb-3 d-flex flex-wrap gap-2">

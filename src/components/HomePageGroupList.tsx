@@ -33,7 +33,7 @@ const HomePageGroupList = () => {
 
   return (
     <div className="mt-4">
-      <h2 className="home-group-heading lead fw-bold mb-3">My Groups</h2>
+      <h2 className="home-group-heading lead mb-3">My Groups</h2>
       <TableStatus
         isLoading={isLoading}
         isError={isError}

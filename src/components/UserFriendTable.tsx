@@ -42,7 +42,7 @@ const UserFriendTable = () => {
 
   return (
     <>
-      <h2 className="mb-1 fw-bold lead">My Friends</h2>
+      <h2 className="mb-1 lead">My Friends</h2>
       <p className="text-muted small mb-3">
         Everyone you're currently friends with. Delete a friend to remove them
         from your list.

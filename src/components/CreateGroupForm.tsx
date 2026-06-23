@@ -21,7 +21,7 @@ const CreateGroupForm = () => {
 
   return (
     <>
-      <h2 className="mb-1 fw-bold lead">Create a Group</h2>
+      <h2 className="mb-1 lead">Create a Group</h2>
       <p className="text-muted small mb-3">
         Enter a name for your new group, then create it to allow your friends to
         join.

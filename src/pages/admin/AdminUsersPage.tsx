@@ -130,7 +130,7 @@ const AdminUsersPage = () => {
 
   return (
     <>
-      <h2 className="mb-1 fw-bold lead">Users</h2>
+      <h2 className="mb-1 lead">Users</h2>
       <p className="text-muted small mb-3">
         All users registered on ScranHub, ordered by display name.
       </p>

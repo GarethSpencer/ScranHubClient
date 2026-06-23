@@ -34,7 +34,7 @@ const GroupTable = ({
 }: Props) => {
   return (
     <>
-      <h2 className={`mb-1 fw-bold lead ${headingClassName}`}>{heading}</h2>
+      <h2 className={`mb-1 lead ${headingClassName}`}>{heading}</h2>
       {helperText && <p className="text-muted small mb-3">{helperText}</p>}
       <TableStatus
         isLoading={isLoading}

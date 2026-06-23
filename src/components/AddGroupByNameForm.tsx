@@ -38,7 +38,7 @@ function AddGroupByNameForm() {
 
   return (
     <>
-      <h2 className="mb-1 fw-bold lead">By Group Name</h2>
+      <h2 className="mb-1 lead">By Group Name</h2>
       <p className="text-muted small mb-3">
         Start typing the name of a group to find groups created by your friends,
         then join them.

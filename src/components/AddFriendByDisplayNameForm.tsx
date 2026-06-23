@@ -38,7 +38,7 @@ function AddFriendByDisplayNameForm() {
 
   return (
     <>
-      <h2 className="mb-1 mt-3 fw-bold lead">By Display Name</h2>
+      <h2 className="mb-1 mt-3 lead">By Display Name</h2>
       <p className="text-muted small mb-3">
         Start typing the display name of another ScranHub user to show a list of
         matching users, then send them a friend request.

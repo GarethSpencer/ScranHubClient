@@ -116,7 +116,7 @@ const AdminGroupsPage = () => {
 
   return (
     <>
-      <h2 className="mb-1 fw-bold lead">Groups</h2>
+      <h2 className="mb-1 lead">Groups</h2>
       <p className="text-muted small mb-3">
         All groups created on ScranHub, ordered by group name.
       </p>

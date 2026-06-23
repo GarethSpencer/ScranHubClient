@@ -66,7 +66,7 @@ const DeclinedFriendRequests = () => {
 
   return (
     <>
-      <h2 className="mb-1 fw-bold lead">Declined Requests</h2>
+      <h2 className="mb-1 lead">Declined Requests</h2>
       <p className="text-muted small mb-3">
         Requests you've previously declined. You can approve them here, or
         delete the request (this will allow them to send another).
