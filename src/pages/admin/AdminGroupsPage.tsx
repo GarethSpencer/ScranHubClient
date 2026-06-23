@@ -9,11 +9,13 @@ import TableStatus from "../../components/TableStatus";
 import TablePagination from "../../components/TablePagination";
 import AdminGroupRow from "../../components/AdminGroupRow";
 import AdminGroupSkeletonRow from "../../components/AdminGroupSkeletonRow";
+import TablePageSizeSelect from "../../components/admin/TablePageSizeSelect";
+import {
+  SEARCH_PAGE_SIZE,
+  SEARCH_MIN_LENGTH,
+} from "../../components/admin/adminTableConstants";
+import useDebounce from "../../hooks/useDebounce";
 import type GroupDetailedResult from "../../models/results/GroupDetailedResult";
-
-const PAGE_SIZE_OPTIONS = [10, 20, 50, 100];
-const SEARCH_PAGE_SIZE = 10;
-const SEARCH_MIN_LENGTH = 3;
 
 const COLUMNS = [
   "Group Name",
@@ -68,7 +70,8 @@ const AdminGroupsPage = () => {
   const [searchText, setSearchText] = useState("");
   const [searchPage, setSearchPage] = useState(1);
 
-  const isSearching = searchText.length >= SEARCH_MIN_LENGTH;
+  const debouncedSearchText = useDebounce(searchText);
+  const isSearching = debouncedSearchText.length >= SEARCH_MIN_LENGTH;
 
   const onSearchTextChange = (newSearchText: string) => {
     setSearchText(newSearchText);
@@ -95,7 +98,7 @@ const AdminGroupsPage = () => {
     isLoading: isSearchLoading,
     isError: isSearchError,
   } = useSearchAllGroups({
-    searchText,
+    searchText: debouncedSearchText,
     pageNumber: searchPage,
     pageSize: SEARCH_PAGE_SIZE,
   });
@@ -176,23 +179,11 @@ const AdminGroupsPage = () => {
               pageSize={pageSize}
               onPageChange={setPage}
             />
-            <div className="position-absolute end-0 d-flex align-items-center gap-2">
-              <Form.Label htmlFor="groupsPageSize" className="mb-0 text-nowrap">
-                Show
-              </Form.Label>
-              <Form.Select
-                id="groupsPageSize"
-                value={pageSize}
-                onChange={(e) => onPageSizeChange(Number(e.target.value))}
-                style={{ width: "auto" }}
-              >
-                {PAGE_SIZE_OPTIONS.map((size) => (
-                  <option key={size} value={size}>
-                    {size}
-                  </option>
-                ))}
-              </Form.Select>
-            </div>
+            <TablePageSizeSelect
+              id="groupsPageSize"
+              pageSize={pageSize}
+              onPageSizeChange={onPageSizeChange}
+            />
           </div>
         </>
       )}

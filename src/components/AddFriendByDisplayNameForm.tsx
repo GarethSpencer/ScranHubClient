@@ -10,14 +10,16 @@ import Button from "react-bootstrap/Button";
 import Spinner from "react-bootstrap/Spinner";
 import Pagination from "react-bootstrap/Pagination";
 import useActingState from "../hooks/useActingState";
+import useDebounce from "../hooks/useDebounce";
 import type UserResult from "../models/results/UserResult";
 
 function AddFriendByDisplayNameForm() {
   const [searchText, setSearchText] = useState("");
   const [page, setPage] = useState(1);
   const pageSize = 10;
+  const debouncedSearchText = useDebounce(searchText);
   const { data, isError } = useSearchUsers({
-    searchText,
+    searchText: debouncedSearchText,
     pageNumber: page,
     pageSize,
   });

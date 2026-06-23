@@ -15,10 +15,11 @@ import GroupVenueRow from "../../components/GroupVenueRow";
 import GroupVenueSkeletonRow from "../../components/GroupVenueSkeletonRow";
 import CreateGroupVenueModal from "../../components/CreateGroupVenueModal";
 import GroupVenueModal from "../../components/GroupVenueModal";
+import TablePageSizeSelect from "../../components/admin/TablePageSizeSelect";
+import useDebounce from "../../hooks/useDebounce";
 import type GroupVenueResult from "../../models/results/GroupVenueResult";
 import { GroupVenueSortParameters } from "../../enums/GroupVenueSortParameters";
 
-const PAGE_SIZE_OPTIONS = [10, 20, 50, 100];
 const SEARCH_MIN_LENGTH = 3;
 
 type SortableColumn = {
@@ -54,7 +55,8 @@ const GroupVenuesPage = () => {
   const [searchPage, setSearchPage] = useState(1);
   const searchPageSize = 10;
 
-  const isSearching = searchText.length >= SEARCH_MIN_LENGTH;
+  const debouncedSearchText = useDebounce(searchText);
+  const isSearching = debouncedSearchText.length >= SEARCH_MIN_LENGTH;
 
   const onSearchTextChange = (newSearchText: string) => {
     setSearchText(newSearchText);
@@ -104,7 +106,7 @@ const GroupVenuesPage = () => {
     isLoading: isSearchLoading,
     isError: isSearchError,
   } = useSearchGroupVenues(id, {
-    searchText,
+    searchText: debouncedSearchText,
     pageNumber: searchPage,
     pageSize: searchPageSize,
   });
@@ -274,23 +276,11 @@ const GroupVenuesPage = () => {
               pageSize={pageSize}
               onPageChange={setPage}
             />
-            <div className="position-absolute end-0 d-flex align-items-center gap-2">
-              <Form.Label htmlFor="venuesPageSize" className="mb-0 text-nowrap">
-                Show
-              </Form.Label>
-              <Form.Select
-                id="venuesPageSize"
-                value={pageSize}
-                onChange={(e) => onPageSizeChange(Number(e.target.value))}
-                style={{ width: "auto" }}
-              >
-                {PAGE_SIZE_OPTIONS.map((size) => (
-                  <option key={size} value={size}>
-                    {size}
-                  </option>
-                ))}
-              </Form.Select>
-            </div>
+            <TablePageSizeSelect
+              id="venuesPageSize"
+              pageSize={pageSize}
+              onPageSizeChange={onPageSizeChange}
+            />
           </div>
         </>
       )}

@@ -12,11 +12,13 @@ import TablePagination from "../../components/TablePagination";
 import AdminUserRow from "../../components/AdminUserRow";
 import AdminUserSkeletonRow from "../../components/AdminUserSkeletonRow";
 import CreateUserModal from "../../components/CreateUserModal";
+import TablePageSizeSelect from "../../components/admin/TablePageSizeSelect";
+import {
+  SEARCH_PAGE_SIZE,
+  SEARCH_MIN_LENGTH,
+} from "../../components/admin/adminTableConstants";
+import useDebounce from "../../hooks/useDebounce";
 import type UserAdminResult from "../../models/results/UserAdminResult";
-
-const PAGE_SIZE_OPTIONS = [10, 20, 50, 100];
-const SEARCH_PAGE_SIZE = 10;
-const SEARCH_MIN_LENGTH = 3;
 
 const COLUMNS = [
   "Display Name",
@@ -80,7 +82,8 @@ const AdminUsersPage = () => {
 
   const [showCreateModal, setShowCreateModal] = useState(false);
 
-  const isSearching = searchText.length >= SEARCH_MIN_LENGTH;
+  const debouncedSearchText = useDebounce(searchText);
+  const isSearching = debouncedSearchText.length >= SEARCH_MIN_LENGTH;
 
   const onSearchTextChange = (newSearchText: string) => {
     setSearchText(newSearchText);
@@ -106,7 +109,7 @@ const AdminUsersPage = () => {
     isLoading: isSearchLoading,
     isError: isSearchError,
   } = useSearchAllUsers({
-    searchText,
+    searchText: debouncedSearchText,
     pageNumber: searchPage,
     pageSize: SEARCH_PAGE_SIZE,
   });
@@ -203,23 +206,11 @@ const AdminUsersPage = () => {
               pageSize={pageSize}
               onPageChange={setPage}
             />
-            <div className="position-absolute end-0 d-flex align-items-center gap-2">
-              <Form.Label htmlFor="usersPageSize" className="mb-0 text-nowrap">
-                Show
-              </Form.Label>
-              <Form.Select
-                id="usersPageSize"
-                value={pageSize}
-                onChange={(e) => onPageSizeChange(Number(e.target.value))}
-                style={{ width: "auto" }}
-              >
-                {PAGE_SIZE_OPTIONS.map((size) => (
-                  <option key={size} value={size}>
-                    {size}
-                  </option>
-                ))}
-              </Form.Select>
-            </div>
+            <TablePageSizeSelect
+              id="usersPageSize"
+              pageSize={pageSize}
+              onPageSizeChange={onPageSizeChange}
+            />
           </div>
         </>
       )}

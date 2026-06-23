@@ -10,14 +10,16 @@ import {
   useSearchGroups,
 } from "../api/controllerHooks/useGroupController";
 import useActingState from "../hooks/useActingState";
+import useDebounce from "../hooks/useDebounce";
 import type GroupResult from "../models/results/GroupResult";
 
 function AddGroupByNameForm() {
   const [searchText, setSearchText] = useState("");
   const [page, setPage] = useState(1);
   const pageSize = 10;
+  const debouncedSearchText = useDebounce(searchText);
   const { data, isError } = useSearchGroups({
-    searchText,
+    searchText: debouncedSearchText,
     pageNumber: page,
     pageSize,
   });
