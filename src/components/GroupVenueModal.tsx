@@ -3,6 +3,8 @@ import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import Spinner from "react-bootstrap/Spinner";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
 import {
   useDeleteGroupVenue,
   useUpdateGroupVenue,
@@ -269,112 +271,131 @@ const GroupVenueModal = ({ groupId, venue, onClose }: Props) => {
               handleSave();
             }}
           >
-            <Form.Group className="mb-3" controlId="updateVenueName">
-              <h6 className="fw-bold mb-1">Venue Details</h6>
-              <p className="text-muted small mb-3">
-                These are generic values and can be amended by anybody in your
-                group.
-              </p>
-              <Form.Label>Venue Name</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Enter venue name"
-                value={venueName}
-                onChange={(e) => setVenueName(e.target.value)}
-                disabled={isPending}
-                maxLength={50}
-              />
-            </Form.Group>
-            <Form.Group className="mb-3" controlId="updateVenueType">
-              <Form.Label>Venue Type</Form.Label>
-              <Form.Select
-                value={venueTypeOptionId}
-                onChange={(e) => setVenueTypeOptionId(e.target.value)}
-                disabled={isPending || areOptionsLoading}
-              >
-                <option value="">None</option>
-                {venueTypeOptions.map((option) => (
-                  <option key={option.optionId} value={option.optionId}>
-                    {option.label}
-                  </option>
-                ))}
-              </Form.Select>
-            </Form.Group>
-            <Form.Group className="mb-3" controlId="updateFoodType">
-              <Form.Label>Food Type</Form.Label>
-              <Form.Select
-                value={foodTypeOptionId}
-                onChange={(e) => setFoodTypeOptionId(e.target.value)}
-                disabled={isPending || areOptionsLoading}
-              >
-                <option value="">None</option>
-                {foodTypeOptions.map((option) => (
-                  <option key={option.optionId} value={option.optionId}>
-                    {option.label}
-                  </option>
-                ))}
-              </Form.Select>
-            </Form.Group>
-            <Form.Group controlId="updateVenueVisited">
-              <Form.Label>Visited</Form.Label>
-              <Form.Check
-                type="switch"
-                checked={visited}
-                onChange={(e) => setVisited(e.target.checked)}
-                disabled={isPending}
-                style={{ marginLeft: "0.25rem", fontSize: "1.5rem" }}
-              />
-            </Form.Group>
-
-            <hr className="section-rule mt-4 mb-4" />
-            <h6 className="fw-bold mb-1">Your Ratings</h6>
-            <p className="text-muted small mb-3">
-              These are specific to you and cannot be amended by anybody else in
-              your group.
-            </p>
-
-            <Form.Group className="mb-3" controlId="updateQualityRating">
-              <Form.Label>Quality Rating</Form.Label>
-              <Form.Select
-                value={areRatingsLoading ? "" : qualitySelection}
-                onChange={(e) => setQualityOptionId(e.target.value)}
-                disabled={isPending || areOptionsLoading || areRatingsLoading}
-              >
-                {areRatingsLoading ? (
-                  <option value="">Loading...</option>
-                ) : (
-                  <>
+            <Row className="g-3 align-items-stretch">
+              <Col xs={12} md>
+                <Form.Group className="mb-3" controlId="updateVenueName">
+                  <h6 className="fw-bold mb-1">Venue Details</h6>
+                  <p className="text-muted small mb-3">
+                    These are generic values and can be amended by anybody in
+                    your group.
+                  </p>
+                  <Form.Label>Venue Name</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Enter venue name"
+                    value={venueName}
+                    onChange={(e) => setVenueName(e.target.value)}
+                    disabled={isPending}
+                    maxLength={50}
+                  />
+                </Form.Group>
+                <Form.Group className="mb-3" controlId="updateVenueType">
+                  <Form.Label>Venue Type</Form.Label>
+                  <Form.Select
+                    value={venueTypeOptionId}
+                    onChange={(e) => setVenueTypeOptionId(e.target.value)}
+                    disabled={isPending || areOptionsLoading}
+                  >
                     <option value="">None</option>
-                    {qualityOptions.map((option) => (
+                    {venueTypeOptions.map((option) => (
                       <option key={option.optionId} value={option.optionId}>
                         {option.label}
                       </option>
                     ))}
-                  </>
-                )}
-              </Form.Select>
-            </Form.Group>
-            <Form.Group className="mb-3" controlId="updateCostRating">
-              <Form.Label>Cost Rating</Form.Label>
-              <Form.Select
-                value={areRatingsLoading ? "" : costSelection}
-                onChange={(e) => setCostOptionId(e.target.value)}
-                disabled={isPending || areOptionsLoading || areRatingsLoading}
-              >
-                {areRatingsLoading ? (
-                  <option value="">Loading...</option>
-                ) : (
-                  <>
+                  </Form.Select>
+                </Form.Group>
+                <Form.Group className="mb-3" controlId="updateFoodType">
+                  <Form.Label>Food Type</Form.Label>
+                  <Form.Select
+                    value={foodTypeOptionId}
+                    onChange={(e) => setFoodTypeOptionId(e.target.value)}
+                    disabled={isPending || areOptionsLoading}
+                  >
                     <option value="">None</option>
-                    {costOptions.map((option) => (
+                    {foodTypeOptions.map((option) => (
                       <option key={option.optionId} value={option.optionId}>
                         {option.label}
                       </option>
                     ))}
-                  </>
-                )}
-              </Form.Select>
-            </Form.Group>
+                  </Form.Select>
+                </Form.Group>
+                <Form.Group controlId="updateVenueVisited">
+                  <Form.Label>Visited</Form.Label>
+                  <Form.Check
+                    type="switch"
+                    checked={visited}
+                    onChange={(e) => setVisited(e.target.checked)}
+                    disabled={isPending}
+                    style={{ marginLeft: "0.25rem", fontSize: "1.5rem" }}
+                  />
+                </Form.Group>
+              </Col>
+
+              <Col xs={12} md="auto" className="d-md-none">
+                <hr className="section-rule mt-4 mb-4" />
+              </Col>
+              <Col
+                xs={12}
+                md="auto"
+                className="section-divider d-none d-md-flex"
+                aria-hidden="true"
+              />
+
+              <Col xs={12} md>
+                <h6 className="fw-bold mb-1">Your Ratings</h6>
+                <p className="text-muted small mb-3">
+                  These are specific to you and cannot be amended by anybody
+                  else in your group.
+                </p>
+
+                <Form.Group className="mb-3" controlId="updateQualityRating">
+                  <Form.Label>Quality Rating</Form.Label>
+                  <Form.Select
+                    value={areRatingsLoading ? "" : qualitySelection}
+                    onChange={(e) => setQualityOptionId(e.target.value)}
+                    disabled={
+                      isPending || areOptionsLoading || areRatingsLoading
+                    }
+                  >
+                    {areRatingsLoading ? (
+                      <option value="">Loading...</option>
+                    ) : (
+                      <>
+                        <option value="">None</option>
+                        {qualityOptions.map((option) => (
+                          <option key={option.optionId} value={option.optionId}>
+                            {option.label}
+                          </option>
+                        ))}
+                      </>
+                    )}
+                  </Form.Select>
+                </Form.Group>
+                <Form.Group className="mb-3" controlId="updateCostRating">
+                  <Form.Label>Cost Rating</Form.Label>
+                  <Form.Select
+                    value={areRatingsLoading ? "" : costSelection}
+                    onChange={(e) => setCostOptionId(e.target.value)}
+                    disabled={
+                      isPending || areOptionsLoading || areRatingsLoading
+                    }
+                  >
+                    {areRatingsLoading ? (
+                      <option value="">Loading...</option>
+                    ) : (
+                      <>
+                        <option value="">None</option>
+                        {costOptions.map((option) => (
+                          <option key={option.optionId} value={option.optionId}>
+                            {option.label}
+                          </option>
+                        ))}
+                      </>
+                    )}
+                  </Form.Select>
+                </Form.Group>
+              </Col>
+            </Row>
           </Form>
         )}
       </Modal.Body>

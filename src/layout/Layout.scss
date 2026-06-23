@@ -200,6 +200,12 @@
   }
 }
 
+@include media-breakpoint-up(md) {
+  .group-venue-modal {
+    max-width: map-get($container-max-widths, xl);
+  }
+}
+
 .modal-footer-stacked {
   display: grid;
   grid-template-columns: 1fr;
