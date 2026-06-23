@@ -4,5 +4,5 @@ export default interface GroupVenueRatingResult {
   groupId: string;
   groupVenueId: string;
   venueName: string;
-  ratingVenueResult: RatingVenueResult[];
+  ratings: RatingVenueResult[];
 }
