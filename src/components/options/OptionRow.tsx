@@ -59,6 +59,7 @@ const OptionRow = <T extends OptionResult>({
             value={draftLabel}
             onChange={(e) => setDraftLabel(e.target.value)}
             disabled={isLocked}
+            maxLength={30}
           />
           <Button
             variant="link"

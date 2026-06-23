@@ -273,6 +273,7 @@ const OptionConfiguration = ({
                         value={newLabel}
                         onChange={(e) => setNewLabel(e.target.value)}
                         autoFocus
+                        maxLength={30}
                       />
                     </td>
                     <td className="option-actions-col" />

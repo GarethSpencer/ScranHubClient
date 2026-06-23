@@ -130,6 +130,7 @@ const MyGroupTable = () => {
                           onChangeName(x.groupId, e.target.value)
                         }
                         disabled={isPending}
+                        maxLength={30}
                       />
                       <Button
                         variant="link"

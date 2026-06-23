@@ -282,6 +282,7 @@ const GroupVenueModal = ({ groupId, venue, onClose }: Props) => {
                 value={venueName}
                 onChange={(e) => setVenueName(e.target.value)}
                 disabled={isPending}
+                maxLength={50}
               />
             </Form.Group>
             <Form.Group className="mb-3" controlId="updateVenueType">

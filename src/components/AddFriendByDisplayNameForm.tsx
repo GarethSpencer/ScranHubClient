@@ -49,6 +49,7 @@ function AddFriendByDisplayNameForm() {
             placeholder="Enter display name"
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
+            maxLength={30}
           />
         </Form.Group>
         {isError && (

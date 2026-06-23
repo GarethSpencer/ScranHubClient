@@ -157,6 +157,7 @@ const GroupVenuesPage = () => {
               value={searchText}
               onChange={(e) => onSearchTextChange(e.target.value)}
               disabled={isVenuesLoading}
+              maxLength={50}
             />
           </Form.Group>
         </Form>

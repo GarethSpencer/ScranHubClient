@@ -60,6 +60,7 @@ const UserDetailsForm = ({
           type="text"
           name="displayName"
           defaultValue={user.displayName}
+          maxLength={30}
         />
       </Form.Group>
       <Form.Group className="mb-3">

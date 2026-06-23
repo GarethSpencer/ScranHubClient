@@ -85,6 +85,7 @@ const CreateGroupVenueModal = ({ show, groupId, onClose }: Props) => {
               onChange={(e) => setVenueName(e.target.value)}
               disabled={isPending}
               autoFocus
+              maxLength={50}
             />
           </Form.Group>
           <Form.Group className="mb-3" controlId="createVenueType">

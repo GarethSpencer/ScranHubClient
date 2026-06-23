@@ -39,6 +39,7 @@ function AddFriendByEmailForm() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             disabled={isPending}
+            maxLength={256}
           />
         </Form.Group>
         {isError && (

@@ -41,6 +41,7 @@ const CreateGroupForm = () => {
               value={groupName}
               onChange={(e) => setGroupName(e.target.value)}
               disabled={isPending}
+              maxLength={30}
             />
             <Button
               type="submit"

@@ -70,6 +70,7 @@ const OptionEditorPanel = ({
                   placeholder={`Option ${index + 1}`}
                   value={label}
                   onChange={(e) => handleLabelChange(index, e.target.value)}
+                  maxLength={30}
                 />
                 <Button
                   variant="outline-secondary"
