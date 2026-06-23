@@ -33,17 +33,24 @@
 
 .main-layout-container {
   min-height: 100vh;
-  background-image:
-    linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
-    url("/site-background.jpg");
-  background-size: cover;
-  background-position: center;
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
   padding-top: var(--navbar-height);
   padding-bottom: 5rem;
+}
+
+.main-layout-container::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
+    url("/site-background.jpg");
+  background-size: cover;
+  background-position: center;
 }
 
 .login-content-wrapper {
@@ -112,7 +119,7 @@
   color: #cdd6f4;
 }
 
-[data-bs-theme="dark"] .main-layout-container {
+[data-bs-theme="dark"] .main-layout-container::before {
   background-image:
     linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)),
     url("/site-background.jpg");
