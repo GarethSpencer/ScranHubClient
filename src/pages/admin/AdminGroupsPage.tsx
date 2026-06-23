@@ -1,7 +1,203 @@
-import Todo from "../../components/Todo";
+import { useState } from "react";
+import Table from "react-bootstrap/Table";
+import Form from "react-bootstrap/Form";
+import {
+  useGetAllGroups,
+  useSearchAllGroups,
+} from "../../api/controllerHooks/useAdminController";
+import TableStatus from "../../components/TableStatus";
+import TablePagination from "../../components/TablePagination";
+import AdminGroupRow from "../../components/AdminGroupRow";
+import AdminGroupSkeletonRow from "../../components/AdminGroupSkeletonRow";
+import type GroupDetailedResult from "../../models/results/GroupDetailedResult";
+
+const PAGE_SIZE_OPTIONS = [10, 20, 50, 100];
+const SEARCH_PAGE_SIZE = 10;
+const SEARCH_MIN_LENGTH = 3;
+
+const COLUMNS = [
+  "Group Name",
+  "Active",
+  "Users",
+  "Venues",
+  "Created By",
+  "Created On",
+  "Last Updated",
+  "Actions",
+];
+
+interface GroupsTableProps {
+  groups: GroupDetailedResult[];
+  isPending: boolean;
+  skeletonRowCount: number;
+}
+
+const GroupsTable = ({
+  groups,
+  isPending,
+  skeletonRowCount,
+}: GroupsTableProps) => (
+  <Table
+    responsive
+    striped="columns"
+    className="align-middle text-center border-top"
+  >
+    <thead>
+      <tr>
+        {COLUMNS.map((column) => (
+          <th key={column} className="text-nowrap">
+            {column}
+          </th>
+        ))}
+      </tr>
+    </thead>
+    <tbody>
+      {isPending
+        ? Array.from({ length: skeletonRowCount }, (_, index) => (
+            <AdminGroupSkeletonRow key={index} />
+          ))
+        : groups.map((x) => <AdminGroupRow key={x.groupId} group={x} />)}
+    </tbody>
+  </Table>
+);
 
 const AdminGroupsPage = () => {
-  return <Todo />;
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
+  const [searchText, setSearchText] = useState("");
+  const [searchPage, setSearchPage] = useState(1);
+
+  const isSearching = searchText.length >= SEARCH_MIN_LENGTH;
+
+  const onSearchTextChange = (newSearchText: string) => {
+    setSearchText(newSearchText);
+    // Reset to the first page of results whenever the search term changes.
+    setSearchPage(1);
+  };
+
+  const onPageSizeChange = (newPageSize: number) => {
+    setPageSize(newPageSize);
+    setPage(1);
+  };
+
+  const {
+    data: groupsData,
+    isLoading: isGroupsLoading,
+    isPlaceholderData: isGroupsPlaceholder,
+    isError: isGroupsError,
+  } = useGetAllGroups({ pageNumber: page, pageSize: pageSize });
+
+  const isGroupsPending = isGroupsLoading || isGroupsPlaceholder;
+
+  const {
+    data: searchData,
+    isLoading: isSearchLoading,
+    isError: isSearchError,
+  } = useSearchAllGroups({
+    searchText,
+    pageNumber: searchPage,
+    pageSize: SEARCH_PAGE_SIZE,
+  });
+
+  const groups = groupsData?.groups ?? [];
+  const totalCount = groupsData?.totalCount ?? 0;
+
+  const searchResults = searchData?.groups ?? [];
+  const searchTotalCount = searchData?.totalCount ?? 0;
+
+  const skeletonRowCount =
+    totalCount > 0
+      ? Math.min(pageSize, Math.max(1, totalCount - (page - 1) * pageSize))
+      : pageSize;
+
+  return (
+    <>
+      <h2 className="mb-1 fw-bold lead">Groups</h2>
+      <p className="text-muted small mb-3">
+        All groups created on ScranHub, ordered by group name.
+      </p>
+
+      <Form onSubmit={(e) => e.preventDefault()}>
+        <Form.Group className="mb-3" controlId="groupsSearch">
+          <Form.Control
+            type="text"
+            placeholder="Search groups by name"
+            value={searchText}
+            onChange={(e) => onSearchTextChange(e.target.value)}
+            maxLength={30}
+          />
+        </Form.Group>
+      </Form>
+
+      {isSearching ? (
+        <TableStatus
+          isLoading={isSearchLoading}
+          isError={isSearchError}
+          isEmpty={searchResults.length === 0}
+          loadingText="Searching groups..."
+          errorText="Couldn't search groups. Please try again."
+          emptyText="No groups match your search"
+        >
+          <GroupsTable
+            groups={searchResults}
+            isPending={false}
+            skeletonRowCount={0}
+          />
+          <div className="d-flex justify-content-center">
+            <TablePagination
+              page={searchPage}
+              totalCount={searchTotalCount}
+              pageSize={SEARCH_PAGE_SIZE}
+              onPageChange={setSearchPage}
+            />
+          </div>
+        </TableStatus>
+      ) : isGroupsError ? (
+        <p className="text-muted text-center mb-0">
+          Couldn't load groups. Please try again.
+        </p>
+      ) : !isGroupsPending && groups.length === 0 ? (
+        <p className="text-center mb-0">No groups yet</p>
+      ) : (
+        <>
+          <GroupsTable
+            groups={groups}
+            isPending={isGroupsPending}
+            skeletonRowCount={skeletonRowCount}
+          />
+          <div
+            className="position-relative d-flex justify-content-center align-items-center"
+            style={{ minHeight: "38px" }}
+          >
+            <TablePagination
+              page={page}
+              totalCount={totalCount}
+              pageSize={pageSize}
+              onPageChange={setPage}
+            />
+            <div className="position-absolute end-0 d-flex align-items-center gap-2">
+              <Form.Label htmlFor="groupsPageSize" className="mb-0 text-nowrap">
+                Show
+              </Form.Label>
+              <Form.Select
+                id="groupsPageSize"
+                value={pageSize}
+                onChange={(e) => onPageSizeChange(Number(e.target.value))}
+                style={{ width: "auto" }}
+              >
+                {PAGE_SIZE_OPTIONS.map((size) => (
+                  <option key={size} value={size}>
+                    {size}
+                  </option>
+                ))}
+              </Form.Select>
+            </div>
+          </div>
+        </>
+      )}
+    </>
+  );
 };
 
 export default AdminGroupsPage;

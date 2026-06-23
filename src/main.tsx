@@ -6,6 +6,7 @@ import {
   QueryClient,
   QueryClientProvider,
 } from "@tanstack/react-query";
+import { isAxiosError } from "axios";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import AuthProvider from "./auth/AuthProvider";
 import "./layout/custom.scss";
@@ -18,6 +19,19 @@ import { queryErrorHandler } from "./contexts/toast/queryErrorHandler";
 const queryClient = new QueryClient({
   queryCache: new QueryCache({ onError: queryErrorHandler }),
   mutationCache: new MutationCache({ onError: queryErrorHandler }),
+  defaultOptions: {
+    queries: {
+      retry: (failureCount, error) => {
+        if (isAxiosError(error)) {
+          const status = error.response?.status;
+          if (status !== undefined && status >= 400 && status < 500) {
+            return false;
+          }
+        }
+        return failureCount < 3;
+      },
+    },
+  },
 });
 
 createRoot(document.getElementById("root")!).render(

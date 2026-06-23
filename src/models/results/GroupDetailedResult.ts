@@ -8,4 +8,5 @@ export default interface GroupDetailedResult {
   createdBy: string;
   updatedOn?: Date;
   updatedBy?: string;
+  displayName: string;
 }

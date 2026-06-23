@@ -135,6 +135,7 @@ const AdminUsersPage = () => {
             placeholder="Search users by display name"
             value={searchText}
             onChange={(e) => onSearchTextChange(e.target.value)}
+            maxLength={30}
           />
         </Form.Group>
       </Form>
