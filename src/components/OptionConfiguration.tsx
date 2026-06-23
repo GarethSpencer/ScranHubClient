@@ -322,8 +322,9 @@ const OptionConfiguration = ({
         title="Remove Custom Options"
         body={
           <p className="mb-0">
-            Are you sure you want to delete the custom options? This will unset
-            all venues in the group.
+            {reorderable
+              ? "Are you sure you want to delete the custom options? This will remap all ratings to their corresponding default options."
+              : "Are you sure you want to delete the custom options? This will unset all venues in the group."}
           </p>
         }
         confirmLabel="Remove Custom Options"
