@@ -74,6 +74,7 @@ const router = createBrowserRouter([
             path: "friends",
             element: (
               <SectionLayout
+                title={<h1 className="visually-hidden">Friends</h1>}
                 tabs={[
                   { label: "My Friends", to: "/friends", end: true },
                   { label: "Find Friends", to: "/friends/find" },
@@ -100,6 +101,7 @@ const router = createBrowserRouter([
             path: "groups",
             element: (
               <SectionLayout
+                title={<h1 className="visually-hidden">Groups</h1>}
                 tabs={[
                   { label: "My Groups", to: "/groups", end: true },
                   { label: "Find Groups", to: "/groups/find" },
@@ -129,6 +131,7 @@ const router = createBrowserRouter([
                 path: "admin",
                 element: (
                   <SectionLayout
+                    title={<h1 className="visually-hidden">Admin</h1>}
                     tabs={[
                       { label: "Users", to: "/admin/users" },
                       { label: "Groups", to: "/admin/groups" },

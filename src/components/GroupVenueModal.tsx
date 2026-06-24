@@ -256,7 +256,7 @@ const GroupVenueModal = ({ groupId, venue, onClose }: Props) => {
       dialogClassName="group-venue-modal"
     >
       <Modal.Header closeButton={!isPending}>
-        <Modal.Title>{venue?.venueName}</Modal.Title>
+        <Modal.Title as="h2">{venue?.venueName}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         {confirmingDelete ? (
@@ -273,7 +273,7 @@ const GroupVenueModal = ({ groupId, venue, onClose }: Props) => {
           >
             <Row className="g-3 align-items-stretch">
               <Col xs={12} md>
-                <h6 className="fw-bold mb-1">Venue Details</h6>
+                <h3 className="h6 fw-bold mb-1">Venue Details</h3>
                 <p className="text-muted small mb-3">
                   These can be amended by anybody in your group.
                 </p>
@@ -353,7 +353,7 @@ const GroupVenueModal = ({ groupId, venue, onClose }: Props) => {
               />
 
               <Col xs={12} md>
-                <h6 className="fw-bold mb-1">Your Ratings</h6>
+                <h3 className="h6 fw-bold mb-1">Your Ratings</h3>
                 <p className="text-muted small mb-3">
                   These cannot be amended by anybody else in your group.
                 </p>

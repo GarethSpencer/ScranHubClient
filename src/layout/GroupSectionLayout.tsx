@@ -12,9 +12,9 @@ const GroupSectionLayout = () => {
     <SectionLayout
       tabsClassName="section-tabs-grid"
       title={
-        <Link to={`/group/${id}`} className="section-title display-5">
-          {groupName}
-        </Link>
+        <h1 className="section-title display-5">
+          <Link to={`/group/${id}`}>{groupName}</Link>
+        </h1>
       }
       tabs={[
         { label: "Summary", to: `/group/${id}`, end: true },
