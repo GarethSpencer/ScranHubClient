@@ -262,6 +262,14 @@
     0 0 4px rgba(255, 255, 255, 0.6);
 }
 
+.vote-bar .progress-bar {
+  background-color: #6c757d;
+}
+
+[data-bs-theme="light"] .vote-bar .progress-bar {
+  background-color: #adb5bd;
+}
+
 .group-venue-row > td {
   cursor: pointer;
   transition: background-color 0.15s ease-in-out;

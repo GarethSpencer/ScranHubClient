@@ -9,6 +9,7 @@ import {
 } from "../../api/controllerHooks/useGroupVenueController";
 import { useGetOptionsForGroup } from "../../api/controllerHooks/useOptionController";
 import { useGetRatingsForGroup } from "../../api/controllerHooks/useRatingController";
+import { useGetGroupMembers } from "../../api/controllerHooks/useGroupController";
 import TableStatus from "../../components/TableStatus";
 import TablePagination from "../../components/TablePagination";
 import RatingDetailsRow from "../../components/RatingDetailsRow";
@@ -115,6 +116,12 @@ const RatingDetailsPage = () => {
     useGetRatingsForGroup("CostRating", id);
 
   const areRatingsLoading = isQualityRatingsLoading || isCostRatingsLoading;
+
+  const { data: membersData } = useGetGroupMembers(id, {
+    pageNumber: 1,
+    pageSize: 1,
+  });
+  const memberCount = membersData?.totalCount ?? 0;
 
   const {
     data: searchData,
@@ -223,6 +230,7 @@ const RatingDetailsPage = () => {
                   costOptions={costOptions}
                   qualityVoteCount={qualityVoteCounts.get(x.groupVenueId) ?? 0}
                   costVoteCount={costVoteCounts.get(x.groupVenueId) ?? 0}
+                  memberCount={memberCount}
                   onSelect={setSelectedVenue}
                 />
               ))}
@@ -299,6 +307,7 @@ const RatingDetailsPage = () => {
                         qualityVoteCounts.get(x.groupVenueId) ?? 0
                       }
                       costVoteCount={costVoteCounts.get(x.groupVenueId) ?? 0}
+                      memberCount={memberCount}
                       onSelect={setSelectedVenue}
                     />
                   ))}

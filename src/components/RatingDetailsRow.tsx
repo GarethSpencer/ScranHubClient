@@ -2,6 +2,7 @@ import { FaCheck, FaXmark } from "react-icons/fa6";
 import type GroupVenueResult from "../models/results/GroupVenueResult";
 import type RatingOptionResult from "../models/results/generic/RatingOptionResult";
 import RatingBar from "./RatingBar";
+import VoteProgressBar from "./VoteProgressBar";
 
 interface Props {
   venue: GroupVenueResult;
@@ -9,6 +10,7 @@ interface Props {
   costOptions: RatingOptionResult[];
   qualityVoteCount: number;
   costVoteCount: number;
+  memberCount: number;
   onSelect: (venue: GroupVenueResult) => void;
 }
 
@@ -18,6 +20,7 @@ const RatingDetailsRow = ({
   costOptions,
   qualityVoteCount,
   costVoteCount,
+  memberCount,
   onSelect,
 }: Props) => (
   <tr
@@ -45,8 +48,12 @@ const RatingDetailsRow = ({
     </td>
     <td>{venue.venueType}</td>
     <td>{venue.foodType}</td>
-    <td>{qualityVoteCount}</td>
-    <td>{costVoteCount}</td>
+    <td>
+      <VoteProgressBar count={qualityVoteCount} total={memberCount} />
+    </td>
+    <td>
+      <VoteProgressBar count={costVoteCount} total={memberCount} />
+    </td>
     <td>
       <RatingBar
         average={venue.averageQualityRating}
