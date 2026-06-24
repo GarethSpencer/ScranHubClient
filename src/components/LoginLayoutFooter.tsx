@@ -13,8 +13,8 @@ const LoginLayoutFooter = () => {
       </a>
       <p className="d-block mt-2">
         © {copyrightYear} Gareth Spencer. Check out my{" "}
-        <a href={frontendLink}>frontend</a> and{" "}
-        <a href={backendLink}>backend</a> source code on GitHub.
+        <a href={backendLink}>backend</a> and{" "}
+        <a href={frontendLink}>frontend</a> source code on GitHub.
       </p>
     </div>
   );
