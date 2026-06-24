@@ -7,4 +7,6 @@ export default interface GroupVenueResult {
   visited: boolean;
   averageCostRating?: number;
   averageQualityRating?: number;
+  myCostRating?: number;
+  myQualityRating?: number;
 }

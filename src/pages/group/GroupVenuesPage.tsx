@@ -32,8 +32,11 @@ const COLUMNS: SortableColumn[] = [
   { label: "Visited", sortBy: GroupVenueSortParameters.Visited },
   { label: "Venue Type", sortBy: GroupVenueSortParameters.VenueType },
   { label: "Food Type", sortBy: GroupVenueSortParameters.FoodType },
-  { label: "Avg Quality", sortBy: GroupVenueSortParameters.AvgQualityRating },
-  { label: "Avg Cost", sortBy: GroupVenueSortParameters.AvgCostRating },
+  {
+    label: "My Quality Rating",
+    sortBy: GroupVenueSortParameters.MyQualityRating,
+  },
+  { label: "My Cost Rating", sortBy: GroupVenueSortParameters.MyCostRating },
 ];
 
 const GroupVenuesPage = () => {

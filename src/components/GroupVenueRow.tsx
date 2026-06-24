@@ -42,13 +42,10 @@ const GroupVenueRow = ({
     <td>{venue.venueType}</td>
     <td>{venue.foodType}</td>
     <td>
-      <RatingBar
-        average={venue.averageQualityRating}
-        options={qualityOptions}
-      />
+      <RatingBar average={venue.myQualityRating} options={qualityOptions} />
     </td>
     <td>
-      <RatingBar average={venue.averageCostRating} options={costOptions} />
+      <RatingBar average={venue.myCostRating} options={costOptions} />
     </td>
   </tr>
 );

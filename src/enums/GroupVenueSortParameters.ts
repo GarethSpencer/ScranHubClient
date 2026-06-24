@@ -5,6 +5,8 @@ export const GroupVenueSortParameters = {
   VenueType: "VenueType",
   AvgCostRating: "AvgCostRating",
   AvgQualityRating: "AvgQualityRating",
+  MyCostRating: "MyCostRating",
+  MyQualityRating: "MyQualityRating",
 } as const;
 
 export type GroupVenueSortParameters =
