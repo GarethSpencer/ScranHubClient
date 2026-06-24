@@ -196,10 +196,7 @@ const AdminUsersPage = () => {
             isPending={isUsersPending}
             skeletonRowCount={skeletonRowCount}
           />
-          <div
-            className="position-relative d-flex justify-content-center align-items-center"
-            style={{ minHeight: "38px" }}
-          >
+          <div className="pagination-row">
             <TablePagination
               page={page}
               totalCount={totalCount}

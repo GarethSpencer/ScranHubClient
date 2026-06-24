@@ -607,3 +607,11 @@
     height: 100%;
   }
 }
+
+.pagination-row {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 38px;
+}
