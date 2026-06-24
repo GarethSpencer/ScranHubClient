@@ -1,5 +1,5 @@
 import ProgressBar from "react-bootstrap/ProgressBar";
-import type RatingOptionResult from "../models/results/generic/RatingOptionResult";
+import type RatingOptionResult from "../../models/results/generic/RatingOptionResult";
 
 interface Props {
   average?: number;

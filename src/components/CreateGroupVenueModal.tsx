@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { MAX_VENUE_NAME_LENGTH } from "../constants/validation";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
@@ -85,7 +86,7 @@ const CreateGroupVenueModal = ({ show, groupId, onClose }: Props) => {
               onChange={(e) => setVenueName(e.target.value)}
               disabled={isPending}
               autoFocus
-              maxLength={50}
+              maxLength={MAX_VENUE_NAME_LENGTH}
             />
           </Form.Group>
           <Form.Group className="mb-3" controlId="createVenueType">

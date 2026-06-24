@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { MAX_VENUE_NAME_LENGTH } from "../constants/validation";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
@@ -287,7 +288,7 @@ const GroupVenueModal = ({ groupId, venue, onClose }: Props) => {
                         value={venueName}
                         onChange={(e) => setVenueName(e.target.value)}
                         disabled={isPending}
-                        maxLength={50}
+                        maxLength={MAX_VENUE_NAME_LENGTH}
                       />
                     </Form.Group>
                   </Col>

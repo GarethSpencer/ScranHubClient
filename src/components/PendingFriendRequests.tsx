@@ -7,7 +7,7 @@ import {
 import type FriendResult from "../models/results/FriendResult";
 import Button from "react-bootstrap/Button";
 import Spinner from "react-bootstrap/Spinner";
-import TableStatus from "./TableStatus";
+import TableStatus from "./common/TableStatus";
 import useActingState from "../hooks/useActingState";
 import { useEffect, useRef } from "react";
 import { FriendshipStatus } from "../enums/FriendshipStatus";

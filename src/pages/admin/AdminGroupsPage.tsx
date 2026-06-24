@@ -1,19 +1,21 @@
 import { useState } from "react";
+import { MAX_NAME_LENGTH } from "../../constants/validation";
 import Table from "react-bootstrap/Table";
 import Form from "react-bootstrap/Form";
 import {
   useGetAllGroups,
   useSearchAllGroups,
 } from "../../api/controllerHooks/useAdminController";
-import TableStatus from "../../components/TableStatus";
-import TablePagination from "../../components/TablePagination";
+import TableStatus from "../../components/common/TableStatus";
+import TablePagination from "../../components/common/TablePagination";
 import AdminGroupRow from "../../components/AdminGroupRow";
 import AdminGroupSkeletonRow from "../../components/AdminGroupSkeletonRow";
-import TablePageSizeSelect from "../../components/admin/TablePageSizeSelect";
+import TablePageSizeSelect from "../../components/common/TablePageSizeSelect";
 import {
+  DEFAULT_PAGE_SIZE,
   SEARCH_PAGE_SIZE,
   SEARCH_MIN_LENGTH,
-} from "../../components/admin/adminTableConstants";
+} from "../../constants/pagination";
 import useDebounce from "../../hooks/useDebounce";
 import type GroupDetailedResult from "../../models/results/GroupDetailedResult";
 
@@ -65,7 +67,7 @@ const GroupsTable = ({
 
 const AdminGroupsPage = () => {
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
 
   const [searchText, setSearchText] = useState("");
   const [searchPage, setSearchPage] = useState(1);
@@ -128,7 +130,7 @@ const AdminGroupsPage = () => {
             placeholder="Search groups by name"
             value={searchText}
             onChange={(e) => onSearchTextChange(e.target.value)}
-            maxLength={30}
+            maxLength={MAX_NAME_LENGTH}
           />
         </Form.Group>
       </Form>

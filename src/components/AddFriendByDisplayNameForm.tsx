@@ -1,4 +1,5 @@
 import Alert from "react-bootstrap/Alert";
+import { MAX_NAME_LENGTH } from "../constants/validation";
 import Form from "react-bootstrap/Form";
 import {
   useAddFriend,
@@ -51,7 +52,7 @@ function AddFriendByDisplayNameForm() {
             placeholder="Enter display name"
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
-            maxLength={30}
+            maxLength={MAX_NAME_LENGTH}
           />
         </Form.Group>
         {isError && (

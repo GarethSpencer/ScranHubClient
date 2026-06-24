@@ -1,4 +1,5 @@
 import { useParams } from "react-router-dom";
+import { MAX_VENUE_NAME_LENGTH } from "../../constants/validation";
 import { useState } from "react";
 import Table from "react-bootstrap/Table";
 import Form from "react-bootstrap/Form";
@@ -9,18 +10,21 @@ import {
   useSearchGroupVenues,
 } from "../../api/controllerHooks/useGroupVenueController";
 import { useGetOptionsForGroup } from "../../api/controllerHooks/useOptionController";
-import TableStatus from "../../components/TableStatus";
-import TablePagination from "../../components/TablePagination";
+import TableStatus from "../../components/common/TableStatus";
+import TablePagination from "../../components/common/TablePagination";
 import GroupVenueRow from "../../components/GroupVenueRow";
 import GroupVenueSkeletonRow from "../../components/GroupVenueSkeletonRow";
 import CreateGroupVenueModal from "../../components/CreateGroupVenueModal";
 import GroupVenueModal from "../../components/GroupVenueModal";
-import TablePageSizeSelect from "../../components/admin/TablePageSizeSelect";
+import TablePageSizeSelect from "../../components/common/TablePageSizeSelect";
 import useDebounce from "../../hooks/useDebounce";
 import type GroupVenueResult from "../../models/results/GroupVenueResult";
 import { GroupVenueSortParameters } from "../../enums/GroupVenueSortParameters";
-
-const SEARCH_MIN_LENGTH = 3;
+import {
+  DEFAULT_PAGE_SIZE,
+  SEARCH_PAGE_SIZE,
+  SEARCH_MIN_LENGTH,
+} from "../../constants/pagination";
 
 type SortableColumn = {
   label: string;
@@ -49,14 +53,14 @@ const GroupVenuesPage = () => {
   );
 
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
   const [sortBy, setSortBy] = useState<GroupVenueSortParameters>(
     GroupVenueSortParameters.VenueName,
   );
   const [sortDescending, setSortDescending] = useState(false);
 
   const [searchPage, setSearchPage] = useState(1);
-  const searchPageSize = 10;
+  const searchPageSize = SEARCH_PAGE_SIZE;
 
   const debouncedSearchText = useDebounce(searchText);
   const isSearching = debouncedSearchText.length >= SEARCH_MIN_LENGTH;
@@ -162,7 +166,7 @@ const GroupVenuesPage = () => {
               value={searchText}
               onChange={(e) => onSearchTextChange(e.target.value)}
               disabled={isVenuesLoading}
-              maxLength={50}
+              maxLength={MAX_VENUE_NAME_LENGTH}
             />
           </Form.Group>
         </Form>

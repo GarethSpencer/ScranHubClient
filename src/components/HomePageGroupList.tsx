@@ -3,7 +3,7 @@ import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import { Link } from "react-router-dom";
-import TableStatus from "./TableStatus";
+import TableStatus from "./common/TableStatus";
 import type GroupResult from "../models/results/GroupResult";
 import { useGetUserGroups } from "../api/controllerHooks/useGroupController";
 

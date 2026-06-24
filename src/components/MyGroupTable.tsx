@@ -1,4 +1,5 @@
 import Table from "react-bootstrap/Table";
+import { MAX_NAME_LENGTH } from "../constants/validation";
 import {
   useDeleteGroup,
   useGetUserGroups,
@@ -11,7 +12,7 @@ import Modal from "react-bootstrap/Modal";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
 import Spinner from "react-bootstrap/Spinner";
-import TableStatus from "./TableStatus";
+import TableStatus from "./common/TableStatus";
 import useActingState from "../hooks/useActingState";
 import { useState } from "react";
 import { RxReset } from "react-icons/rx";
@@ -130,7 +131,7 @@ const MyGroupTable = () => {
                           onChangeName(x.groupId, e.target.value)
                         }
                         disabled={isPending}
-                        maxLength={30}
+                        maxLength={MAX_NAME_LENGTH}
                       />
                       <Button
                         variant="link"

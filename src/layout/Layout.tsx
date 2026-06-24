@@ -1,7 +1,7 @@
 import "./Layout.scss";
 import { Outlet } from "react-router-dom";
-import LayoutFooter from "../components/LayoutFooter";
-import NavBar from "../components/NavBar";
+import LayoutFooter from "../components/layout/LayoutFooter";
+import NavBar from "../components/layout/NavBar";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 

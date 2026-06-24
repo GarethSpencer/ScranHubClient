@@ -1,5 +1,5 @@
 import Form from "react-bootstrap/Form";
-import { PAGE_SIZE_OPTIONS } from "./adminTableConstants";
+import { PAGE_SIZE_OPTIONS } from "../../constants/pagination";
 
 interface Props {
   id: string;

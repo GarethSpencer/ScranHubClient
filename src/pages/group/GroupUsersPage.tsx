@@ -8,15 +8,16 @@ import {
   useGetGroupMembers,
 } from "../../api/controllerHooks/useGroupController";
 import { useGetCurrentUser } from "../../api/controllerHooks/useUserController";
-import TablePagination from "../../components/TablePagination";
-import TablePageSizeSelect from "../../components/admin/TablePageSizeSelect";
+import TablePagination from "../../components/common/TablePagination";
+import TablePageSizeSelect from "../../components/common/TablePageSizeSelect";
+import { DEFAULT_PAGE_SIZE } from "../../constants/pagination";
 import type UserResult from "../../models/results/UserResult";
 
 const GroupUsersPage = () => {
   const { id = "" } = useParams();
 
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
 
   const onPageSizeChange = (newPageSize: number) => {
     setPageSize(newPageSize);

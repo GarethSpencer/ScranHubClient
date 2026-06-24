@@ -3,15 +3,15 @@ import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import NavDropdown from "react-bootstrap/NavDropdown";
-import useAuth from "../auth/useAuth";
-import useDarkMode from "../contexts/darkMode/useDarkMode";
-import { useGetCurrentUser } from "../api/controllerHooks/useUserController";
+import useAuth from "../../auth/useAuth";
+import useDarkMode from "../../contexts/darkMode/useDarkMode";
+import { useGetCurrentUser } from "../../api/controllerHooks/useUserController";
 import UserDetailsModal from "./UserDetailsModal";
 import DeactivateAccountModal from "./DeactivateAccountModal";
 import NotificationIcon from "./NotificationIcon";
 import NotificationsModal from "./NotificationsModal";
 import { Link, NavLink } from "react-router-dom";
-import { sections } from "../navigation/sections";
+import { sections } from "../../navigation/sections";
 
 function NavBar() {
   const { logout } = useAuth();

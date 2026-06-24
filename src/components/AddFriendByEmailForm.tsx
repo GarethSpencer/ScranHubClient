@@ -1,4 +1,5 @@
 import Alert from "react-bootstrap/Alert";
+import { MAX_EMAIL_LENGTH } from "../constants/validation";
 import Button from "react-bootstrap/Button";
 import Spinner from "react-bootstrap/Spinner";
 import Form from "react-bootstrap/Form";
@@ -39,7 +40,7 @@ function AddFriendByEmailForm() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             disabled={isPending}
-            maxLength={256}
+            maxLength={MAX_EMAIL_LENGTH}
           />
         </Form.Group>
         {isError && (

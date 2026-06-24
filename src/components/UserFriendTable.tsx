@@ -6,8 +6,8 @@ import {
 import type FriendResult from "../models/results/FriendResult";
 import Button from "react-bootstrap/Button";
 import Spinner from "react-bootstrap/Spinner";
-import TableStatus from "./TableStatus";
-import TablePagination from "./TablePagination";
+import TableStatus from "./common/TableStatus";
+import TablePagination from "./common/TablePagination";
 import useActingState from "../hooks/useActingState";
 import { useState } from "react";
 import { FriendshipStatus } from "../enums/FriendshipStatus";

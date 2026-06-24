@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { MAX_NAME_LENGTH } from "../../constants/validation";
 import Table from "react-bootstrap/Table";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
@@ -7,16 +8,17 @@ import {
   useSearchAllUsers,
 } from "../../api/controllerHooks/useAdminController";
 import { useGetCurrentUser } from "../../api/controllerHooks/useUserController";
-import TableStatus from "../../components/TableStatus";
-import TablePagination from "../../components/TablePagination";
+import TableStatus from "../../components/common/TableStatus";
+import TablePagination from "../../components/common/TablePagination";
 import AdminUserRow from "../../components/AdminUserRow";
 import AdminUserSkeletonRow from "../../components/AdminUserSkeletonRow";
 import CreateUserModal from "../../components/CreateUserModal";
-import TablePageSizeSelect from "../../components/admin/TablePageSizeSelect";
+import TablePageSizeSelect from "../../components/common/TablePageSizeSelect";
 import {
+  DEFAULT_PAGE_SIZE,
   SEARCH_PAGE_SIZE,
   SEARCH_MIN_LENGTH,
-} from "../../components/admin/adminTableConstants";
+} from "../../constants/pagination";
 import useDebounce from "../../hooks/useDebounce";
 import type UserAdminResult from "../../models/results/UserAdminResult";
 
@@ -75,7 +77,7 @@ const UsersTable = ({
 
 const AdminUsersPage = () => {
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
 
   const [searchText, setSearchText] = useState("");
   const [searchPage, setSearchPage] = useState(1);
@@ -153,7 +155,7 @@ const AdminUsersPage = () => {
             placeholder="Search users by display name"
             value={searchText}
             onChange={(e) => onSearchTextChange(e.target.value)}
-            maxLength={30}
+            maxLength={MAX_NAME_LENGTH}
           />
         </Form.Group>
       </Form>

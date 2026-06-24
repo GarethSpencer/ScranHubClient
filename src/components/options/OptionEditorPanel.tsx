@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { MAX_NAME_LENGTH } from "../../constants/validation";
 import Button from "react-bootstrap/Button";
 import Collapse from "react-bootstrap/Collapse";
 import Form from "react-bootstrap/Form";
@@ -70,7 +71,7 @@ const OptionEditorPanel = ({
                   placeholder={`Option ${index + 1}`}
                   value={label}
                   onChange={(e) => handleLabelChange(index, e.target.value)}
-                  maxLength={30}
+                  maxLength={MAX_NAME_LENGTH}
                 />
                 <Button
                   variant="outline-secondary"

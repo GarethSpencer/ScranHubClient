@@ -1,7 +1,7 @@
 import { FaCheck, FaXmark } from "react-icons/fa6";
 import type GroupVenueResult from "../models/results/GroupVenueResult";
 import type RatingOptionResult from "../models/results/generic/RatingOptionResult";
-import RatingBar from "./RatingBar";
+import RatingBar from "./common/RatingBar";
 
 interface Props {
   venue: GroupVenueResult;

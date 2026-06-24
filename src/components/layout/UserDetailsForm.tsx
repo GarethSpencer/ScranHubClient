@@ -1,12 +1,13 @@
 import type { SubmitEvent } from "react";
-import { useGetCurrentUser } from "../api/controllerHooks/useUserController";
+import { MAX_NAME_LENGTH } from "../../constants/validation";
+import { useGetCurrentUser } from "../../api/controllerHooks/useUserController";
 import type { UseMutationResult } from "@tanstack/react-query";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import Alert from "react-bootstrap/Alert";
 import Spinner from "react-bootstrap/Spinner";
-import type CommonResponse from "../models/responses/generic/CommonResponse";
-import type UpdateUserRequest from "../models/requests/users/UpdateUserRequest";
+import type CommonResponse from "../../models/responses/generic/CommonResponse";
+import type UpdateUserRequest from "../../models/requests/users/UpdateUserRequest";
 
 interface Props {
   setShowUserDetailsModal: (input: boolean) => void;
@@ -60,7 +61,7 @@ const UserDetailsForm = ({
           type="text"
           name="displayName"
           defaultValue={user.displayName}
-          maxLength={30}
+          maxLength={MAX_NAME_LENGTH}
         />
       </Form.Group>
       <Form.Group className="mb-3">

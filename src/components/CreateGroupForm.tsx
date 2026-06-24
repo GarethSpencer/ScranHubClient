@@ -1,4 +1,5 @@
 import Form from "react-bootstrap/Form";
+import { MAX_NAME_LENGTH } from "../constants/validation";
 import Button from "react-bootstrap/Button";
 import Spinner from "react-bootstrap/Spinner";
 import { useState } from "react";
@@ -41,7 +42,7 @@ const CreateGroupForm = () => {
               value={groupName}
               onChange={(e) => setGroupName(e.target.value)}
               disabled={isPending}
-              maxLength={30}
+              maxLength={MAX_NAME_LENGTH}
             />
             <Button
               type="submit"

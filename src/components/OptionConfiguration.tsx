@@ -1,10 +1,11 @@
 import { useCallback, useState } from "react";
+import { MAX_NAME_LENGTH } from "../constants/validation";
 import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
 import Spinner from "react-bootstrap/Spinner";
 import Form from "react-bootstrap/Form";
-import TableStatus from "./TableStatus";
-import ConfirmModal from "./ConfirmModal";
+import TableStatus from "./common/TableStatus";
+import ConfirmModal from "./common/ConfirmModal";
 import OptionRow from "./options/OptionRow";
 import ReorderableOptionList from "./options/ReorderableOptionList";
 import OptionEditorPanel from "./options/OptionEditorPanel";
@@ -273,7 +274,7 @@ const OptionConfiguration = ({
                         value={newLabel}
                         onChange={(e) => setNewLabel(e.target.value)}
                         autoFocus
-                        maxLength={30}
+                        maxLength={MAX_NAME_LENGTH}
                       />
                     </td>
                     <td className="option-actions-col" />

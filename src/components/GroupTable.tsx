@@ -2,7 +2,7 @@ import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
 import Spinner from "react-bootstrap/Spinner";
 import { Link } from "react-router-dom";
-import TableStatus from "./TableStatus";
+import TableStatus from "./common/TableStatus";
 import type GroupResult from "../models/results/GroupResult";
 
 interface Props {

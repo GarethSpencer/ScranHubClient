@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { MAX_EMAIL_LENGTH } from "../constants/validation";
 import { useQueryClient } from "@tanstack/react-query";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
@@ -77,7 +78,7 @@ const CreateUserModal = ({ show, onClose }: Props) => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               disabled={isPending}
-              maxLength={256}
+              maxLength={MAX_EMAIL_LENGTH}
               autoFocus
             />
           </Form.Group>

@@ -4,7 +4,7 @@ import { useGetCurrentUser } from "../api/controllerHooks/useUserController";
 import type GroupVenueResult from "../models/results/GroupVenueResult";
 import type RatingVenueResult from "../models/results/generic/RatingVenueResult";
 import type RatingOptionResult from "../models/results/generic/RatingOptionResult";
-import RatingBar from "./RatingBar";
+import RatingBar from "./common/RatingBar";
 
 interface Props {
   venue: GroupVenueResult | null;

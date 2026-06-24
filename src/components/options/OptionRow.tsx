@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { MAX_NAME_LENGTH } from "../../constants/validation";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
@@ -59,7 +60,7 @@ const OptionRow = <T extends OptionResult>({
             value={draftLabel}
             onChange={(e) => setDraftLabel(e.target.value)}
             disabled={isLocked}
-            maxLength={30}
+            maxLength={MAX_NAME_LENGTH}
           />
           <Button
             variant="link"

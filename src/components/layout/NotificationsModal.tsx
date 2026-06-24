@@ -1,5 +1,5 @@
 import Modal from "react-bootstrap/Modal";
-import PendingFriendRequests from "./PendingFriendRequests";
+import PendingFriendRequests from "../PendingFriendRequests";
 
 interface Props {
   showNotificationsModal: boolean;

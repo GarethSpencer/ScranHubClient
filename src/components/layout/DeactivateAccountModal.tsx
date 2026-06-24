@@ -4,10 +4,10 @@ import Placeholder from "react-bootstrap/Placeholder";
 import {
   useGetCurrentUser,
   useUpdateUser,
-} from "../api/controllerHooks/useUserController";
+} from "../../api/controllerHooks/useUserController";
 import Button from "react-bootstrap/Button";
 import Spinner from "react-bootstrap/Spinner";
-import useAuth from "../auth/useAuth";
+import useAuth from "../../auth/useAuth";
 
 interface Props {
   showDeactivateAccountModal: boolean;

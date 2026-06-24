@@ -4,7 +4,7 @@ import UserDetailsForm from "./UserDetailsForm";
 import {
   useGetCurrentUser,
   useUpdateUser,
-} from "../api/controllerHooks/useUserController";
+} from "../../api/controllerHooks/useUserController";
 
 interface Props {
   showUserDetailsModal: boolean;

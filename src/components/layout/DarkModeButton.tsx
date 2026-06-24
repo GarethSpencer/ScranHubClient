@@ -1,5 +1,5 @@
 import { MdDarkMode, MdLightMode } from "react-icons/md";
-import useDarkMode from "../contexts/darkMode/useDarkMode";
+import useDarkMode from "../../contexts/darkMode/useDarkMode";
 
 const DarkModeButton = () => {
   const { state: isDarkMode, toggleDarkMode } = useDarkMode();
