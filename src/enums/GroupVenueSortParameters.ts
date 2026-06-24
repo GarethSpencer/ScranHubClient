@@ -7,6 +7,8 @@ export const GroupVenueSortParameters = {
   AvgQualityRating: "AvgQualityRating",
   MyCostRating: "MyCostRating",
   MyQualityRating: "MyQualityRating",
+  CostRatingVotes: "CostRatingVotes",
+  QualityRatingVotes: "QualityRatingVotes",
 } as const;
 
 export type GroupVenueSortParameters =

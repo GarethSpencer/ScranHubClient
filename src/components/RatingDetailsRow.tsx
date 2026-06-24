@@ -8,8 +8,6 @@ interface Props {
   venue: GroupVenueResult;
   qualityOptions: RatingOptionResult[];
   costOptions: RatingOptionResult[];
-  qualityVoteCount: number;
-  costVoteCount: number;
   memberCount: number;
   onSelect: (venue: GroupVenueResult) => void;
 }
@@ -18,8 +16,6 @@ const RatingDetailsRow = ({
   venue,
   qualityOptions,
   costOptions,
-  qualityVoteCount,
-  costVoteCount,
   memberCount,
   onSelect,
 }: Props) => (
@@ -49,10 +45,13 @@ const RatingDetailsRow = ({
     <td>{venue.venueType}</td>
     <td>{venue.foodType}</td>
     <td>
-      <VoteProgressBar count={qualityVoteCount} total={memberCount} />
+      <VoteProgressBar
+        count={venue.qualityRatingVotes ?? 0}
+        total={memberCount}
+      />
     </td>
     <td>
-      <VoteProgressBar count={costVoteCount} total={memberCount} />
+      <VoteProgressBar count={venue.costRatingVotes ?? 0} total={memberCount} />
     </td>
     <td>
       <RatingBar

@@ -34,8 +34,11 @@ const COLUMNS: Column[] = [
   { label: "Visited", sortBy: GroupVenueSortParameters.Visited },
   { label: "Venue Type", sortBy: GroupVenueSortParameters.VenueType },
   { label: "Food Type", sortBy: GroupVenueSortParameters.FoodType },
-  { label: "Quality Votes" },
-  { label: "Cost Votes" },
+  {
+    label: "Quality Votes",
+    sortBy: GroupVenueSortParameters.QualityRatingVotes,
+  },
+  { label: "Cost Votes", sortBy: GroupVenueSortParameters.CostRatingVotes },
   { label: "Avg Quality", sortBy: GroupVenueSortParameters.AvgQualityRating },
   { label: "Avg Cost", sortBy: GroupVenueSortParameters.AvgCostRating },
 ];
@@ -133,19 +136,6 @@ const RatingDetailsPage = () => {
     pageSize: searchPageSize,
   });
 
-  const qualityVoteCounts = new Map(
-    qualityRatingsData?.groupVenueRatingsResults?.map((venue) => [
-      venue.groupVenueId,
-      venue.ratings.length,
-    ]),
-  );
-  const costVoteCounts = new Map(
-    costRatingsData?.groupVenueRatingsResults?.map((venue) => [
-      venue.groupVenueId,
-      venue.ratings.length,
-    ]),
-  );
-
   const venues = venuesData?.groupVenues ?? [];
   const totalCount = venuesData?.totalCount ?? 0;
 
@@ -228,8 +218,6 @@ const RatingDetailsPage = () => {
                   venue={x}
                   qualityOptions={qualityOptions}
                   costOptions={costOptions}
-                  qualityVoteCount={qualityVoteCounts.get(x.groupVenueId) ?? 0}
-                  costVoteCount={costVoteCounts.get(x.groupVenueId) ?? 0}
                   memberCount={memberCount}
                   onSelect={setSelectedVenue}
                 />
@@ -303,10 +291,6 @@ const RatingDetailsPage = () => {
                       venue={x}
                       qualityOptions={qualityOptions}
                       costOptions={costOptions}
-                      qualityVoteCount={
-                        qualityVoteCounts.get(x.groupVenueId) ?? 0
-                      }
-                      costVoteCount={costVoteCounts.get(x.groupVenueId) ?? 0}
                       memberCount={memberCount}
                       onSelect={setSelectedVenue}
                     />

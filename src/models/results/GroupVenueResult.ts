@@ -9,4 +9,6 @@ export default interface GroupVenueResult {
   averageQualityRating?: number;
   myCostRating?: number;
   myQualityRating?: number;
+  costRatingVotes?: number;
+  qualityRatingVotes?: number;
 }
