@@ -48,19 +48,27 @@ npm install
 
 The app reads its configuration from Vite environment variables. A `.env.development` file is used in development; create one (or a `.env.local`) with the following keys:
 
-| Variable               | Description                                                 |
-| ---------------------- | ----------------------------------------------------------- |
-| `VITE_AUTH0_DOMAIN`    | Your Auth0 tenant domain (e.g. `your-tenant.eu.auth0.com`). |
-| `VITE_AUTH0_CLIENT_ID` | The Client ID of your Auth0 SPA application.                |
-| `VITE_AUTH0_AUDIENCE`  | The API audience/identifier registered in Auth0.            |
-| `VITE_API_BASE_URL`    | Base URL of the ScranHub API the client should call.        |
+| Variable                     | Description                                                          |
+| ---------------------------- | ------------------------------------------------------------------- |
+| `VITE_AUTH0_DOMAIN`          | Your Auth0 tenant domain (e.g. `your-tenant.eu.auth0.com`).         |
+| `VITE_AUTH0_CLIENT_ID`       | The Client ID of your Auth0 SPA application.                        |
+| `VITE_AUTH0_AUDIENCE`        | The API audience/identifier registered in Auth0.                    |
+| `VITE_API_BASE_URL`          | Base URL of the ScranHub API the client should call.                |
+| `VITE_GOOGLE_MAPS_API_KEY`   | _Optional._ Google Maps key for venue autocomplete (see below).     |
 
 ```dotenv
 VITE_AUTH0_DOMAIN=your-tenant.eu.auth0.com
 VITE_AUTH0_CLIENT_ID=your-client-id
 VITE_AUTH0_AUDIENCE=https://your-api-audience
 VITE_API_BASE_URL=https://localhost:5001
+VITE_GOOGLE_MAPS_API_KEY=your-google-maps-key
 ```
+
+> **Google Maps is optional.** Without `VITE_GOOGLE_MAPS_API_KEY` the "Add Venue"
+> form falls back to a plain text input. To enable Places autocomplete, follow
+> [docs/google-maps-setup.md](docs/google-maps-setup.md), which documents the
+> required APIs, key restrictions, and the cost controls that keep usage within
+> Google's free tier.
 
 > **Note:** environment files containing secrets should not be committed. Keep real values in `.env.local` (which Vite ignores by default) or your deployment's configuration.
 
