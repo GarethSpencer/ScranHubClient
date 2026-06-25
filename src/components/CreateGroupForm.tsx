@@ -1,24 +1,19 @@
 import Form from "react-bootstrap/Form";
 import { MAX_NAME_LENGTH } from "../constants/validation";
 import Button from "react-bootstrap/Button";
-import Spinner from "react-bootstrap/Spinner";
 import { useState } from "react";
-import { useCreateGroup } from "../api/controllerHooks/useGroupController";
+import CreateGroupModal from "./CreateGroupModal";
 
 const CreateGroupForm = () => {
   const [groupName, setGroupName] = useState("");
-  const { mutate, isPending } = useCreateGroup();
+  const [showModal, setShowModal] = useState(false);
 
-  const onCreateGroup = () => {
-    mutate(
-      { groupName: groupName.trim() },
-      {
-        onSuccess: () => setGroupName(""),
-      },
-    );
+  const canSubmit = groupName.trim() !== "";
+
+  const onCreated = () => {
+    setShowModal(false);
+    setGroupName("");
   };
-
-  const canSubmit = groupName.trim() !== "" && !isPending;
 
   return (
     <>
@@ -30,7 +25,7 @@ const CreateGroupForm = () => {
       <Form
         onSubmit={(e) => {
           e.preventDefault();
-          if (canSubmit) onCreateGroup();
+          if (canSubmit) setShowModal(true);
         }}
       >
         <Form.Group className="mb-3" controlId="formCreateGroupName">
@@ -41,7 +36,6 @@ const CreateGroupForm = () => {
               placeholder="Enter group name"
               value={groupName}
               onChange={(e) => setGroupName(e.target.value)}
-              disabled={isPending}
               maxLength={MAX_NAME_LENGTH}
             />
             <Button
@@ -49,25 +43,17 @@ const CreateGroupForm = () => {
               disabled={!canSubmit}
               className="text-nowrap flex-md-shrink-0"
             >
-              {isPending ? (
-                <>
-                  <Spinner
-                    as="span"
-                    animation="border"
-                    size="sm"
-                    role="status"
-                    aria-hidden="true"
-                    className="me-2"
-                  />
-                  Creating...
-                </>
-              ) : (
-                "Create Group"
-              )}
+              Create Group
             </Button>
           </div>
         </Form.Group>
       </Form>
+      <CreateGroupModal
+        show={showModal}
+        groupName={groupName}
+        onClose={() => setShowModal(false)}
+        onCreated={onCreated}
+      />
     </>
   );
 };
