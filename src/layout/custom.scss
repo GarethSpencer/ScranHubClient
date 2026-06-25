@@ -19,3 +19,30 @@ $custom-colors: (
 $theme-colors: map-merge($theme-colors, $custom-colors);
 
 @import "bootstrap/scss/bootstrap";
+
+.place-autocomplete {
+  gmp-place-autocomplete {
+    width: 100%;
+    background-color: var(--bs-body-bg);
+    color: var(--bs-body-color);
+    border: var(--bs-border-width) solid var(--bs-border-color);
+    border-radius: var(--bs-border-radius);
+  }
+
+  gmp-place-autocomplete::part(input) {
+    background-color: transparent;
+    color: var(--bs-body-color);
+    border: none;
+  }
+
+  gmp-place-autocomplete::part(prediction-list) {
+    color-scheme: light;
+    background-color: var(--bs-body-bg);
+  }
+}
+
+[data-bs-theme="dark"]
+  .place-autocomplete
+  gmp-place-autocomplete::part(prediction-list) {
+  color-scheme: dark;
+}

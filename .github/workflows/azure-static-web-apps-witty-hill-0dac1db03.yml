@@ -39,6 +39,7 @@ jobs:
           VITE_AUTH0_CLIENT_ID: ${{ vars.VITE_AUTH0_CLIENT_ID }}
           VITE_AUTH0_AUDIENCE: ${{ vars.VITE_AUTH0_AUDIENCE }}
           VITE_API_BASE_URL: ${{ vars.VITE_API_BASE_URL }}
+          VITE_GOOGLE_MAPS_API_KEY: ${{ vars.VITE_GOOGLE_MAPS_API_KEY }}
         run: npm run build
       - name: Install OIDC Client from Core Package
         run: npm install @actions/core@1.6.0 @actions/http-client
@@ -60,6 +61,7 @@ jobs:
           api_location: "" # Api source code path - optional
           output_location: "" # Already pointing at built output via app_location
           skip_app_build: true
+          deployment_environment: ${{ github.event_name == 'pull_request' && 'staging' || '' }}
           # Required for OIDC auth. GitHub flags this as an "unexpected input" because
           # the action's action.yml doesn't declare it, but the deploy binary reads it
           # from INPUT_GITHUB_ID_TOKEN at runtime. Removing it breaks deployment.

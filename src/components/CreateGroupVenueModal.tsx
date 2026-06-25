@@ -6,6 +6,10 @@ import Form from "react-bootstrap/Form";
 import Spinner from "react-bootstrap/Spinner";
 import { useCreateGroupVenue } from "../api/controllerHooks/useGroupVenueController";
 import { useGetOptionsForGroup } from "../api/controllerHooks/useOptionController";
+import PlaceAutocomplete, {
+  type SelectedPlace,
+} from "./common/PlaceAutocomplete";
+import { isGoogleMapsConfigured } from "../lib/googleMaps";
 
 interface Props {
   show: boolean;
@@ -17,6 +21,10 @@ const CreateGroupVenueModal = ({ show, groupId, onClose }: Props) => {
   const [venueName, setVenueName] = useState("");
   const [venueTypeOptionId, setVenueTypeOptionId] = useState("");
   const [foodTypeOptionId, setFoodTypeOptionId] = useState("");
+  const [selectedAddress, setSelectedAddress] = useState("");
+  const [useAutocomplete, setUseAutocomplete] = useState(
+    isGoogleMapsConfigured(),
+  );
 
   const { data: venueTypeData } = useGetOptionsForGroup(
     "VenueTypeOption",
@@ -36,6 +44,13 @@ const CreateGroupVenueModal = ({ show, groupId, onClose }: Props) => {
     setVenueName("");
     setVenueTypeOptionId("");
     setFoodTypeOptionId("");
+    setSelectedAddress("");
+    setUseAutocomplete(isGoogleMapsConfigured());
+  };
+
+  const handlePlaceSelect = (place: SelectedPlace) => {
+    setVenueName(place.displayName.slice(0, MAX_VENUE_NAME_LENGTH));
+    setSelectedAddress(place.formattedAddress ?? "");
   };
 
   const canSave = venueName.trim().length > 0;
@@ -77,17 +92,38 @@ const CreateGroupVenueModal = ({ show, groupId, onClose }: Props) => {
             handleSave();
           }}
         >
+          {useAutocomplete && (
+            <Form.Group className="mb-3" controlId="createVenueSearch">
+              <Form.Label>Search for a place</Form.Label>
+              <PlaceAutocomplete
+                onSelect={handlePlaceSelect}
+                onUnavailable={() => setUseAutocomplete(false)}
+                disabled={isPending}
+                placeholder="Start typing a venue name or address"
+              />
+              <Form.Text className="text-muted">
+                Pick a real place from Google, or just type a name below.
+              </Form.Text>
+            </Form.Group>
+          )}
           <Form.Group className="mb-3" controlId="createVenueName">
             <Form.Label>Venue Name</Form.Label>
             <Form.Control
               type="text"
               placeholder="Enter venue name"
               value={venueName}
-              onChange={(e) => setVenueName(e.target.value)}
+              onChange={(e) => {
+                setVenueName(e.target.value);
+                // Manual edits no longer match the selected place's address.
+                setSelectedAddress("");
+              }}
               disabled={isPending}
-              autoFocus
+              autoFocus={!useAutocomplete}
               maxLength={MAX_VENUE_NAME_LENGTH}
             />
+            {selectedAddress && (
+              <Form.Text className="text-muted">{selectedAddress}</Form.Text>
+            )}
           </Form.Group>
           <Form.Group className="mb-3" controlId="createVenueType">
             <Form.Label>Venue Type</Form.Label>
