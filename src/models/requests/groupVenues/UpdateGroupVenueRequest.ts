@@ -3,4 +3,8 @@ export default interface UpdateGroupVenueRequest {
   visited: boolean;
   foodTypeOptionId?: string;
   venueTypeOptionId?: string;
+  googlePlaceId?: string;
+  formattedAddress?: string;
+  latitude?: number;
+  longitude?: number;
 }

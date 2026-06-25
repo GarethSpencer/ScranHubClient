@@ -11,4 +11,8 @@ export default interface GroupVenueResult {
   myQualityRating?: number;
   costRatingVotes?: number;
   qualityRatingVotes?: number;
+  googlePlaceId?: string;
+  formattedAddress?: string;
+  latitude?: number;
+  longitude?: number;
 }

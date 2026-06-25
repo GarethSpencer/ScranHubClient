@@ -135,11 +135,32 @@ VITE_GOOGLE_MAPS_API_KEY=your-key-here
 
 Vite reads env vars **at startup**, so restart `npm run dev` after adding it.
 
+## Place data persistence (done)
+
+The selected place is persisted end-to-end. The backend stores four nullable
+fields on `GroupVenue` — `GooglePlaceId` (`varchar(255)`), `FormattedAddress`
+(`nvarchar(512)`), `Latitude`/`Longitude` (`decimal(8,6)`/`decimal(9,6)`) — and
+they flow through `CreateGroupVenueRequest`, `UpdateGroupVenueRequest`, and
+`GroupVenueResult` (camelCase on the client, PascalCase on the API).
+
+Behaviour, by design:
+
+- **Create** is all-or-nothing: picking a place sends all four fields; typing a
+  name manually (or editing the name after picking) sends none, so we never store a
+  place ID that doesn't match the saved name.
+- **Edit** preserves the place data ("Option B"). The edit modal has no place
+  search, so it passes the venue's existing values straight through — renaming a
+  venue keeps its pin/address rather than dropping it. The known trade-off: renaming
+  a venue to a *genuinely different* place leaves the old pin until "Option C" below
+  is built.
+
 ## Future work
 
-- **Store the Place ID.** To persist the selected place (and later show a map on the
-  venue detail page), the backend `CreateGroupVenueRequest` / `GroupVenueResult` need
-  new fields (`placeId`, `latitude`, `longitude`, `address`). The client already
-  captures these in `PlaceAutocomplete`'s `SelectedPlace`; they are just not sent yet.
-- **Map view** on the venue detail modal — uses the Maps JavaScript API "map loads"
-  SKU (the 100/day cap is already in place for it).
+- **Autocomplete in the edit modal ("Option C").** Add the `PlaceAutocomplete`
+  widget to `GroupVenueModal` (mirroring the create modal) so a venue can be
+  re-anchored to a new place — selecting a place overwrites all four fields, a manual
+  name edit clears them. This is the proper fix for the edit-time consistency
+  trade-off noted above.
+- **Map view** on the venue detail modal — render a map + marker from the stored
+  `latitude`/`longitude` (no extra API call needed for the pin). Uses the Maps
+  JavaScript API "map loads" SKU; the 100/day cap is already in place for it.

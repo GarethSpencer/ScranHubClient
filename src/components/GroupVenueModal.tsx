@@ -204,6 +204,10 @@ const GroupVenueModal = ({ groupId, venue, onClose }: Props) => {
             visited,
             venueTypeOptionId: venueTypeOptionId || undefined,
             foodTypeOptionId: foodTypeOptionId || undefined,
+            googlePlaceId: venue.googlePlaceId,
+            formattedAddress: venue.formattedAddress,
+            latitude: venue.latitude,
+            longitude: venue.longitude,
           },
         }),
         persistRating(

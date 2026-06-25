@@ -21,7 +21,9 @@ const CreateGroupVenueModal = ({ show, groupId, onClose }: Props) => {
   const [venueName, setVenueName] = useState("");
   const [venueTypeOptionId, setVenueTypeOptionId] = useState("");
   const [foodTypeOptionId, setFoodTypeOptionId] = useState("");
-  const [selectedAddress, setSelectedAddress] = useState("");
+  const [selectedPlace, setSelectedPlace] = useState<SelectedPlace | null>(
+    null,
+  );
   const [useAutocomplete, setUseAutocomplete] = useState(
     isGoogleMapsConfigured(),
   );
@@ -44,13 +46,13 @@ const CreateGroupVenueModal = ({ show, groupId, onClose }: Props) => {
     setVenueName("");
     setVenueTypeOptionId("");
     setFoodTypeOptionId("");
-    setSelectedAddress("");
+    setSelectedPlace(null);
     setUseAutocomplete(isGoogleMapsConfigured());
   };
 
   const handlePlaceSelect = (place: SelectedPlace) => {
     setVenueName(place.displayName.slice(0, MAX_VENUE_NAME_LENGTH));
-    setSelectedAddress(place.formattedAddress ?? "");
+    setSelectedPlace(place);
   };
 
   const canSave = venueName.trim().length > 0;
@@ -68,6 +70,10 @@ const CreateGroupVenueModal = ({ show, groupId, onClose }: Props) => {
         venueName: venueName.trim(),
         venueTypeOptionId: venueTypeOptionId || undefined,
         foodTypeOptionId: foodTypeOptionId || undefined,
+        googlePlaceId: selectedPlace?.placeId,
+        formattedAddress: selectedPlace?.formattedAddress,
+        latitude: selectedPlace?.location?.lat,
+        longitude: selectedPlace?.location?.lng,
       },
       { onSuccess: onClose },
     );
@@ -114,15 +120,19 @@ const CreateGroupVenueModal = ({ show, groupId, onClose }: Props) => {
               value={venueName}
               onChange={(e) => {
                 setVenueName(e.target.value);
-                // Manual edits no longer match the selected place's address.
-                setSelectedAddress("");
+                // A manual edit means the name no longer matches the chosen
+                // place, so drop the Google data rather than persist a
+                // mismatched place ID / address / coordinates.
+                setSelectedPlace(null);
               }}
               disabled={isPending}
               autoFocus={!useAutocomplete}
               maxLength={MAX_VENUE_NAME_LENGTH}
             />
-            {selectedAddress && (
-              <Form.Text className="text-muted">{selectedAddress}</Form.Text>
+            {selectedPlace?.formattedAddress && (
+              <Form.Text className="text-muted">
+                {selectedPlace.formattedAddress}
+              </Form.Text>
             )}
           </Form.Group>
           <Form.Group className="mb-3" controlId="createVenueType">
