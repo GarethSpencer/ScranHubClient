@@ -200,13 +200,15 @@
 }
 
 @include media-breakpoint-down(md) {
-  .group-venue-modal.modal-dialog-scrollable {
+  .group-venue-modal.modal-dialog-scrollable,
+  .create-group-modal.modal-dialog-scrollable {
     height: auto;
     max-height: 70vh;
     max-height: 70dvh;
   }
 
-  .group-venue-modal.modal-dialog-scrollable .modal-content {
+  .group-venue-modal.modal-dialog-scrollable .modal-content,
+  .create-group-modal.modal-dialog-scrollable .modal-content {
     max-height: 70vh;
     max-height: 70dvh;
   }
@@ -216,6 +218,22 @@
   .group-venue-modal {
     max-width: map-get($container-max-widths, xl);
   }
+}
+
+.friend-select-row {
+  cursor: pointer;
+}
+
+.friend-select-row .form-check-input {
+  width: 1.5rem;
+  height: 1.5rem;
+  cursor: pointer;
+}
+
+.friend-select-row.is-selected > td {
+  background-color: rgba(var(--bs-primary-rgb), 0.12);
+  color: var(--bs-primary);
+  font-weight: 600;
 }
 
 .modal-footer-stacked {

@@ -92,7 +92,9 @@ const CreateGroupModal = ({ show, groupName, onClose, onCreated }: Props) => {
       onEntered={resetForm}
       backdrop={isPending ? "static" : true}
       keyboard={!isPending}
+      scrollable
       centered
+      dialogClassName="create-group-modal"
     >
       <Modal.Header closeButton={!isPending}>
         <Modal.Title>Create Group</Modal.Title>
@@ -117,7 +119,13 @@ const CreateGroupModal = ({ show, groupName, onClose, onCreated }: Props) => {
           >
             <tbody>
               {friends.map((x: FriendResult) => (
-                <tr key={x.userFriendId}>
+                <tr
+                  key={x.userFriendId}
+                  className={`friend-select-row${
+                    selectedIds.includes(x.friendId) ? " is-selected" : ""
+                  }`}
+                  onClick={() => !isPending && toggleFriend(x.friendId)}
+                >
                   <td className="w-75 text-start text-break">
                     {x.displayName}
                   </td>
@@ -127,7 +135,9 @@ const CreateGroupModal = ({ show, groupName, onClose, onCreated }: Props) => {
                       aria-label={`Add ${x.displayName} to the group`}
                       checked={selectedIds.includes(x.friendId)}
                       onChange={() => toggleFriend(x.friendId)}
+                      onClick={(e) => e.stopPropagation()}
                       disabled={isPending}
+                      className="d-flex justify-content-center"
                     />
                   </td>
                 </tr>
