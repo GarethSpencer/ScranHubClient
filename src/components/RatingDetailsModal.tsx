@@ -5,6 +5,7 @@ import type GroupVenueResult from "../models/results/GroupVenueResult";
 import type RatingVenueResult from "../models/results/generic/RatingVenueResult";
 import type RatingOptionResult from "../models/results/generic/RatingOptionResult";
 import RatingBar from "./common/RatingBar";
+import VenueMap from "./common/VenueMap";
 
 interface Props {
   venue: GroupVenueResult | null;
@@ -33,6 +34,14 @@ const displayOrderForOption = (
 
 const displayNameForUser = (row: UserRatingRow, currentUserId?: string) =>
   row.userId === currentUserId ? "Me" : row.displayName;
+
+const googleMapsUrl = (venue: GroupVenueResult) => {
+  const query = encodeURIComponent(venue.formattedAddress ?? venue.venueName);
+  const url = `https://www.google.com/maps/search/?api=1&query=${query}`;
+  return venue.googlePlaceId
+    ? `${url}&query_place_id=${encodeURIComponent(venue.googlePlaceId)}`
+    : url;
+};
 
 const buildUserRatingRows = (
   qualityRatings: RatingVenueResult[],
@@ -91,6 +100,27 @@ const RatingDetailsModal = ({
         <Modal.Title>{venue?.venueName}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
+        {venue?.latitude != null && venue?.longitude != null && (
+          <div className="mb-3">
+            <VenueMap
+              latitude={venue.latitude}
+              longitude={venue.longitude}
+              name={venue.venueName}
+            />
+            {venue.formattedAddress && (
+              <p className="small mt-2 mb-0">
+                <a
+                  href={googleMapsUrl(venue)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {venue.formattedAddress}
+                </a>
+              </p>
+            )}
+            <hr className="my-3" />
+          </div>
+        )}
         <p className="text-muted small mb-3">
           Every group member's ratings for this venue.
         </p>
