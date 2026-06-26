@@ -8,6 +8,7 @@ import Button from "react-bootstrap/Button";
 import Spinner from "react-bootstrap/Spinner";
 import TableStatus from "./common/TableStatus";
 import TablePagination from "./common/TablePagination";
+import ConfirmModal from "./common/ConfirmModal";
 import useActingState from "../hooks/useActingState";
 import { useState } from "react";
 import { FriendshipStatus } from "../enums/FriendshipStatus";
@@ -24,10 +25,17 @@ const UserFriendTable = () => {
 
   const { isActing, mutationCallbacks } = useActingState();
 
+  const [friendToDelete, setFriendToDelete] = useState<FriendResult | null>(
+    null,
+  );
+
   const friends = data?.friends ?? [];
   const totalCount = data?.totalCount ?? 0;
 
-  const onDeleteFriend = (userFriendId: string) => {
+  const onConfirmDeleteFriend = () => {
+    if (!friendToDelete) return;
+
+    const userFriendId = friendToDelete.userFriendId;
     mutate(
       userFriendId,
       mutationCallbacks(userFriendId, "delete", {
@@ -35,6 +43,7 @@ const UserFriendTable = () => {
           if (page > 1 && totalCount <= (page - 1) * pageSize + 1) {
             setPage(page - 1);
           }
+          setFriendToDelete(null);
         },
       }),
     );
@@ -61,11 +70,11 @@ const UserFriendTable = () => {
           <tbody>
             {friends.map((x: FriendResult) => (
               <tr key={x.userFriendId}>
-                <td className="w-50 text-start text-break">{x.displayName}</td>
-                <td className="w-50">
+                <td className="w-75 text-start text-break">{x.displayName}</td>
+                <td className="w-25">
                   <Button
                     variant="danger"
-                    onClick={() => onDeleteFriend(x.userFriendId)}
+                    onClick={() => setFriendToDelete(x)}
                     disabled={isPending}
                   >
                     {isActing(x.userFriendId, "delete") ? (
@@ -86,6 +95,22 @@ const UserFriendTable = () => {
           onPageChange={setPage}
         />
       </TableStatus>
+
+      <ConfirmModal
+        show={friendToDelete !== null}
+        title="Delete Friend"
+        body={
+          <p className="mb-0">
+            Are you sure you want to delete{" "}
+            <strong>{friendToDelete?.displayName}</strong> from your friends?
+          </p>
+        }
+        confirmLabel="Delete"
+        pendingLabel="Deleting..."
+        isPending={isPending}
+        onConfirm={onConfirmDeleteFriend}
+        onCancel={() => setFriendToDelete(null)}
+      />
     </>
   );
 };
