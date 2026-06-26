@@ -137,30 +137,43 @@ Vite reads env vars **at startup**, so restart `npm run dev` after adding it.
 
 ## Place data persistence (done)
 
-The selected place is persisted end-to-end. The backend stores four nullable
-fields on `GroupVenue` — `GooglePlaceId` (`varchar(255)`), `FormattedAddress`
-(`nvarchar(512)`), `Latitude`/`Longitude` (`decimal(8,6)`/`decimal(9,6)`) — and
-they flow through `CreateGroupVenueRequest`, `UpdateGroupVenueRequest`, and
-`GroupVenueResult` (camelCase on the client, PascalCase on the API).
+The selected place is persisted end-to-end, and the **backend changes are live in
+production** (the four columns exist and the API reads/writes them). The backend
+stores four nullable fields on `GroupVenue` — `GooglePlaceId` (`varchar(255)`),
+`FormattedAddress` (`nvarchar(512)`), `Latitude`/`Longitude`
+(`decimal(8,6)`/`decimal(9,6)`) — and they flow through `CreateGroupVenueRequest`,
+`UpdateGroupVenueRequest`, and `GroupVenueResult` (camelCase on the client,
+PascalCase on the API). Migrations auto-apply on API startup, so the schema stays
+in sync on deploy.
 
-Behaviour, by design:
+The shared search state for both the create and edit modals lives in the
+`useVenuePlaceSearch` hook (`src/hooks/`), which tracks the picked place and
+derives the request fields. Behaviour, by design:
 
 - **Create** is all-or-nothing: picking a place sends all four fields; typing a
   name manually (or editing the name after picking) sends none, so we never store a
   place ID that doesn't match the saved name.
-- **Edit** preserves the place data ("Option B"). The edit modal has no place
-  search, so it passes the venue's existing values straight through — renaming a
-  venue keeps its pin/address rather than dropping it. The known trade-off: renaming
-  a venue to a *genuinely different* place leaves the old pin until "Option C" below
-  is built.
+- **Edit** (`GroupVenueModal`) has the same place search. Picking a new place
+  re-anchors the venue (overwrites all four fields); a manual name edit **preserves**
+  the existing place data ("Option B"). The hook is seeded with the venue's existing
+  fields via `initialFields`, so editing the name keeps the pin/address unless a new
+  place is explicitly chosen. (A venue created by manual typing can also gain a place
+  later via the edit search.)
+
+## Map view
+
+The venue detail summary (`RatingDetailsModal`) renders a read-only map + marker
+from the stored `latitude`/`longitude` via the `VenueMap` component (legacy
+`google.maps.Marker`; no Map ID needed). The marker is plotted from stored
+coordinates, so it costs only a **map load** (the Maps JS SKU capped at 100/day) —
+**no Places API call**. The formatted address below the map links out to Google
+Maps, built from the stored `googlePlaceId` (exact place) or address — also no API
+call. Venues without coordinates show no map (and no divider).
 
 ## Future work
 
-- **Autocomplete in the edit modal ("Option C").** Add the `PlaceAutocomplete`
-  widget to `GroupVenueModal` (mirroring the create modal) so a venue can be
-  re-anchored to a new place — selecting a place overwrites all four fields, a manual
-  name edit clears them. This is the proper fix for the edit-time consistency
-  trade-off noted above.
-- **Map view** on the venue detail modal — render a map + marker from the stored
-  `latitude`/`longitude` (no extra API call needed for the pin). Uses the Maps
-  JavaScript API "map loads" SKU; the 100/day cap is already in place for it.
+- **AdvancedMarkerElement.** `VenueMap` uses the soft-deprecated legacy `Marker`
+  to avoid Map ID setup. Upgrading to `AdvancedMarkerElement` (needs a Cloud Map ID)
+  is the long-term path if/when the deprecation warning matters.
+- **Dark-mode map tiles.** The map renders in Google's default light style
+  regardless of `data-bs-theme`. A dark map style could be applied for dark mode.

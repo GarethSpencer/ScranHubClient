@@ -20,6 +20,10 @@ import {
 import { useGetCurrentUser } from "../api/controllerHooks/useUserController";
 import type GroupVenueResult from "../models/results/GroupVenueResult";
 import type RatingOptionResult from "../models/results/generic/RatingOptionResult";
+import PlaceAutocomplete, {
+  type SelectedPlace,
+} from "./common/PlaceAutocomplete";
+import useVenuePlaceSearch from "../hooks/useVenuePlaceSearch";
 
 interface Props {
   groupId: string;
@@ -41,6 +45,22 @@ const GroupVenueModal = ({ groupId, venue, onClose }: Props) => {
   const [foodTypeOptionId, setFoodTypeOptionId] = useState("");
   const [qualityOptionId, setQualityOptionId] = useState<string | null>(null);
   const [costOptionId, setCostOptionId] = useState<string | null>(null);
+
+  const {
+    useAutocomplete,
+    onAutocompleteUnavailable,
+    selectPlace,
+    displayedAddress,
+    placeFields,
+    reset: resetPlaceSearch,
+  } = useVenuePlaceSearch({
+    initialFields: {
+      googlePlaceId: venue?.googlePlaceId,
+      formattedAddress: venue?.formattedAddress,
+      latitude: venue?.latitude,
+      longitude: venue?.longitude,
+    },
+  });
 
   const groupVenueId = venue?.groupVenueId ?? "";
 
@@ -133,6 +153,12 @@ const GroupVenueModal = ({ groupId, venue, onClose }: Props) => {
     setVisited(venue?.visited ?? false);
     setVenueTypeOptionId(optionIdForLabel(venueTypeOptions, venue?.venueType));
     setFoodTypeOptionId(optionIdForLabel(foodTypeOptions, venue?.foodType));
+    resetPlaceSearch();
+  };
+
+  const handlePlaceSelect = (place: SelectedPlace) => {
+    setVenueName(place.displayName.slice(0, MAX_VENUE_NAME_LENGTH));
+    selectPlace(place);
   };
 
   const qualitySelection =
@@ -204,10 +230,7 @@ const GroupVenueModal = ({ groupId, venue, onClose }: Props) => {
             visited,
             venueTypeOptionId: venueTypeOptionId || undefined,
             foodTypeOptionId: foodTypeOptionId || undefined,
-            googlePlaceId: venue.googlePlaceId,
-            formattedAddress: venue.formattedAddress,
-            latitude: venue.latitude,
-            longitude: venue.longitude,
+            ...placeFields,
           },
         }),
         persistRating(
@@ -282,6 +305,21 @@ const GroupVenueModal = ({ groupId, venue, onClose }: Props) => {
                 <p className="text-muted small mb-3">
                   These can be amended by anybody in your group.
                 </p>
+                {useAutocomplete && (
+                  <Form.Group className="mb-3" controlId="updateVenueSearch">
+                    <Form.Label>Search for a place</Form.Label>
+                    <PlaceAutocomplete
+                      onSelect={handlePlaceSelect}
+                      onUnavailable={onAutocompleteUnavailable}
+                      disabled={isPending}
+                      placeholder="Search to update the venue's place"
+                    />
+                    <Form.Text className="text-muted">
+                      Pick a place to update the map, or just edit the name
+                      below.
+                    </Form.Text>
+                  </Form.Group>
+                )}
                 <Row className="g-3 mb-3">
                   <Col xs={9}>
                     <Form.Group controlId="updateVenueName">
@@ -294,6 +332,11 @@ const GroupVenueModal = ({ groupId, venue, onClose }: Props) => {
                         disabled={isPending}
                         maxLength={MAX_VENUE_NAME_LENGTH}
                       />
+                      {displayedAddress && (
+                        <Form.Text className="text-muted">
+                          {displayedAddress}
+                        </Form.Text>
+                      )}
                     </Form.Group>
                   </Col>
                   <Col xs={3}>

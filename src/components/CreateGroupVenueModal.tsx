@@ -9,7 +9,7 @@ import { useGetOptionsForGroup } from "../api/controllerHooks/useOptionControlle
 import PlaceAutocomplete, {
   type SelectedPlace,
 } from "./common/PlaceAutocomplete";
-import { isGoogleMapsConfigured } from "../lib/googleMaps";
+import useVenuePlaceSearch from "../hooks/useVenuePlaceSearch";
 
 interface Props {
   show: boolean;
@@ -21,12 +21,15 @@ const CreateGroupVenueModal = ({ show, groupId, onClose }: Props) => {
   const [venueName, setVenueName] = useState("");
   const [venueTypeOptionId, setVenueTypeOptionId] = useState("");
   const [foodTypeOptionId, setFoodTypeOptionId] = useState("");
-  const [selectedPlace, setSelectedPlace] = useState<SelectedPlace | null>(
-    null,
-  );
-  const [useAutocomplete, setUseAutocomplete] = useState(
-    isGoogleMapsConfigured(),
-  );
+  const {
+    useAutocomplete,
+    onAutocompleteUnavailable,
+    selectPlace,
+    clearNewPlace,
+    displayedAddress,
+    placeFields,
+    reset: resetPlaceSearch,
+  } = useVenuePlaceSearch();
 
   const { data: venueTypeData } = useGetOptionsForGroup(
     "VenueTypeOption",
@@ -46,13 +49,12 @@ const CreateGroupVenueModal = ({ show, groupId, onClose }: Props) => {
     setVenueName("");
     setVenueTypeOptionId("");
     setFoodTypeOptionId("");
-    setSelectedPlace(null);
-    setUseAutocomplete(isGoogleMapsConfigured());
+    resetPlaceSearch();
   };
 
   const handlePlaceSelect = (place: SelectedPlace) => {
     setVenueName(place.displayName.slice(0, MAX_VENUE_NAME_LENGTH));
-    setSelectedPlace(place);
+    selectPlace(place);
   };
 
   const canSave = venueName.trim().length > 0;
@@ -70,10 +72,7 @@ const CreateGroupVenueModal = ({ show, groupId, onClose }: Props) => {
         venueName: venueName.trim(),
         venueTypeOptionId: venueTypeOptionId || undefined,
         foodTypeOptionId: foodTypeOptionId || undefined,
-        googlePlaceId: selectedPlace?.placeId,
-        formattedAddress: selectedPlace?.formattedAddress,
-        latitude: selectedPlace?.location?.lat,
-        longitude: selectedPlace?.location?.lng,
+        ...placeFields,
       },
       { onSuccess: onClose },
     );
@@ -103,7 +102,7 @@ const CreateGroupVenueModal = ({ show, groupId, onClose }: Props) => {
               <Form.Label>Search for a place</Form.Label>
               <PlaceAutocomplete
                 onSelect={handlePlaceSelect}
-                onUnavailable={() => setUseAutocomplete(false)}
+                onUnavailable={onAutocompleteUnavailable}
                 disabled={isPending}
                 placeholder="Start typing a venue name or address"
               />
@@ -123,16 +122,14 @@ const CreateGroupVenueModal = ({ show, groupId, onClose }: Props) => {
                 // A manual edit means the name no longer matches the chosen
                 // place, so drop the Google data rather than persist a
                 // mismatched place ID / address / coordinates.
-                setSelectedPlace(null);
+                clearNewPlace();
               }}
               disabled={isPending}
               autoFocus={!useAutocomplete}
               maxLength={MAX_VENUE_NAME_LENGTH}
             />
-            {selectedPlace?.formattedAddress && (
-              <Form.Text className="text-muted">
-                {selectedPlace.formattedAddress}
-              </Form.Text>
+            {displayedAddress && (
+              <Form.Text className="text-muted">{displayedAddress}</Form.Text>
             )}
           </Form.Group>
           <Form.Group className="mb-3" controlId="createVenueType">
