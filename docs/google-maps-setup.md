@@ -127,13 +127,22 @@ overkill here.)
 
 ## Local development
 
-Add the key to `.env.development` (gitignored — never committed):
+Add the key (and Map ID) to `.env.development` (gitignored — never committed):
 
 ```dotenv
 VITE_GOOGLE_MAPS_API_KEY=your-key-here
+VITE_GOOGLE_MAPS_MAP_ID=your-map-id-here
 ```
 
-Vite reads env vars **at startup**, so restart `npm run dev` after adding it.
+Both are also injected at build time via the deploy workflow's `env:` block from
+repository **Variables** (`vars.*`), matching the other `VITE_*` config.
+
+Vite reads env vars **at startup**, so restart `npm run dev` after adding them.
+
+The Map ID is optional in code — `VenueMap` falls back to Google's `DEMO_MAP_ID`
+when it is unset (works, but intended for dev). It does not need its own
+referrer/API restrictions; it is just a styling/config reference, and security
+still rests on the API key's restrictions.
 
 ## Place data persistence (done)
 
@@ -162,18 +171,21 @@ derives the request fields. Behaviour, by design:
 
 ## Map view
 
-The venue detail summary (`RatingDetailsModal`) renders a read-only map + marker
-from the stored `latitude`/`longitude` via the `VenueMap` component (legacy
-`google.maps.Marker`; no Map ID needed). The marker is plotted from stored
-coordinates, so it costs only a **map load** (the Maps JS SKU capped at 100/day) —
-**no Places API call**. The formatted address below the map links out to Google
-Maps, built from the stored `googlePlaceId` (exact place) or address — also no API
-call. Venues without coordinates show no map (and no divider).
+The venue detail summary (`RatingDetailsModal`) renders a read-only map via the
+`VenueMap` component, with an `AdvancedMarkerElement` pin plotted from the stored
+`latitude`/`longitude`. The marker comes from stored coordinates, so it costs only
+a **map load** (the Maps JS SKU capped at 100/day) — **no Places API call**. The
+formatted address below the map links out to Google Maps, built from the stored
+`googlePlaceId` (exact place) or address — also no API call. Venues without
+coordinates show no map (and no divider).
 
-## Future work
+`AdvancedMarkerElement` requires the map to be created with a **Map ID**
+(`VITE_GOOGLE_MAPS_MAP_ID`, a vector Map ID created in Cloud → Map Management;
+`DEMO_MAP_ID` fallback otherwise). Using a Map ID does **not** add a new billing
+SKU or quota — it is still the same per-map-load charge under the 100/day cap.
 
-- **AdvancedMarkerElement.** `VenueMap` uses the soft-deprecated legacy `Marker`
-  to avoid Map ID setup. Upgrading to `AdvancedMarkerElement` (needs a Cloud Map ID)
-  is the long-term path if/when the deprecation warning matters.
-- **Dark-mode map tiles.** The map renders in Google's default light style
-  regardless of `data-bs-theme`. A dark map style could be applied for dark mode.
+**Dark mode:** the Map ID holds both a light and a dark cloud style, and `VenueMap`
+selects between them at render time with `colorScheme: "DARK" | "LIGHT"`, driven by
+the app's `useDarkMode()` state. Toggling the app theme rebuilds the map in the
+matching scheme. The styles are currently Google's defaults; a branded dark style
+can be set in the console's Map style editor with no code change.

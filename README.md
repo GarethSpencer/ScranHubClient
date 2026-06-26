@@ -9,6 +9,7 @@ ScranHub is a web app for groups of friends to track and rate the places they ea
 - **Friends** — add friends by their email or display name and manage pending/declined requests.
 - **Groups** — create groups, manage them and search to join groups created by your friends.
 - **Venues & ratings** — add places to a group that you'd like to dine together, and then rate them on configurable **quality** and **cost** scales.
+- **Google Maps integration** — _(optional)_ search real places via Google Places autocomplete when adding or editing a venue, and view the selected venue on a map (with a link to Google Maps) on the summary screen. The map follows the app's light/dark theme. Degrades gracefully to plain text entry when no key is configured.
 - **Summaries** — two summary views of every venue in a group showing average ratings and how each member voted, with sorting and filtering.
 - **Custom rating options** — each group can configure its own food types, venue types, and quality/cost rating scales, with drag-and-drop reordering. So you can personalise each group to the people using it.
 - **Admin** — an API-protected area for managing users and groups across the platform.
@@ -26,6 +27,7 @@ ScranHub is a web app for groups of friends to track and rate the places they ea
 | UI            | [React-Bootstrap](https://react-bootstrap.netlify.app/) + [Bootstrap 5](https://getbootstrap.com/) (SCSS) |
 | Drag & drop   | [dnd kit](https://dndkit.com/)                                                                            |
 | Auth          | [Auth0](https://auth0.com/) (`@auth0/auth0-react`)                                                        |
+| Maps          | [Google Maps Platform](https://developers.google.com/maps) — Places autocomplete + Maps JS _(optional)_  |
 | Hosting       | [Azure Static Web Apps](https://azure.microsoft.com/products/app-service/static)                          |
 
 ## Getting started
@@ -54,7 +56,8 @@ The app reads its configuration from Vite environment variables. A `.env.develop
 | `VITE_AUTH0_CLIENT_ID`       | The Client ID of your Auth0 SPA application.                        |
 | `VITE_AUTH0_AUDIENCE`        | The API audience/identifier registered in Auth0.                    |
 | `VITE_API_BASE_URL`          | Base URL of the ScranHub API the client should call.                |
-| `VITE_GOOGLE_MAPS_API_KEY`   | _Optional._ Google Maps key for venue autocomplete (see below).     |
+| `VITE_GOOGLE_MAPS_API_KEY`   | _Optional._ Google Maps key for venue autocomplete + maps (see below). |
+| `VITE_GOOGLE_MAPS_MAP_ID`    | _Optional._ Cloud Map ID for the venue detail map (falls back to `DEMO_MAP_ID`). |
 
 ```dotenv
 VITE_AUTH0_DOMAIN=your-tenant.eu.auth0.com
@@ -62,12 +65,14 @@ VITE_AUTH0_CLIENT_ID=your-client-id
 VITE_AUTH0_AUDIENCE=https://your-api-audience
 VITE_API_BASE_URL=https://localhost:5001
 VITE_GOOGLE_MAPS_API_KEY=your-google-maps-key
+VITE_GOOGLE_MAPS_MAP_ID=your-map-id
 ```
 
 > **Google Maps is optional.** Without `VITE_GOOGLE_MAPS_API_KEY` the "Add Venue"
-> form falls back to a plain text input. To enable Places autocomplete, follow
+> form falls back to a plain text input and no venue map is shown — the app works
+> exactly as before. To enable Places autocomplete and the venue detail map, follow
 > [docs/google-maps-setup.md](docs/google-maps-setup.md), which documents the
-> required APIs, key restrictions, and the cost controls that keep usage within
+> required APIs, the key/Map ID setup, and the cost controls that keep usage within
 > Google's free tier.
 
 > **Note:** environment files containing secrets should not be committed. Keep real values in `.env.local` (which Vite ignores by default) or your deployment's configuration.
