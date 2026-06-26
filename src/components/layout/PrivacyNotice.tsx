@@ -22,7 +22,7 @@ const PrivacyNotice = () => {
       aria-label="Dismiss privacy notice"
     >
       Your theme preference and login session will be stored locally in your
-      browser. This site doesn't use any tracking or advertising cookies.
+      browser. This site doesn't use any tracking or advertising cookies.{" "}
       <span className="privacy-notice-action">Got it</span>
     </button>
   );
