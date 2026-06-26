@@ -98,6 +98,35 @@
   font-size: 4rem;
 }
 
+.privacy-notice {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1050;
+  display: block;
+  width: 100%;
+  border: 0;
+  padding: 0.6rem 1rem;
+  text-align: center;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  color: #eee;
+  background-color: rgba(0, 0, 0, 0.85);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+}
+
+.privacy-notice:hover {
+  background-color: rgba(0, 0, 0, 0.92);
+}
+
+.privacy-notice-action {
+  font-weight: 600;
+  text-decoration: underline;
+  white-space: nowrap;
+}
+
 .content-footer {
   position: absolute;
   bottom: 1rem;
