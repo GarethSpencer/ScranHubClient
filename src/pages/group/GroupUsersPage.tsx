@@ -87,7 +87,7 @@ const GroupUsersPage = () => {
                         {member.displayName}
                         {member.userId === currentUserId && (
                           <Badge bg="primary" className="ms-2">
-                            You
+                            Me
                           </Badge>
                         )}
                         {member.userId === creatorId && (
