@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { loadGoogleMaps } from "../../lib/googleMaps";
+import useDarkMode from "../../contexts/darkMode/useDarkMode";
 
 interface Props {
   latitude: number;
@@ -7,9 +8,12 @@ interface Props {
   name?: string;
 }
 
+const MAP_ID = import.meta.env.VITE_GOOGLE_MAPS_MAP_ID || "DEMO_MAP_ID";
+
 const VenueMap = ({ latitude, longitude, name }: Props) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [failed, setFailed] = useState(false);
+  const { state: isDarkMode } = useDarkMode();
 
   useEffect(() => {
     let cancelled = false;
@@ -21,7 +25,7 @@ const VenueMap = ({ latitude, longitude, name }: Props) => {
         const { Map } = (await maps.importLibrary(
           "maps",
         )) as google.maps.MapsLibrary;
-        const { Marker } = (await maps.importLibrary(
+        const { AdvancedMarkerElement } = (await maps.importLibrary(
           "marker",
         )) as google.maps.MarkerLibrary;
 
@@ -29,11 +33,13 @@ const VenueMap = ({ latitude, longitude, name }: Props) => {
         const map = new Map(containerRef.current, {
           center: position,
           zoom: 16,
+          mapId: MAP_ID,
+          colorScheme: isDarkMode ? "DARK" : "LIGHT",
           disableDefaultUI: true,
           zoomControl: true,
           clickableIcons: false,
         });
-        new Marker({ map, position, title: name });
+        new AdvancedMarkerElement({ map, position, title: name });
       })
       .catch(() => {
         if (!cancelled) setFailed(true);
@@ -42,7 +48,7 @@ const VenueMap = ({ latitude, longitude, name }: Props) => {
     return () => {
       cancelled = true;
     };
-  }, [latitude, longitude, name]);
+  }, [latitude, longitude, name, isDarkMode]);
 
   if (failed) return null;
 
