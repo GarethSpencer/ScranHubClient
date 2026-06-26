@@ -395,7 +395,7 @@ const GroupVenueModal = ({ groupId, venue, onClose }: Props) => {
               </Col>
 
               <Col xs={12} md="auto" className="d-md-none">
-                <hr className="section-rule mt-4 mb-4" />
+                <hr className="section-rule mt-2 mb-3" />
               </Col>
               <Col
                 xs={12}
