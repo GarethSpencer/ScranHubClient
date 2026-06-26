@@ -17,6 +17,7 @@ interface Props {
   isLoading: boolean;
   isError: boolean;
   emptyText: string;
+  showCreatedBy?: boolean;
   showActions?: boolean;
   isLeaving?: boolean;
   isActing?: (groupId: string, action: string) => boolean;
@@ -31,6 +32,7 @@ const GroupTable = ({
   isLoading,
   isError,
   emptyText,
+  showCreatedBy = true,
   showActions = false,
   isLeaving = false,
   isActing,
@@ -63,7 +65,7 @@ const GroupTable = ({
           <thead>
             <tr>
               <th>Group Name</th>
-              <th>Created By</th>
+              {showCreatedBy && <th>Created By</th>}
               {showActions && (
                 <th className="text-nowrap" style={{ width: "1%" }}>
                   Action
@@ -77,7 +79,9 @@ const GroupTable = ({
                 <td className="text-start text-break">
                   <Link to={`/group/${x.groupId}`}>{x.groupName}</Link>
                 </td>
-                <td className="text-start text-break">{x.displayName}</td>
+                {showCreatedBy && (
+                  <td className="text-start text-break">{x.displayName}</td>
+                )}
                 {showActions && (
                   <td className="text-nowrap" style={{ width: "1%" }}>
                     <OverlayTrigger overlay={<Tooltip>Leave group</Tooltip>}>

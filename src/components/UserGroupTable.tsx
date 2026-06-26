@@ -47,6 +47,7 @@ const UserGroupTable = () => {
         headingClassName="mt-5"
         helperText="You're added to these automatically when you create them."
         groups={createdGroups}
+        showCreatedBy={false}
         isLoading={isLoading}
         isError={isError}
         emptyText="You haven't created any groups yet"

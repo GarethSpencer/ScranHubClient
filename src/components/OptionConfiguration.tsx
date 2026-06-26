@@ -196,7 +196,7 @@ const OptionConfiguration = ({
             )}
             {reorderable && hasCustomOptions && sortedOptions.length > 1 && (
               <Button
-                variant="outline-secondary"
+                variant="secondary"
                 onClick={() => reorder.start(sortedOptions)}
                 disabled={hasOtherPendingWork}
                 title={
