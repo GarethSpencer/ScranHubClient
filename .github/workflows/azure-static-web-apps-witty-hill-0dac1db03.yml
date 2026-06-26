@@ -86,22 +86,6 @@ jobs:
             const coredemo = require('@actions/core')
             return await coredemo.getIDToken()
           result-encoding: string
-      - name: Log close context
-        run: |
-          echo "Event: ${{ github.event_name }} / action: ${{ github.event.action }}"
-          echo "PR number: ${{ github.event.pull_request.number }}"
-          echo "PR merged: ${{ github.event.pull_request.merged }}"
-          echo "Head ref (preview branch): ${{ github.head_ref }}"
-          echo "Base ref: ${{ github.base_ref }}"
-          echo "SHA: ${{ github.sha }}"
-          # Don't print the token itself, just whether one was obtained.
-          if [ -n "$OIDC_TOKEN" ]; then
-            echo "OIDC token: obtained (length ${#OIDC_TOKEN})"
-          else
-            echo "OIDC token: MISSING — close will fail to authenticate"
-          fi
-        env:
-          OIDC_TOKEN: ${{ steps.idtoken.outputs.result }}
       - name: Close Pull Request
         id: closepullrequest
         uses: Azure/static-web-apps-deploy@v1
@@ -110,11 +94,3 @@ jobs:
           app_location: "/"
           action: "close"
           github_id_token: ${{ steps.idtoken.outputs.result }}
-      - name: Report close outcome
-        if: always()
-        run: |
-          echo "Close step outcome: ${{ steps.closepullrequest.outcome }}"
-          if [ "${{ steps.closepullrequest.outcome }}" != "success" ]; then
-            echo "::warning::Preview environment close did not succeed — it may"
-            echo "::warning::need manual deletion in the Azure portal (Environments)."
-          fi
