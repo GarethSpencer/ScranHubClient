@@ -46,3 +46,9 @@ $theme-colors: map-merge($theme-colors, $custom-colors);
   gmp-place-autocomplete::part(prediction-list) {
   color-scheme: dark;
 }
+
+.venue-map {
+  width: 100%;
+  height: 220px;
+  overflow: hidden;
+}

@@ -3,4 +3,8 @@ export default interface CreateGroupVenueRequest {
   groupId: string;
   foodTypeOptionId?: string;
   venueTypeOptionId?: string;
+  googlePlaceId?: string;
+  formattedAddress?: string;
+  latitude?: number;
+  longitude?: number;
 }
