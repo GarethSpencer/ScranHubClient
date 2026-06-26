@@ -77,7 +77,6 @@ const AdminGroupsPage = () => {
 
   const onSearchTextChange = (newSearchText: string) => {
     setSearchText(newSearchText);
-    // Reset to the first page of results whenever the search term changes.
     setSearchPage(1);
   };
 

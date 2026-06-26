@@ -33,9 +33,6 @@ const AdminUserRow = ({ user, isCurrentUser }: Props) => {
     skipInvalidation: true,
   });
 
-  // Sends the full update request with the current values, overriding only the
-  // fields passed in, then refreshes the admin users table on success. The
-  // action is tracked so only the button that was pressed shows a spinner.
   const applyUpdate = (
     action: Exclude<PendingAction, null>,
     changes: Partial<{ admin: boolean; active: boolean }>,
@@ -61,10 +58,6 @@ const AdminUserRow = ({ user, isCurrentUser }: Props) => {
     );
   };
 
-  // Admin is intentionally promote-only: there is no superuser tier, so we never
-  // expose a way to revoke admin (which could leave the app with zero admins).
-  // Both actions are also hidden for other admins, mirroring the backend, which
-  // rejects any edit to an admin other than yourself.
   const canManage = !user.admin && !isCurrentUser;
 
   return (

@@ -29,9 +29,7 @@ export const useGetGroup = (groupId: string) => {
         .getQueryData<UserGroupsResponse>(["userGroups"])
         ?.userGroups?.find((g) => g.groupId === groupId);
 
-      return cachedGroup
-        ? { statusCode: 200, group: cachedGroup }
-        : undefined;
+      return cachedGroup ? { statusCode: 200, group: cachedGroup } : undefined;
     },
   });
 };
@@ -83,7 +81,6 @@ export const useCreateGroup = () => {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["userGroups"] });
       if (data.message) showToast(data.message, "success");
-      // navigate(`/groups/${data.groupId}`);
     },
   });
 };

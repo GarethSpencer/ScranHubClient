@@ -67,7 +67,6 @@ const GroupVenuesPage = () => {
 
   const onSearchTextChange = (newSearchText: string) => {
     setSearchText(newSearchText);
-    // Reset to the first page of results whenever the search term changes.
     setSearchPage(1);
   };
 
@@ -135,8 +134,8 @@ const GroupVenuesPage = () => {
     <>
       <h2 className="mb-1 lead">Venue Management</h2>
       <p className="text-muted small mb-3">
-        Add, view, edit and rate the venues for the group. Press a row to check
-        the venue details and enter your ratings.
+        Add, view, edit and rate the venues for the group. Select a venue to
+        amend details and enter your own ratings.
       </p>
 
       <div className="d-grid mx-auto mb-3">
