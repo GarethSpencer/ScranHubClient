@@ -25,7 +25,7 @@ const CreateGroupVenueModal = ({ show, groupId, onClose }: Props) => {
     useAutocomplete,
     onAutocompleteUnavailable,
     selectPlace,
-    clearNewPlace,
+    onNameChange,
     displayedAddress,
     placeFields,
     reset: resetPlaceSearch,
@@ -119,10 +119,7 @@ const CreateGroupVenueModal = ({ show, groupId, onClose }: Props) => {
               value={venueName}
               onChange={(e) => {
                 setVenueName(e.target.value);
-                // A manual edit means the name no longer matches the chosen
-                // place, so drop the Google data rather than persist a
-                // mismatched place ID / address / coordinates.
-                clearNewPlace();
+                onNameChange(e.target.value);
               }}
               disabled={isPending}
               autoFocus={!useAutocomplete}

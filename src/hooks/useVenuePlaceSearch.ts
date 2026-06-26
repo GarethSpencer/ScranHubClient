@@ -24,27 +24,44 @@ const useVenuePlaceSearch = (options: Options = {}) => {
   const { initialFields } = options;
 
   const [newPlace, setNewPlace] = useState<SelectedPlace | null>(null);
+  const [cleared, setCleared] = useState(false);
   const [useAutocomplete, setUseAutocomplete] = useState(
     isGoogleMapsConfigured(),
   );
 
   const reset = () => {
     setNewPlace(null);
+    setCleared(false);
     setUseAutocomplete(isGoogleMapsConfigured());
   };
 
-  const displayedAddress =
-    newPlace?.formattedAddress ?? initialFields?.formattedAddress;
+  const selectPlace = (place: SelectedPlace) => {
+    setNewPlace(place);
+    setCleared(false);
+  };
 
-  const placeFields: VenuePlaceFields = newPlace
-    ? fieldsFromPlace(newPlace)
-    : (initialFields ?? {});
+  const onNameChange = (name: string) => {
+    if (name.trim() === "") {
+      setNewPlace(null);
+      setCleared(true);
+    }
+  };
+
+  const displayedAddress = cleared
+    ? undefined
+    : (newPlace?.formattedAddress ?? initialFields?.formattedAddress);
+
+  const placeFields: VenuePlaceFields = cleared
+    ? {}
+    : newPlace
+      ? fieldsFromPlace(newPlace)
+      : (initialFields ?? {});
 
   return {
     useAutocomplete,
     onAutocompleteUnavailable: () => setUseAutocomplete(false),
-    selectPlace: setNewPlace,
-    clearNewPlace: () => setNewPlace(null),
+    selectPlace,
+    onNameChange,
     displayedAddress,
     placeFields,
     reset,

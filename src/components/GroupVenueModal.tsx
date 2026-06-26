@@ -50,6 +50,7 @@ const GroupVenueModal = ({ groupId, venue, onClose }: Props) => {
     useAutocomplete,
     onAutocompleteUnavailable,
     selectPlace,
+    onNameChange,
     displayedAddress,
     placeFields,
     reset: resetPlaceSearch,
@@ -328,7 +329,10 @@ const GroupVenueModal = ({ groupId, venue, onClose }: Props) => {
                         type="text"
                         placeholder="Enter venue name"
                         value={venueName}
-                        onChange={(e) => setVenueName(e.target.value)}
+                        onChange={(e) => {
+                          setVenueName(e.target.value);
+                          onNameChange(e.target.value);
+                        }}
                         disabled={isPending}
                         maxLength={MAX_VENUE_NAME_LENGTH}
                       />
