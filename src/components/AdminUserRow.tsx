@@ -99,8 +99,8 @@ const AdminUserRow = ({ user, isCurrentUser }: Props) => {
               <OverlayTrigger overlay={<Tooltip>Make admin</Tooltip>}>
                 <span className="d-inline-block">
                   <Button
-                    size="sm"
-                    variant="outline-primary"
+                    className="icon-btn"
+                    variant="primary"
                     onClick={() => setShowAdminConfirm(true)}
                     disabled={isPending}
                     aria-label="Make admin"
@@ -108,7 +108,7 @@ const AdminUserRow = ({ user, isCurrentUser }: Props) => {
                     {pendingAction === "admin" ? (
                       <Spinner animation="border" size="sm" />
                     ) : (
-                      <RiAdminLine size={17} />
+                      <RiAdminLine />
                     )}
                   </Button>
                 </span>
@@ -120,8 +120,8 @@ const AdminUserRow = ({ user, isCurrentUser }: Props) => {
               >
                 <span className="d-inline-block">
                   <Button
-                    size="sm"
-                    variant={user.active ? "outline-danger" : "outline-success"}
+                    className="icon-btn"
+                    variant={user.active ? "danger" : "success"}
                     onClick={() =>
                       applyUpdate("active", { active: !user.active })
                     }
@@ -131,7 +131,7 @@ const AdminUserRow = ({ user, isCurrentUser }: Props) => {
                     {pendingAction === "active" ? (
                       <Spinner animation="border" size="sm" />
                     ) : (
-                      <FaPowerOff size={17} />
+                      <FaPowerOff />
                     )}
                   </Button>
                 </span>
@@ -159,7 +159,7 @@ const AdminUserRow = ({ user, isCurrentUser }: Props) => {
         </Modal.Body>
         <Modal.Footer>
           <Button
-            variant="secondary"
+            variant="outline-secondary"
             onClick={() => setShowAdminConfirm(false)}
             disabled={isPending}
           >

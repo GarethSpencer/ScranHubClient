@@ -21,7 +21,7 @@ const AddOptionControls = ({
   if (!isAdding) {
     return (
       <Button
-        variant="outline-success"
+        variant="success"
         size="sm"
         onClick={onStart}
         aria-label="Add option"

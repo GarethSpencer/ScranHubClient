@@ -79,8 +79,8 @@ const OptionRow = <T extends OptionResult>({
           <OverlayTrigger overlay={<Tooltip>Update label</Tooltip>}>
             <span className={hasChanged ? "d-inline-block" : "d-none"}>
               <Button
-                variant="outline-secondary"
-                size="sm"
+                variant="secondary"
+                className="icon-btn"
                 onClick={handleUpdate}
                 disabled={isLocked}
                 aria-label={`Update ${option.label}`}
@@ -92,8 +92,8 @@ const OptionRow = <T extends OptionResult>({
           <OverlayTrigger overlay={<Tooltip>Delete option</Tooltip>}>
             <span className="d-inline-block">
               <Button
-                variant="outline-danger"
-                size="sm"
+                variant="danger"
+                className="icon-btn"
                 onClick={() => onRequestDelete(option)}
                 disabled={isLocked}
                 aria-label={`Delete ${option.label}`}

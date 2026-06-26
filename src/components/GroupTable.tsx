@@ -1,8 +1,12 @@
+import { useState } from "react";
 import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
-import Spinner from "react-bootstrap/Spinner";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Tooltip from "react-bootstrap/Tooltip";
+import { FaSignOutAlt } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import TableStatus from "./common/TableStatus";
+import ConfirmModal from "./common/ConfirmModal";
 import type GroupResult from "../models/results/GroupResult";
 
 interface Props {
@@ -16,7 +20,7 @@ interface Props {
   showActions?: boolean;
   isLeaving?: boolean;
   isActing?: (groupId: string, action: string) => boolean;
-  onLeaveGroup?: (groupId: string) => void;
+  onLeaveGroup?: (groupId: string, onSuccess: () => void) => void;
 }
 
 const GroupTable = ({
@@ -32,6 +36,14 @@ const GroupTable = ({
   isActing,
   onLeaveGroup,
 }: Props) => {
+  const [groupToLeave, setGroupToLeave] = useState<GroupResult | null>(null);
+
+  const onConfirmLeaveGroup = () => {
+    if (groupToLeave) {
+      onLeaveGroup?.(groupToLeave.groupId, () => setGroupToLeave(null));
+    }
+  };
+
   return (
     <>
       <h2 className={`mb-1 lead ${headingClassName}`}>{heading}</h2>
@@ -50,35 +62,37 @@ const GroupTable = ({
         >
           <thead>
             <tr>
-              <th className="w-50">Group Name</th>
-              <th className={showActions ? "w-25" : "w-50"}>Created By</th>
-              {showActions && <th className="w-25">Action</th>}
+              <th>Group Name</th>
+              <th>Created By</th>
+              {showActions && (
+                <th className="text-nowrap" style={{ width: "1%" }}>
+                  Action
+                </th>
+              )}
             </tr>
           </thead>
           <tbody>
             {groups.map((x: GroupResult) => (
               <tr key={x.groupId}>
-                <td className="w-50 text-start text-break">
+                <td className="text-start text-break">
                   <Link to={`/group/${x.groupId}`}>{x.groupName}</Link>
                 </td>
-                <td
-                  className={`${showActions ? "w-25" : "w-50"} text-start text-break`}
-                >
-                  {x.displayName}
-                </td>
+                <td className="text-start text-break">{x.displayName}</td>
                 {showActions && (
-                  <td className="w-25">
-                    <Button
-                      variant="danger"
-                      onClick={() => onLeaveGroup?.(x.groupId)}
-                      disabled={isLeaving}
-                    >
-                      {isActing?.(x.groupId, "delete") ? (
-                        <Spinner animation="border" size="sm" />
-                      ) : (
-                        "Leave Group"
-                      )}
-                    </Button>
+                  <td className="text-nowrap" style={{ width: "1%" }}>
+                    <OverlayTrigger overlay={<Tooltip>Leave group</Tooltip>}>
+                      <span className="d-inline-block">
+                        <Button
+                          variant="danger"
+                          className="icon-btn"
+                          onClick={() => setGroupToLeave(x)}
+                          disabled={isLeaving}
+                          aria-label={`Leave ${x.groupName}`}
+                        >
+                          <FaSignOutAlt />
+                        </Button>
+                      </span>
+                    </OverlayTrigger>
                   </td>
                 )}
               </tr>
@@ -86,6 +100,26 @@ const GroupTable = ({
           </tbody>
         </Table>
       </TableStatus>
+
+      {showActions && (
+        <ConfirmModal
+          show={groupToLeave !== null}
+          title="Leave Group"
+          body={
+            <p className="mb-0">
+              Are you sure you want to leave{" "}
+              <strong>{groupToLeave?.groupName}</strong>?
+            </p>
+          }
+          confirmLabel="Leave Group"
+          pendingLabel="Leaving..."
+          isPending={
+            !!groupToLeave && !!isActing?.(groupToLeave.groupId, "delete")
+          }
+          onConfirm={onConfirmLeaveGroup}
+          onCancel={() => setGroupToLeave(null)}
+        />
+      )}
     </>
   );
 };

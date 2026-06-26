@@ -158,6 +158,7 @@ const MyGroupTable = () => {
                         >
                           <Button
                             variant="secondary"
+                            className="icon-btn"
                             onClick={() => onUpdateGroupName(x)}
                             disabled={isPending || isDeleting}
                             aria-label="Update name"
@@ -180,6 +181,7 @@ const MyGroupTable = () => {
                         <span className="d-inline-block">
                           <Button
                             variant={x.active ? "primary" : "success"}
+                            className="icon-btn"
                             onClick={() => onSetGroupActive(x, !x.active)}
                             disabled={isPending || isDeleting}
                             aria-label={
@@ -201,6 +203,7 @@ const MyGroupTable = () => {
                           <span className="d-inline-block">
                             <Button
                               variant="danger"
+                              className="icon-btn"
                               onClick={() => setGroupToDelete(x)}
                               disabled={isPending || isDeleting}
                               aria-label="Delete group"
@@ -241,7 +244,7 @@ const MyGroupTable = () => {
         </Modal.Body>
         <Modal.Footer>
           <Button
-            variant="secondary"
+            variant="outline-secondary"
             onClick={() => setGroupToDelete(null)}
             disabled={isDeleting}
           >

@@ -24,8 +24,8 @@ const UserGroupTable = () => {
     (x) => x.createdBy === currentUserId,
   );
 
-  const onLeaveGroup = (groupId: string) => {
-    mutate(groupId, mutationCallbacks(groupId, "delete"));
+  const onLeaveGroup = (groupId: string, onSuccess: () => void) => {
+    mutate(groupId, mutationCallbacks(groupId, "delete", { onSuccess }));
   };
 
   return (

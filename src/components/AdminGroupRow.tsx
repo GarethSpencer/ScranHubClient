@@ -63,8 +63,8 @@ const AdminGroupRow = ({ group }: Props) => {
             <OverlayTrigger overlay={<Tooltip>Delete group</Tooltip>}>
               <span className="d-inline-block">
                 <Button
-                  size="sm"
-                  variant="outline-danger"
+                  className="icon-btn"
+                  variant="danger"
                   onClick={() => setShowDeleteConfirm(true)}
                   disabled={isDeleting}
                   aria-label="Delete group"
@@ -72,7 +72,7 @@ const AdminGroupRow = ({ group }: Props) => {
                   {isDeleting ? (
                     <Spinner animation="border" size="sm" />
                   ) : (
-                    <FaTrash size={15} />
+                    <FaTrash />
                   )}
                 </Button>
               </span>
@@ -100,7 +100,7 @@ const AdminGroupRow = ({ group }: Props) => {
         </Modal.Body>
         <Modal.Footer>
           <Button
-            variant="secondary"
+            variant="outline-secondary"
             onClick={() => setShowDeleteConfirm(false)}
             disabled={isDeleting}
           >
