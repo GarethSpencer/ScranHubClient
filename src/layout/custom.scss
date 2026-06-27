@@ -41,3 +41,11 @@ $theme-colors: map-merge($theme-colors, $custom-colors);
   height: 220px;
   overflow: hidden;
 }
+
+.venue-address {
+  color: var(--bs-primary);
+}
+
+[data-bs-theme="dark"] .venue-address {
+  color: color-mix(in srgb, var(--bs-primary) 70%, white);
+}
