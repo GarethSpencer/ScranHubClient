@@ -581,6 +581,10 @@
 
   .section-tabs .nav-link {
     text-align: center;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    line-height: 1.2;
+    min-height: 3.5rem;
   }
 
   .section-tabs-grid .nav-item:nth-child(-n + 3) {
