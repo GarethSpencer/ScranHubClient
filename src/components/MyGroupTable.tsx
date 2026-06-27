@@ -122,6 +122,11 @@ const MyGroupTable = () => {
           <tbody>
             {groups
               .filter((x) => x.createdBy === currentUserId)
+              .sort(
+                (a, b) =>
+                  new Date(b.createdOn).getTime() -
+                  new Date(a.createdOn).getTime(),
+              )
               .map((x: GroupResult) => (
                 <tr key={x.groupId}>
                   <td className="text-start">

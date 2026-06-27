@@ -16,7 +16,9 @@ const UserGroupTable = () => {
   const groups = data?.userGroups ?? [];
   const currentUserId = currentUser?.user?.userId;
 
-  const activeGroups = groups.filter((x) => x.active);
+  const activeGroups = groups
+    .filter((x) => x.active)
+    .sort((a, b) => a.groupName.localeCompare(b.groupName));
   const joinedGroups = activeGroups.filter(
     (x) => x.createdBy !== currentUserId,
   );

@@ -22,7 +22,9 @@ const HomePageGroupList = () => {
   );
 
   const currentUserId = currentUser?.user?.userId;
-  const groupResults = (groups?.userGroups ?? []).filter((x) => x.active);
+  const groupResults = (groups?.userGroups ?? [])
+    .filter((x) => x.active)
+    .sort((a, b) => a.groupName.localeCompare(b.groupName));
 
   const showStatus = isLoading || isError || groupResults.length === 0;
 
