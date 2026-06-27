@@ -575,7 +575,8 @@
 
 @include media-breakpoint-down(md) {
   .section-tabs .nav-item {
-    flex: 1 1 auto;
+    flex: 1 1 0;
+    min-width: 0;
   }
 
   .section-tabs .nav-link {

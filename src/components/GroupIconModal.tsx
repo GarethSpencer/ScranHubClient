@@ -65,8 +65,7 @@ const GroupIconModal = ({ group, onHide }: Props) => {
       </Modal.Header>
       <Modal.Body className="d-flex flex-column align-items-center gap-3">
         <p className="text-muted small text-center mb-0">
-          Pick an emoji to show in the circle for{" "}
-          <strong>{group?.groupName}</strong>.
+          Pick an emoji icon for <strong>{group?.groupName}</strong>.
         </p>
         <span className="group-card-avatar group-icon-preview flex-shrink-0">
           {previewIcon ?? group?.groupName.charAt(0).toUpperCase()}

@@ -105,7 +105,7 @@ const router = createBrowserRouter([
                 tabs={[
                   { label: "My Groups", to: "/groups", end: true },
                   { label: "Find Groups", to: "/groups/find" },
-                  { label: "Group Creation", to: "/groups/manage" },
+                  { label: "Manage Groups", to: "/groups/manage" },
                 ]}
               />
             ),
