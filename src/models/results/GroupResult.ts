@@ -7,4 +7,5 @@ export default interface GroupResult {
   displayName: string;
   userCount: number;
   venueCount: number;
+  icon?: string;
 }

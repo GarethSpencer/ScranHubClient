@@ -60,6 +60,7 @@ const MyGroupTable = () => {
         requestData: {
           groupName: group.groupName,
           active,
+          icon: group.icon,
         },
       },
       mutationCallbacks(group.groupId, "setActive"),
@@ -84,6 +85,7 @@ const MyGroupTable = () => {
         requestData: {
           groupName: getDraftName(group).trim(),
           active: group.active,
+          icon: group.icon,
         },
       },
       mutationCallbacks(group.groupId, "updateName", {

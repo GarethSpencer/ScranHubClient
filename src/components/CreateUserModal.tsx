@@ -93,7 +93,7 @@ const CreateUserModal = ({ show, onClose }: Props) => {
         </Modal.Body>
         <Modal.Footer>
           <Button
-            variant="secondary"
+            variant="outline-secondary"
             onClick={handleClose}
             disabled={isPending}
           >

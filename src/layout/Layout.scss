@@ -419,6 +419,48 @@
   line-height: 1;
 }
 
+.group-card-avatar-button {
+  position: relative;
+  padding: 0;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease-in-out,
+    transform 0.15s ease-in-out;
+}
+
+.group-card-avatar-button:hover,
+.group-card-avatar-button:focus-visible {
+  background-color: rgba(255, 255, 255, 0.4);
+  transform: scale(1.05);
+  outline: none;
+}
+
+.group-card-avatar-edit-badge {
+  position: absolute;
+  right: -2px;
+  bottom: -2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 50%;
+  background-color: var(--bs-primary);
+  color: #fff;
+  font-size: 0.6rem;
+  border: 2px solid #2a9d8f;
+  pointer-events: none;
+}
+
+.group-icon-preview {
+  width: 4rem;
+  height: 4rem;
+  font-size: 2rem;
+  background-color: var(--bs-secondary-bg);
+}
+
 @include media-breakpoint-up(md) {
   .menu-card-icon {
     width: 80px;
@@ -489,8 +531,31 @@
   text-decoration: none;
 }
 
+.section-title a.section-title-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: nowrap;
+  gap: 0.75rem;
+}
+
+.section-title-avatar {
+  width: 3.5rem;
+  height: 3.5rem;
+  font-size: 1.75rem;
+  text-shadow: none;
+}
+
 @media (hover: hover) {
   .section-title a:hover {
+    text-decoration: underline;
+  }
+
+  .section-title a.section-title-link:hover {
+    text-decoration: none;
+  }
+
+  .section-title a.section-title-link:hover .section-title-name {
     text-decoration: underline;
   }
 }

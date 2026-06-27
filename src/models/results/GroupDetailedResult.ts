@@ -9,4 +9,5 @@ export default interface GroupDetailedResult {
   updatedOn?: Date;
   updatedBy?: string;
   displayName: string;
+  icon?: string;
 }
