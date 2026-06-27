@@ -21,8 +21,6 @@ interface Props {
 
 const PLACE_FIELDS = ["displayName", "formattedAddress", "location", "id"];
 
-// Bounding box covering Great Britain & Northern Ireland. Used as a soft
-// preference so UK venues surface first without excluding other countries.
 const UK_BOUNDS: google.maps.LatLngBoundsLiteral = {
   north: 60.9,
   south: 49.8,
@@ -54,7 +52,13 @@ const PlaceAutocomplete = ({
     placeholderRef.current = placeholder;
     includedPrimaryTypesRef.current = includedPrimaryTypes;
     locationBiasRef.current = locationBias;
-  }, [onSelect, onUnavailable, placeholder, includedPrimaryTypes, locationBias]);
+  }, [
+    onSelect,
+    onUnavailable,
+    placeholder,
+    includedPrimaryTypes,
+    locationBias,
+  ]);
 
   const [isReady, setIsReady] = useState(false);
 
