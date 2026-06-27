@@ -121,6 +121,7 @@ const RatingDetailsModal = ({
             <hr className="my-3" />
           </div>
         )}
+        <h3 className="h6 fw-bold mb-1">Rating Breakdown</h3>
         <p className="text-muted small mb-3">
           Every group member's ratings for this venue.
         </p>

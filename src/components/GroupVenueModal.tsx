@@ -333,7 +333,7 @@ const GroupVenueModal = ({ groupId, venue, onClose }: Props) => {
                         maxLength={MAX_VENUE_NAME_LENGTH}
                       />
                       {displayedAddress && (
-                        <Form.Text className="text-muted">
+                        <Form.Text className="text-primary">
                           {displayedAddress}
                         </Form.Text>
                       )}
