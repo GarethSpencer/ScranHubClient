@@ -73,7 +73,7 @@ const GroupUsersPage = () => {
               {isPending
                 ? Array.from({ length: skeletonRowCount }, (_, index) => (
                     <tr key={index} aria-hidden="true">
-                      <td>
+                      <td className="text-start">
                         <Placeholder animation="glow">
                           <Placeholder xs={6} />
                         </Placeholder>
