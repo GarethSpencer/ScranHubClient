@@ -161,6 +161,7 @@ const OptionConfiguration = ({
               )}
             </Button>
             <Button
+              key="reorder-cancel"
               variant="outline-secondary"
               onClick={reorder.cancel}
               disabled={reorder.isSaving}
@@ -196,11 +197,9 @@ const OptionConfiguration = ({
             )}
             {reorderable && hasCustomOptions && sortedOptions.length > 1 && (
               <Button
+                key="reorder-start"
                 variant="secondary"
-                onClick={(e) => {
-                  e.currentTarget.blur();
-                  reorder.start(sortedOptions);
-                }}
+                onClick={() => reorder.start(sortedOptions)}
                 disabled={hasOtherPendingWork}
                 title={
                   hasOtherPendingWork
