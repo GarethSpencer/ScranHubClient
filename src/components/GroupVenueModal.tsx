@@ -308,17 +308,13 @@ const GroupVenueModal = ({ groupId, venue, onClose }: Props) => {
                 </p>
                 {useAutocomplete && (
                   <Form.Group className="mb-3" controlId="updateVenueSearch">
-                    <Form.Label>Search for a place</Form.Label>
+                    <Form.Label>Search</Form.Label>
                     <PlaceAutocomplete
                       onSelect={handlePlaceSelect}
                       onUnavailable={onAutocompleteUnavailable}
                       disabled={isPending}
-                      placeholder="Search to update the venue's place"
+                      placeholder="Pick a real place, or just type a name below"
                     />
-                    <Form.Text className="text-muted">
-                      Pick a place to update the map, or just edit the name
-                      below.
-                    </Form.Text>
                   </Form.Group>
                 )}
                 <Row className="g-3 mb-3">

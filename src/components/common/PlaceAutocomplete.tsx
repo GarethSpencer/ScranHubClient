@@ -27,10 +27,12 @@ const PlaceAutocomplete = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const onSelectRef = useRef(onSelect);
   const onUnavailableRef = useRef(onUnavailable);
+  const placeholderRef = useRef(placeholder);
   useEffect(() => {
     onSelectRef.current = onSelect;
     onUnavailableRef.current = onUnavailable;
-  }, [onSelect, onUnavailable]);
+    placeholderRef.current = placeholder;
+  }, [onSelect, onUnavailable, placeholder]);
 
   const [isReady, setIsReady] = useState(false);
 
@@ -69,6 +71,10 @@ const PlaceAutocomplete = ({
 
         element = new PlaceAutocompleteElement();
         element.addEventListener("gmp-select", handleSelect as EventListener);
+        if (placeholderRef.current) {
+          (element as unknown as { placeholder?: string }).placeholder =
+            placeholderRef.current;
+        }
         containerRef.current.appendChild(element);
         setIsReady(true);
       })

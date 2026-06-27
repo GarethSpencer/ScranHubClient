@@ -45,6 +45,14 @@ $theme-colors: map-merge($theme-colors, $custom-colors);
   .place-autocomplete
   gmp-place-autocomplete::part(prediction-list) {
   color-scheme: dark;
+  background-color: var(--bs-body-bg);
+  color: var(--bs-body-color);
+}
+
+[data-bs-theme="dark"] gmp-place-autocomplete::part(prediction-list) {
+  color-scheme: dark;
+  background-color: var(--bs-body-bg);
+  color: var(--bs-body-color);
 }
 
 .venue-map {

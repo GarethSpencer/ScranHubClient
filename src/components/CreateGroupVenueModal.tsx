@@ -99,16 +99,13 @@ const CreateGroupVenueModal = ({ show, groupId, onClose }: Props) => {
         >
           {useAutocomplete && (
             <Form.Group className="mb-3" controlId="createVenueSearch">
-              <Form.Label>Search for a place</Form.Label>
+              <Form.Label>Search</Form.Label>
               <PlaceAutocomplete
                 onSelect={handlePlaceSelect}
                 onUnavailable={onAutocompleteUnavailable}
                 disabled={isPending}
-                placeholder="Start typing a venue name or address"
+                placeholder="Pick a real place, or just type a name below"
               />
-              <Form.Text className="text-muted">
-                Pick a real place from Google, or just type a name below.
-              </Form.Text>
             </Form.Group>
           )}
           <Form.Group className="mb-3" controlId="createVenueName">
