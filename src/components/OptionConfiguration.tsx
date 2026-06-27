@@ -197,7 +197,10 @@ const OptionConfiguration = ({
             {reorderable && hasCustomOptions && sortedOptions.length > 1 && (
               <Button
                 variant="secondary"
-                onClick={() => reorder.start(sortedOptions)}
+                onClick={(e) => {
+                  e.currentTarget.blur();
+                  reorder.start(sortedOptions);
+                }}
                 disabled={hasOtherPendingWork}
                 title={
                   hasOtherPendingWork
