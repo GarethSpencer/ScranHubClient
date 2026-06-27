@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import Form from "react-bootstrap/Form";
 import { loadGoogleMaps } from "../../lib/googleMaps";
+import useDarkMode from "../../contexts/darkMode/useDarkMode";
 
 export interface SelectedPlace {
   placeId: string;
@@ -24,7 +25,11 @@ const PlaceAutocomplete = ({
   disabled,
   placeholder,
 }: Props) => {
+  const { state: isDarkMode } = useDarkMode();
   const containerRef = useRef<HTMLDivElement>(null);
+  const elementRef = useRef<google.maps.places.PlaceAutocompleteElement | null>(
+    null,
+  );
   const onSelectRef = useRef(onSelect);
   const onUnavailableRef = useRef(onUnavailable);
   const placeholderRef = useRef(placeholder);
@@ -76,6 +81,7 @@ const PlaceAutocomplete = ({
             placeholderRef.current;
         }
         containerRef.current.appendChild(element);
+        elementRef.current = element;
         setIsReady(true);
       })
       .catch(() => {
@@ -91,8 +97,14 @@ const PlaceAutocomplete = ({
         );
         element.remove();
       }
+      elementRef.current = null;
     };
   }, []);
+
+  useEffect(() => {
+    if (!isReady || !elementRef.current) return;
+    elementRef.current.style.colorScheme = isDarkMode ? "dark" : "light";
+  }, [isDarkMode, isReady]);
 
   return (
     <>

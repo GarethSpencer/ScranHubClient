@@ -313,7 +313,7 @@ const GroupVenueModal = ({ groupId, venue, onClose }: Props) => {
                       onSelect={handlePlaceSelect}
                       onUnavailable={onAutocompleteUnavailable}
                       disabled={isPending}
-                      placeholder="Pick a real place, or just type a name below"
+                      placeholder="Pick a real place or just type below"
                     />
                   </Form.Group>
                 )}
