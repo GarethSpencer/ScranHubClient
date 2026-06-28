@@ -375,6 +375,20 @@
   background-color: rgba(0, 0, 0, 0.15);
 }
 
+.navbar-desktop-switch .form-check-input {
+  margin-top: 0.3em;
+}
+
+.navbar-mobile-switch .form-check-input {
+  background-color: rgba(255, 255, 255, 0.35);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.navbar-mobile-switch .form-check-input:checked {
+  background-color: #adb5bd;
+  border-color: #adb5bd;
+}
+
 .menu-card-icon {
   width: 40px;
   height: 40px;

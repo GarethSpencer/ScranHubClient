@@ -3,6 +3,7 @@ import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import NavDropdown from "react-bootstrap/NavDropdown";
+import Form from "react-bootstrap/Form";
 import useAuth from "../../auth/useAuth";
 import useDarkMode from "../../contexts/darkMode/useDarkMode";
 import { useGetCurrentUser } from "../../api/controllerHooks/useUserController";
@@ -15,7 +16,7 @@ import { sections } from "../../navigation/sections";
 
 function NavBar() {
   const { logout } = useAuth();
-  const { toggleDarkMode } = useDarkMode();
+  const { state: darkMode, toggleDarkMode } = useDarkMode();
   const { data, isLoading, isError } = useGetCurrentUser();
 
   const visibleSections = sections.filter(
@@ -119,10 +120,17 @@ function NavBar() {
               </Nav.Link>
               <Nav.Link
                 role="button"
-                className="text-white navbar-mobile-link"
+                className="text-white navbar-mobile-link d-flex align-items-center justify-content-between"
                 onClick={() => toggleDarkMode({ type: "SET" })}
               >
-                Toggle Dark Mode
+                <span>Dark Mode</span>
+                <Form.Check
+                  type="switch"
+                  checked={darkMode}
+                  readOnly
+                  tabIndex={-1}
+                  className="ms-2 pe-none navbar-mobile-switch"
+                />
               </Nav.Link>
               <Nav.Link
                 role="button"
@@ -171,8 +179,16 @@ function NavBar() {
                     event.stopPropagation();
                     toggleDarkMode({ type: "SET" });
                   }}
+                  className="d-flex align-items-center justify-content-between"
                 >
-                  Toggle Dark Mode
+                  <span>Dark Mode</span>
+                  <Form.Check
+                    type="switch"
+                    checked={darkMode}
+                    readOnly
+                    tabIndex={-1}
+                    className="ms-2 pe-none navbar-desktop-switch"
+                  />
                 </NavDropdown.Item>
                 <NavDropdown.Item
                   role="button"
