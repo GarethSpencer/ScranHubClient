@@ -165,7 +165,9 @@ const RatingDetailsModal = ({
                             {summary.days.map((day) => (
                               <li
                                 key={day.description}
-                                className={day.isToday ? "fw-bold" : undefined}
+                                className={
+                                  day.isToday ? "venue-primary" : undefined
+                                }
                               >
                                 {day.description}
                               </li>

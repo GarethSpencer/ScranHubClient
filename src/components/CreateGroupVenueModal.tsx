@@ -123,7 +123,9 @@ const CreateGroupVenueModal = ({ show, groupId, onClose }: Props) => {
               maxLength={MAX_VENUE_NAME_LENGTH}
             />
             {displayedAddress && (
-              <Form.Text className="venue-address">{displayedAddress}</Form.Text>
+              <Form.Text className="venue-primary">
+                {displayedAddress}
+              </Form.Text>
             )}
           </Form.Group>
           <Form.Group className="mb-3" controlId="createVenueType">

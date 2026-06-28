@@ -42,10 +42,10 @@ $theme-colors: map-merge($theme-colors, $custom-colors);
   overflow: hidden;
 }
 
-.venue-address {
+.venue-primary {
   color: var(--bs-primary);
 }
 
-[data-bs-theme="dark"] .venue-address {
+[data-bs-theme="dark"] .venue-primary {
   color: color-mix(in srgb, var(--bs-primary) 70%, white);
 }
