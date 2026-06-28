@@ -370,7 +370,12 @@
   transition: background-color 0.15s ease-in-out;
 }
 
-.navbar-mobile-link:hover,
+@media (hover: hover) {
+  .navbar-mobile-link:hover {
+    background-color: rgba(0, 0, 0, 0.15);
+  }
+}
+
 .navbar-mobile-link:focus-visible {
   background-color: rgba(0, 0, 0, 0.15);
 }
