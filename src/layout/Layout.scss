@@ -376,7 +376,8 @@
   }
 }
 
-.navbar-mobile-link:focus-visible {
+.navbar-mobile-link:focus-visible,
+.navbar-mobile-link:active {
   background-color: rgba(0, 0, 0, 0.15);
 }
 
