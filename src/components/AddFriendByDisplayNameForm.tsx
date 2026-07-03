@@ -19,7 +19,7 @@ function AddFriendByDisplayNameForm() {
   const [page, setPage] = useState(1);
   const pageSize = 10;
   const debouncedSearchText = useDebounce(searchText);
-  const { data, isError } = useSearchUsers({
+  const { data, isError, isFetching } = useSearchUsers({
     searchText: debouncedSearchText,
     pageNumber: page,
     pageSize,
@@ -27,6 +27,10 @@ function AddFriendByDisplayNameForm() {
   const { mutate, isPending } = useAddFriend();
 
   const { isActing, mutationCallbacks } = useActingState();
+
+  const isSearching =
+    searchText.length >= 3 &&
+    (isFetching || debouncedSearchText !== searchText);
 
   const onAddFriend = (userId: string) => {
     mutate(
@@ -61,7 +65,14 @@ function AddFriendByDisplayNameForm() {
           </Alert>
         )}
       </Form>
-      {data?.users && (
+      {isSearching && (
+        <div className="text-center my-3">
+          <Spinner animation="border" role="status">
+            <span className="visually-hidden">Searching…</span>
+          </Spinner>
+        </div>
+      )}
+      {!isSearching && data?.users && (
         <>
           <Table striped="columns" className="align-middle text-center">
             <thead>

@@ -19,7 +19,7 @@ function AddGroupByNameForm() {
   const [page, setPage] = useState(1);
   const pageSize = 10;
   const debouncedSearchText = useDebounce(searchText);
-  const { data, isError } = useSearchGroups({
+  const { data, isError, isFetching } = useSearchGroups({
     searchText: debouncedSearchText,
     pageNumber: page,
     pageSize,
@@ -27,6 +27,10 @@ function AddGroupByNameForm() {
   const { mutate, isPending } = useJoinGroup();
 
   const { isActing, mutationCallbacks } = useActingState();
+
+  const isSearching =
+    searchText.length >= 3 &&
+    (isFetching || debouncedSearchText !== searchText);
 
   const onJoinGroup = (groupId: string) => {
     mutate(
@@ -61,7 +65,14 @@ function AddGroupByNameForm() {
           </Alert>
         )}
       </Form>
-      {data?.groups && (
+      {isSearching && (
+        <div className="text-center my-3">
+          <Spinner animation="border" role="status">
+            <span className="visually-hidden">Searching…</span>
+          </Spinner>
+        </div>
+      )}
+      {!isSearching && data?.groups && (
         <>
           <Table striped="columns" className="align-middle text-center">
             <thead>
