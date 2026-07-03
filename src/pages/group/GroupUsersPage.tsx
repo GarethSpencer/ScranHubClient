@@ -73,12 +73,16 @@ const GroupUsersPage = () => {
               {isPending
                 ? Array.from({ length: skeletonRowCount }, (_, index) => (
                     <tr key={index} aria-hidden="true">
-                      <td className="text-start">
-                        <Placeholder animation="glow">
-                          <Placeholder xs={6} />
-                        </Placeholder>
-                      </td>
-                      <td></td>
+                      <Placeholder
+                        as="td"
+                        animation="glow"
+                        className="text-start"
+                      >
+                        <Placeholder xs={6} />
+                      </Placeholder>
+                      <Placeholder as="td" animation="glow">
+                        <Placeholder xs={4} />
+                      </Placeholder>
                     </tr>
                   ))
                 : members.map((member: UserResult) => (
