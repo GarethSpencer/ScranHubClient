@@ -101,10 +101,12 @@ const AdminUsersPage = () => {
     data: usersData,
     isLoading: isUsersLoading,
     isPlaceholderData: isUsersPlaceholder,
+    isFetching: isUsersFetching,
     isError: isUsersError,
   } = useGetAllUsers({ pageNumber: page, pageSize: pageSize });
 
-  const isUsersPending = isUsersLoading || isUsersPlaceholder;
+  const isUsersPending =
+    isUsersLoading || isUsersPlaceholder || isUsersFetching;
 
   const {
     data: searchData,

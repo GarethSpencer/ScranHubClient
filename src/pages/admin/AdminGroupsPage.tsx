@@ -89,10 +89,12 @@ const AdminGroupsPage = () => {
     data: groupsData,
     isLoading: isGroupsLoading,
     isPlaceholderData: isGroupsPlaceholder,
+    isFetching: isGroupsFetching,
     isError: isGroupsError,
   } = useGetAllGroups({ pageNumber: page, pageSize: pageSize });
 
-  const isGroupsPending = isGroupsLoading || isGroupsPlaceholder;
+  const isGroupsPending =
+    isGroupsLoading || isGroupsPlaceholder || isGroupsFetching;
 
   const {
     data: searchData,

@@ -30,13 +30,11 @@ const TableStatus = ({
       </div>
     );
 
-  if (isError) return <p className="text-muted text-center mb-0">{errorText}</p>;
+  if (isError)
+    return <p className="text-muted text-center mb-0">{errorText}</p>;
 
   if (isEmpty) return <p className="text-center mb-0">{emptyText}</p>;
 
-  // Background refetch (e.g. after a mutation invalidates the cache): keep the
-  // existing data visible but dim it and overlay a spinner so it's clear the
-  // list is being refreshed rather than snapping to new data with no feedback.
   return (
     <div className="position-relative">
       <div

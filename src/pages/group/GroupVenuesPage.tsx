@@ -89,6 +89,7 @@ const GroupVenuesPage = () => {
     data: venuesData,
     isLoading: isVenuesLoading,
     isPlaceholderData: isVenuesPlaceholder,
+    isFetching: isVenuesFetching,
     isError: isVenuesError,
   } = useGetVenuesForGroup(id, {
     pageNumber: page,
@@ -97,7 +98,8 @@ const GroupVenuesPage = () => {
     sortDescending: sortDescending,
   });
 
-  const isVenuesPending = isVenuesLoading || isVenuesPlaceholder;
+  const isVenuesPending =
+    isVenuesLoading || isVenuesPlaceholder || isVenuesFetching;
 
   const { data: qualityOptionData } = useGetOptionsForGroup(
     "QualityOption",
