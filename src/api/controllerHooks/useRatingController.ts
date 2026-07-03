@@ -18,6 +18,20 @@ const ratingServices: Record<RatingController, ApiClient> = {
   QualityRating: qualityRatingControllerService,
 };
 
+const invalidateRatingQueries = (
+  queryClient: ReturnType<typeof useQueryClient>,
+  controller: RatingController,
+  groupId: string,
+  groupVenueId: string,
+) => {
+  queryClient.invalidateQueries({
+    queryKey: [controller, groupId, "venues", groupVenueId],
+  });
+  queryClient.invalidateQueries({ queryKey: [controller, groupId, "me"] });
+  queryClient.invalidateQueries({ queryKey: [controller, groupId, "group"] });
+  queryClient.invalidateQueries({ queryKey: ["groups", groupId, "venues"] });
+};
+
 export const useCreateRating = (
   controller: RatingController,
   groupId: string,
@@ -31,15 +45,12 @@ export const useCreateRating = (
     mutationFn: (request: CreateRatingRequest) =>
       service.post<AddRatingResponse, CreateRatingRequest>(undefined, request),
     onSuccess: (data, request) => {
-      queryClient.invalidateQueries({
-        queryKey: [controller, groupId, "venues", request.groupVenueId],
-      });
-      queryClient.invalidateQueries({
-        queryKey: [controller, groupId, "me"],
-      });
-      queryClient.invalidateQueries({
-        queryKey: [controller, groupId, "group"],
-      });
+      invalidateRatingQueries(
+        queryClient,
+        controller,
+        groupId,
+        request.groupVenueId,
+      );
       if (!options?.silent && data.message) showToast(data.message, "success");
     },
   });
@@ -62,15 +73,7 @@ export const useUpdateRating = (
     mutationFn: ({ ratingId, request }) =>
       service.patch<CommonResponse, UpdateRatingRequest>(ratingId, request),
     onSuccess: (data, { groupVenueId }) => {
-      queryClient.invalidateQueries({
-        queryKey: [controller, groupId, "venues", groupVenueId],
-      });
-      queryClient.invalidateQueries({
-        queryKey: [controller, groupId, "me"],
-      });
-      queryClient.invalidateQueries({
-        queryKey: [controller, groupId, "group"],
-      });
+      invalidateRatingQueries(queryClient, controller, groupId, groupVenueId);
       if (!options?.silent && data.message) showToast(data.message, "success");
     },
   });
@@ -92,15 +95,7 @@ export const useDeleteRating = (
   >({
     mutationFn: ({ ratingId }) => service.delete<CommonResponse>(ratingId),
     onSuccess: (data, { groupVenueId }) => {
-      queryClient.invalidateQueries({
-        queryKey: [controller, groupId, "venues", groupVenueId],
-      });
-      queryClient.invalidateQueries({
-        queryKey: [controller, groupId, "me"],
-      });
-      queryClient.invalidateQueries({
-        queryKey: [controller, groupId, "group"],
-      });
+      invalidateRatingQueries(queryClient, controller, groupId, groupVenueId);
       if (!options?.silent && data.message) showToast(data.message, "success");
     },
   });

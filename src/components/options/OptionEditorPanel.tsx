@@ -61,7 +61,8 @@ const OptionEditorPanel = ({
           <h3 className="lead mb-1">Custom {heading}</h3>
           <p className="text-muted small mb-3">
             Add the labels you want this group to use. These will replace the
-            default options and unset all venues in the group.
+            default options and unset all venues which don't map to a custom
+            option.
           </p>
           <Form onSubmit={(e) => e.preventDefault()}>
             {labels.map((label, index) => (

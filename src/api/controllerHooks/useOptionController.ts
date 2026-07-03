@@ -42,6 +42,15 @@ const optionServices: Record<OptionController, ApiClient> = {
   VenueTypeOption: venueTypeOptionControllerService,
 };
 
+const invalidateOptionQueries = (
+  queryClient: ReturnType<typeof useQueryClient>,
+  controller: OptionController,
+  groupId: string,
+) => {
+  queryClient.invalidateQueries({ queryKey: [controller, groupId] });
+  queryClient.invalidateQueries({ queryKey: ["groups", groupId, "venues"] });
+};
+
 export const useSetCustomOptions = (
   controller: OptionController,
   groupId: string,
@@ -57,7 +66,7 @@ export const useSetCustomOptions = (
         groupId,
       }),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: [controller, groupId] });
+      invalidateOptionQueries(queryClient, controller, groupId);
       if (data.message) showToast(data.message, "success");
     },
   });
@@ -74,7 +83,7 @@ export const useRemoveCustomOptions = (
   return useMutation<CommonResponse, Error>({
     mutationFn: () => service.delete<CommonResponse>(groupId),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: [controller, groupId] });
+      invalidateOptionQueries(queryClient, controller, groupId);
       if (data.message) showToast(data.message, "success");
     },
   });
@@ -95,7 +104,7 @@ export const useAddCustomOption = (
         groupId,
       }),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: [controller, groupId] });
+      invalidateOptionQueries(queryClient, controller, groupId);
       if (data.message) showToast(data.message, "success");
     },
   });
@@ -120,9 +129,7 @@ export const useUpdateCustomOption = (
         request,
       ),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({
-        queryKey: [controller, groupId],
-      });
+      invalidateOptionQueries(queryClient, controller, groupId);
       if (data.message) showToast(data.message, "success");
     },
   });
@@ -140,9 +147,7 @@ export const useRemoveCustomOption = (
     mutationFn: (optionId: string) =>
       service.delete<CommonResponse>(`custom/${optionId}`),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({
-        queryKey: [controller, groupId],
-      });
+      invalidateOptionQueries(queryClient, controller, groupId);
       if (data.message) showToast(data.message, "success");
     },
   });
