@@ -53,7 +53,9 @@ const VenueRatingsModal = ({ groupId, venue, onClose }: Props) => {
       dialogClassName="group-venue-modal"
     >
       <Modal.Header closeButton={!isPending}>
-        <Modal.Title as="h2">Your Ratings</Modal.Title>
+        <Modal.Title as="h2">
+          {venue ? `My Ratings: ${venue.venueName}` : "My Ratings"}
+        </Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form
@@ -62,9 +64,6 @@ const VenueRatingsModal = ({ groupId, venue, onClose }: Props) => {
             handleSave();
           }}
         >
-          <p className="text-muted small mb-1">
-            Your ratings for <strong>{venue?.venueName}</strong>.
-          </p>
           <p className="text-muted small mb-3">
             These cannot be amended by anybody else in your group.
           </p>

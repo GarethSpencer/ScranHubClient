@@ -112,7 +112,7 @@ const GroupVenueModal = ({ groupId, venue, onClose }: Props) => {
               />
 
               <Col xs={12} md>
-                <h3 className="h6 fw-bold mb-1">Your Ratings</h3>
+                <h3 className="h6 fw-bold mb-1">My Ratings</h3>
                 <p className="text-muted small mb-3">
                   These cannot be amended by anybody else in your group.
                 </p>

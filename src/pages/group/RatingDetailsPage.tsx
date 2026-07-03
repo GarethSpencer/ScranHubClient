@@ -17,9 +17,12 @@ import RatingDetailsRow from "../../components/RatingDetailsRow";
 import RatingDetailsSkeletonRow from "../../components/RatingDetailsSkeletonRow";
 import RatingDetailsModal from "../../components/RatingDetailsModal";
 import VenueSummaryCard from "../../components/venue/VenueSummaryCard";
+import VenueInfoModal from "../../components/venue/VenueInfoModal";
+import VenueBreakdownModal from "../../components/venue/VenueBreakdownModal";
 import MobileSortControl from "../../components/venue/MobileSortControl";
 import TablePageSizeSelect from "../../components/common/TablePageSizeSelect";
 import useDebounce from "../../hooks/useDebounce";
+import useIsMobile from "../../hooks/useIsMobile";
 import type GroupVenueResult from "../../models/results/GroupVenueResult";
 import type RatingVenueResult from "../../models/results/generic/RatingVenueResult";
 import type GroupVenueRatingResult from "../../models/results/generic/GroupVenueRatingResult";
@@ -59,8 +62,11 @@ const ratingsForVenue = (
 const RatingDetailsPage = () => {
   const { id = "" } = useParams();
 
+  const isMobile = useIsMobile();
+
   const [searchText, setSearchText] = useState("");
-  const [selectedVenue, setSelectedVenue] = useState<GroupVenueResult | null>(
+  const [infoVenue, setInfoVenue] = useState<GroupVenueResult | null>(null);
+  const [breakdownVenue, setBreakdownVenue] = useState<GroupVenueResult | null>(
     null,
   );
 
@@ -150,7 +156,16 @@ const RatingDetailsPage = () => {
 
   const showSearch = totalCount > 0 || isVenuesPending || isSearching;
 
-  const selectedVenueId = selectedVenue?.groupVenueId ?? "";
+  const breakdownVenueId = breakdownVenue?.groupVenueId ?? "";
+
+  const breakdownQualityRatings = ratingsForVenue(
+    qualityRatingsData?.groupVenueRatingsResults,
+    breakdownVenueId,
+  );
+  const breakdownCostRatings = ratingsForVenue(
+    costRatingsData?.groupVenueRatingsResults,
+    breakdownVenueId,
+  );
 
   const skeletonRowCount =
     totalCount > 0
@@ -165,21 +180,34 @@ const RatingDetailsPage = () => {
         user ratings, and the map location if available.
       </p>
 
-      <RatingDetailsModal
-        venue={selectedVenue}
-        qualityRatings={ratingsForVenue(
-          qualityRatingsData?.groupVenueRatingsResults,
-          selectedVenueId,
-        )}
-        costRatings={ratingsForVenue(
-          costRatingsData?.groupVenueRatingsResults,
-          selectedVenueId,
-        )}
-        qualityOptions={qualityOptions}
-        costOptions={costOptions}
-        isLoading={areRatingsLoading}
-        onClose={() => setSelectedVenue(null)}
-      />
+      {!isMobile && (
+        <RatingDetailsModal
+          venue={breakdownVenue}
+          qualityRatings={breakdownQualityRatings}
+          costRatings={breakdownCostRatings}
+          qualityOptions={qualityOptions}
+          costOptions={costOptions}
+          isLoading={areRatingsLoading}
+          onClose={() => setBreakdownVenue(null)}
+        />
+      )}
+      {isMobile && (
+        <>
+          <VenueInfoModal
+            venue={infoVenue}
+            onClose={() => setInfoVenue(null)}
+          />
+          <VenueBreakdownModal
+            venue={breakdownVenue}
+            qualityRatings={breakdownQualityRatings}
+            costRatings={breakdownCostRatings}
+            qualityOptions={qualityOptions}
+            costOptions={costOptions}
+            isLoading={areRatingsLoading}
+            onClose={() => setBreakdownVenue(null)}
+          />
+        </>
+      )}
 
       {showSearch && (
         <Form onSubmit={(e) => e.preventDefault()}>
@@ -225,7 +253,7 @@ const RatingDetailsPage = () => {
                   qualityOptions={qualityOptions}
                   costOptions={costOptions}
                   memberCount={memberCount}
-                  onSelect={setSelectedVenue}
+                  onSelect={setBreakdownVenue}
                 />
               ))}
             </tbody>
@@ -239,7 +267,8 @@ const RatingDetailsPage = () => {
                 qualityOptions={qualityOptions}
                 costOptions={costOptions}
                 memberCount={memberCount}
-                onSelect={setSelectedVenue}
+                onViewInfo={setInfoVenue}
+                onViewBreakdown={setBreakdownVenue}
               />
             ))}
           </div>
@@ -312,7 +341,7 @@ const RatingDetailsPage = () => {
                       qualityOptions={qualityOptions}
                       costOptions={costOptions}
                       memberCount={memberCount}
-                      onSelect={setSelectedVenue}
+                      onSelect={setBreakdownVenue}
                     />
                   ))}
             </tbody>
@@ -353,7 +382,8 @@ const RatingDetailsPage = () => {
                     qualityOptions={qualityOptions}
                     costOptions={costOptions}
                     memberCount={memberCount}
-                    onSelect={setSelectedVenue}
+                    onViewInfo={setInfoVenue}
+                    onViewBreakdown={setBreakdownVenue}
                   />
                 ))}
           </div>
