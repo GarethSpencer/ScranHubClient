@@ -32,7 +32,7 @@ const VisitedIndicator = ({ visited, visitedOn, size }: Props) => {
         role="img"
       />
       {visitedOn && (
-        <span className="venue-visited-date text-muted">
+        <span className="venue-visited-date">
           ({formatVisitedOn(visitedOn)})
         </span>
       )}
