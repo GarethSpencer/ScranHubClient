@@ -3,13 +3,9 @@ import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import Spinner from "react-bootstrap/Spinner";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
-import type GroupVenueResult from "../models/results/GroupVenueResult";
-import useVenueDetailsForm from "../hooks/useVenueDetailsForm";
-import useVenueRatingsForm from "../hooks/useVenueRatingsForm";
-import VenueDetailsFields from "./venue/VenueDetailsFields";
-import VenueRatingsFields from "./venue/VenueRatingsFields";
+import type GroupVenueResult from "../../models/results/GroupVenueResult";
+import useVenueDetailsForm from "../../hooks/useVenueDetailsForm";
+import VenueDetailsFields from "./VenueDetailsFields";
 
 interface Props {
   groupId: string;
@@ -17,18 +13,15 @@ interface Props {
   onClose: () => void;
 }
 
-const GroupVenueModal = ({ groupId, venue, onClose }: Props) => {
+const VenueDetailsModal = ({ groupId, venue, onClose }: Props) => {
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   const [isDeletingVenue, setIsDeletingVenue] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
   const details = useVenueDetailsForm(groupId, venue);
-  const ratings = useVenueRatingsForm(groupId, venue);
 
   const isPending =
     details.isUpdating || details.isDeleting || isDeletingVenue || isSaving;
-
-  const canSave = details.canSave;
 
   const handleClose = () => {
     if (isPending) return;
@@ -36,15 +29,15 @@ const GroupVenueModal = ({ groupId, venue, onClose }: Props) => {
   };
 
   const handleSave = async () => {
-    if (!venue || !canSave || isPending) return;
+    if (!venue || !details.canSave || isPending) return;
 
     setIsSaving(true);
     try {
-      await Promise.all([details.save(), ratings.save()]);
+      await details.save();
       onClose();
     } catch {
       // A failed mutation already surfaces its own error toast; keep the modal
-      // open so the user can see what failed and retry.
+      // open so the user can retry.
     } finally {
       setIsSaving(false);
     }
@@ -62,14 +55,8 @@ const GroupVenueModal = ({ groupId, venue, onClose }: Props) => {
     <Modal
       show={venue !== null}
       onHide={handleClose}
-      onEntered={() => {
-        details.initialise();
-        ratings.reset();
-      }}
-      onExited={() => {
-        setConfirmingDelete(false);
-        ratings.reset();
-      }}
+      onEntered={details.initialise}
+      onExited={() => setConfirmingDelete(false)}
       backdrop={isPending ? "static" : true}
       keyboard={!isPending}
       scrollable
@@ -77,7 +64,7 @@ const GroupVenueModal = ({ groupId, venue, onClose }: Props) => {
       dialogClassName="group-venue-modal"
     >
       <Modal.Header closeButton={!isPending}>
-        <Modal.Title as="h2">{venue?.venueName}</Modal.Title>
+        <Modal.Title as="h2">Venue Details</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         {confirmingDelete ? (
@@ -92,33 +79,10 @@ const GroupVenueModal = ({ groupId, venue, onClose }: Props) => {
               handleSave();
             }}
           >
-            <Row className="g-3 align-items-stretch">
-              <Col xs={12} md>
-                <h3 className="h6 fw-bold mb-1">Venue Details</h3>
-                <p className="text-muted small mb-3">
-                  These can be amended by anybody in your group.
-                </p>
-                <VenueDetailsFields form={details} isPending={isPending} />
-              </Col>
-
-              <Col xs={12} md="auto" className="d-md-none">
-                <hr className="section-rule mt-2 mb-3" />
-              </Col>
-              <Col
-                xs={12}
-                md="auto"
-                className="section-divider d-none d-md-flex"
-                aria-hidden="true"
-              />
-
-              <Col xs={12} md>
-                <h3 className="h6 fw-bold mb-1">Your Ratings</h3>
-                <p className="text-muted small mb-3">
-                  These cannot be amended by anybody else in your group.
-                </p>
-                <VenueRatingsFields form={ratings} isPending={isPending} />
-              </Col>
-            </Row>
+            <p className="text-muted small mb-3">
+              These can be amended by anybody in your group.
+            </p>
+            <VenueDetailsFields form={details} isPending={isPending} />
           </Form>
         )}
       </Modal.Body>
@@ -159,7 +123,9 @@ const GroupVenueModal = ({ groupId, venue, onClose }: Props) => {
             <Button
               variant="primary"
               onClick={handleSave}
-              disabled={isPending || !canSave || details.areOptionsLoading}
+              disabled={
+                isPending || !details.canSave || details.areOptionsLoading
+              }
             >
               {isSaving ? (
                 <>
@@ -191,4 +157,4 @@ const GroupVenueModal = ({ groupId, venue, onClose }: Props) => {
   );
 };
 
-export default GroupVenueModal;
+export default VenueDetailsModal;

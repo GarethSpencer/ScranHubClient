@@ -16,8 +16,13 @@ import GroupVenueRow from "../../components/GroupVenueRow";
 import GroupVenueSkeletonRow from "../../components/GroupVenueSkeletonRow";
 import CreateGroupVenueModal from "../../components/CreateGroupVenueModal";
 import GroupVenueModal from "../../components/GroupVenueModal";
+import VenueCard from "../../components/venue/VenueCard";
+import VenueDetailsModal from "../../components/venue/VenueDetailsModal";
+import VenueRatingsModal from "../../components/venue/VenueRatingsModal";
+import MobileSortControl from "../../components/venue/MobileSortControl";
 import TablePageSizeSelect from "../../components/common/TablePageSizeSelect";
 import useDebounce from "../../hooks/useDebounce";
+import useIsMobile from "../../hooks/useIsMobile";
 import type GroupVenueResult from "../../models/results/GroupVenueResult";
 import { GroupVenueSortParameters } from "../../enums/GroupVenueSortParameters";
 import {
@@ -46,9 +51,14 @@ const COLUMNS: SortableColumn[] = [
 const GroupVenuesPage = () => {
   const { id = "" } = useParams();
 
+  const isMobile = useIsMobile();
+
   const [searchText, setSearchText] = useState("");
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [selectedVenue, setSelectedVenue] = useState<GroupVenueResult | null>(
+  const [detailsVenue, setDetailsVenue] = useState<GroupVenueResult | null>(
+    null,
+  );
+  const [ratingsVenue, setRatingsVenue] = useState<GroupVenueResult | null>(
     null,
   );
 
@@ -152,11 +162,27 @@ const GroupVenuesPage = () => {
         onClose={() => setShowCreateModal(false)}
       />
 
-      <GroupVenueModal
-        groupId={id}
-        venue={selectedVenue}
-        onClose={() => setSelectedVenue(null)}
-      />
+      {!isMobile && (
+        <GroupVenueModal
+          groupId={id}
+          venue={detailsVenue}
+          onClose={() => setDetailsVenue(null)}
+        />
+      )}
+      {isMobile && (
+        <>
+          <VenueDetailsModal
+            groupId={id}
+            venue={detailsVenue}
+            onClose={() => setDetailsVenue(null)}
+          />
+          <VenueRatingsModal
+            groupId={id}
+            venue={ratingsVenue}
+            onClose={() => setRatingsVenue(null)}
+          />
+        </>
+      )}
 
       {showSearch && (
         <Form onSubmit={(e) => e.preventDefault()}>
@@ -185,7 +211,7 @@ const GroupVenuesPage = () => {
           <Table
             responsive
             striped="columns"
-            className="align-middle text-center border-top group-venue-table"
+            className="d-none d-md-table align-middle text-center border-top group-venue-table"
           >
             <thead>
               <tr>
@@ -201,11 +227,25 @@ const GroupVenuesPage = () => {
                   venue={x}
                   qualityOptions={qualityOptions}
                   costOptions={costOptions}
-                  onSelect={setSelectedVenue}
+                  onSelect={setDetailsVenue}
                 />
               ))}
             </tbody>
           </Table>
+
+          <div className="d-md-none venue-card-list border-top">
+            {searchResults.map((x: GroupVenueResult) => (
+              <VenueCard
+                key={x.groupVenueId}
+                venue={x}
+                qualityOptions={qualityOptions}
+                costOptions={costOptions}
+                onEditDetails={setDetailsVenue}
+                onEditRatings={setRatingsVenue}
+              />
+            ))}
+          </div>
+
           <div className="d-flex justify-content-center">
             <TablePagination
               page={searchPage}
@@ -226,7 +266,7 @@ const GroupVenuesPage = () => {
           <Table
             responsive
             striped="columns"
-            className="align-middle text-center border-top group-venue-table"
+            className="d-none d-md-table align-middle text-center border-top group-venue-table"
           >
             <thead>
               <tr>
@@ -269,11 +309,52 @@ const GroupVenuesPage = () => {
                       venue={x}
                       qualityOptions={qualityOptions}
                       costOptions={costOptions}
-                      onSelect={setSelectedVenue}
+                      onSelect={setDetailsVenue}
                     />
                   ))}
             </tbody>
           </Table>
+
+          {!isVenuesPending && (
+            <div className="d-md-none">
+              <MobileSortControl
+                id="venuesMobileSort"
+                options={COLUMNS.map((c) => ({
+                  label: c.label,
+                  value: c.sortBy,
+                }))}
+                sortBy={sortBy}
+                sortDescending={sortDescending}
+                onSortByChange={(value) => {
+                  setSortBy(value);
+                  setSortDescending(false);
+                  setPage(1);
+                }}
+                onToggleDirection={() => {
+                  setSortDescending((prev) => !prev);
+                  setPage(1);
+                }}
+              />
+            </div>
+          )}
+
+          <div className="d-md-none venue-card-list border-top">
+            {isVenuesPending
+              ? Array.from({ length: skeletonRowCount }, (_, index) => (
+                  <div key={index} className="venue-card venue-card-skeleton" />
+                ))
+              : venues.map((x: GroupVenueResult) => (
+                  <VenueCard
+                    key={x.groupVenueId}
+                    venue={x}
+                    qualityOptions={qualityOptions}
+                    costOptions={costOptions}
+                    onEditDetails={setDetailsVenue}
+                    onEditRatings={setRatingsVenue}
+                  />
+                ))}
+          </div>
+
           <div className="pagination-row">
             <TablePagination
               page={page}

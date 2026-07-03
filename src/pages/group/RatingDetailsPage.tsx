@@ -16,6 +16,8 @@ import TablePagination from "../../components/common/TablePagination";
 import RatingDetailsRow from "../../components/RatingDetailsRow";
 import RatingDetailsSkeletonRow from "../../components/RatingDetailsSkeletonRow";
 import RatingDetailsModal from "../../components/RatingDetailsModal";
+import VenueSummaryCard from "../../components/venue/VenueSummaryCard";
+import MobileSortControl from "../../components/venue/MobileSortControl";
 import TablePageSizeSelect from "../../components/common/TablePageSizeSelect";
 import useDebounce from "../../hooks/useDebounce";
 import type GroupVenueResult from "../../models/results/GroupVenueResult";
@@ -206,7 +208,7 @@ const RatingDetailsPage = () => {
           <Table
             responsive
             striped="columns"
-            className="align-middle text-center border-top group-venue-table"
+            className="d-none d-md-table align-middle text-center border-top group-venue-table"
           >
             <thead>
               <tr>
@@ -228,6 +230,20 @@ const RatingDetailsPage = () => {
               ))}
             </tbody>
           </Table>
+
+          <div className="d-md-none venue-card-list border-top">
+            {searchResults.map((x: GroupVenueResult) => (
+              <VenueSummaryCard
+                key={x.groupVenueId}
+                venue={x}
+                qualityOptions={qualityOptions}
+                costOptions={costOptions}
+                memberCount={memberCount}
+                onSelect={setSelectedVenue}
+              />
+            ))}
+          </div>
+
           <div className="d-flex justify-content-center">
             <TablePagination
               page={searchPage}
@@ -248,7 +264,7 @@ const RatingDetailsPage = () => {
           <Table
             responsive
             striped="columns"
-            className="align-middle text-center border-top group-venue-table"
+            className="d-none d-md-table align-middle text-center border-top group-venue-table"
           >
             <thead>
               <tr>
@@ -301,6 +317,47 @@ const RatingDetailsPage = () => {
                   ))}
             </tbody>
           </Table>
+
+          {!isVenuesPending && (
+            <div className="d-md-none">
+              <MobileSortControl
+                id="ratingDetailsMobileSort"
+                options={COLUMNS.filter(
+                  (c): c is Column & { sortBy: GroupVenueSortParameters } =>
+                    c.sortBy !== undefined,
+                ).map((c) => ({ label: c.label, value: c.sortBy }))}
+                sortBy={sortBy}
+                sortDescending={sortDescending}
+                onSortByChange={(value) => {
+                  setSortBy(value);
+                  setSortDescending(false);
+                  setPage(1);
+                }}
+                onToggleDirection={() => {
+                  setSortDescending((prev) => !prev);
+                  setPage(1);
+                }}
+              />
+            </div>
+          )}
+
+          <div className="d-md-none venue-card-list border-top">
+            {isVenuesPending
+              ? Array.from({ length: skeletonRowCount }, (_, index) => (
+                  <div key={index} className="venue-card venue-card-skeleton" />
+                ))
+              : venues.map((x: GroupVenueResult) => (
+                  <VenueSummaryCard
+                    key={x.groupVenueId}
+                    venue={x}
+                    qualityOptions={qualityOptions}
+                    costOptions={costOptions}
+                    memberCount={memberCount}
+                    onSelect={setSelectedVenue}
+                  />
+                ))}
+          </div>
+
           <div className="pagination-row">
             <TablePagination
               page={page}
