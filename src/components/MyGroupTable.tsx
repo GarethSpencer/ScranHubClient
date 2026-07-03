@@ -20,7 +20,7 @@ import { FaPencilAlt, FaPowerOff, FaTrash } from "react-icons/fa";
 import type GroupResult from "../models/results/GroupResult";
 
 const MyGroupTable = () => {
-  const { data, isLoading, isError } = useGetUserGroups();
+  const { data, isLoading, isError, isFetching } = useGetUserGroups();
   const { data: currentUser } = useGetCurrentUser();
   const { mutate, isPending } = useUpdateGroup();
   const { mutate: deleteGroup, isPending: isDeleting } = useDeleteGroup();
@@ -105,6 +105,7 @@ const MyGroupTable = () => {
         isLoading={isLoading}
         isError={isError}
         isEmpty={groups.length === 0}
+        isFetching={isFetching}
         loadingText="Loading your groups..."
         errorText="Couldn't load your groups. Please try again."
       >

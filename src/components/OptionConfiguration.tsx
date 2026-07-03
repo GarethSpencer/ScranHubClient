@@ -38,7 +38,7 @@ const OptionConfiguration = ({
 }: Props) => {
   const reorderable = isRatingController(controller);
 
-  const { data, isLoading, isError } = useGetOptionsForGroup(
+  const { data, isLoading, isError, isFetching } = useGetOptionsForGroup(
     controller,
     groupId,
   );
@@ -232,6 +232,7 @@ const OptionConfiguration = ({
         isLoading={isLoading}
         isError={isError}
         isEmpty={options.length === 0}
+        isFetching={isFetching}
         loadingText={`Loading ${heading.toLowerCase()}...`}
         errorText={`Couldn't load ${heading.toLowerCase()}. Please try again.`}
         emptyText={`No ${heading.toLowerCase()} configured yet.`}

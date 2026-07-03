@@ -16,7 +16,7 @@ import { FriendshipStatus } from "../enums/FriendshipStatus";
 const UserFriendTable = () => {
   const [page, setPage] = useState(1);
   const pageSize = 10;
-  const { data, isLoading, isError } = useGetFriends({
+  const { data, isLoading, isError, isFetching } = useGetFriends({
     pageNumber: page,
     pageSize: pageSize,
     status: FriendshipStatus.Accepted,
@@ -60,6 +60,7 @@ const UserFriendTable = () => {
         isLoading={isLoading}
         isError={isError}
         isEmpty={friends.length === 0}
+        isFetching={isFetching}
         loadingText="Loading your friends…"
         errorText="Couldn't load your friends. Please try again."
       >

@@ -16,7 +16,7 @@ import { FriendshipStatus } from "../enums/FriendshipStatus";
 const DeclinedFriendRequests = () => {
   const [page, setPage] = useState(1);
   const pageSize = 10;
-  const { data, isLoading, isError } = useGetFriends({
+  const { data, isLoading, isError, isFetching } = useGetFriends({
     pageNumber: page,
     pageSize: pageSize,
     status: FriendshipStatus.Declined,
@@ -75,6 +75,7 @@ const DeclinedFriendRequests = () => {
         isLoading={isLoading}
         isError={isError}
         isEmpty={friends.length === 0}
+        isFetching={isFetching}
         loadingText="Loading declined requests…"
         errorText="Couldn't load declined requests. Please try again."
       >
