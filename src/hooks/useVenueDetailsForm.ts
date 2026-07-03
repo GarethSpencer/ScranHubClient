@@ -15,12 +15,24 @@ const optionIdForLabel = (
   label: string | undefined,
 ) => options.find((option) => option.label === label)?.optionId ?? "";
 
+const toDateInputValue = (visitedOn: string | undefined) =>
+  visitedOn ? visitedOn.slice(0, 10) : "";
+
+const todayDateInputValue = () => {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
 const useVenueDetailsForm = (
   groupId: string,
   venue: GroupVenueResult | null,
 ) => {
   const [venueName, setVenueName] = useState("");
   const [visited, setVisited] = useState(false);
+  const [visitedOn, setVisitedOn] = useState("");
   const [venueTypeOptionId, setVenueTypeOptionId] = useState("");
   const [foodTypeOptionId, setFoodTypeOptionId] = useState("");
 
@@ -53,6 +65,7 @@ const useVenueDetailsForm = (
   const initialise = () => {
     setVenueName(venue?.venueName ?? "");
     setVisited(venue?.visited ?? false);
+    setVisitedOn(toDateInputValue(venue?.visitedOn));
     setVenueTypeOptionId(optionIdForLabel(venueTypeOptions, venue?.venueType));
     setFoodTypeOptionId(optionIdForLabel(foodTypeOptions, venue?.foodType));
     placeSearch.reset();
@@ -68,6 +81,12 @@ const useVenueDetailsForm = (
     placeSearch.onNameChange(value);
   };
 
+  const onVisitedChange = (value: boolean) => {
+    setVisited(value);
+    if (value) setVisitedOn((current) => current || todayDateInputValue());
+    else setVisitedOn("");
+  };
+
   const save = () => {
     if (!venue || !canSave) return Promise.resolve();
     return updateVenue({
@@ -75,6 +94,7 @@ const useVenueDetailsForm = (
       request: {
         venueName: venueName.trim(),
         visited,
+        visitedOn: visited && visitedOn ? visitedOn : undefined,
         venueTypeOptionId: venueTypeOptionId || undefined,
         foodTypeOptionId: foodTypeOptionId || undefined,
         ...placeSearch.placeFields,
@@ -91,10 +111,17 @@ const useVenueDetailsForm = (
   };
 
   return {
-    values: { venueName, visited, venueTypeOptionId, foodTypeOptionId },
+    values: {
+      venueName,
+      visited,
+      visitedOn,
+      venueTypeOptionId,
+      foodTypeOptionId,
+    },
     setters: {
       setVenueName,
       setVisited,
+      setVisitedOn,
       setVenueTypeOptionId,
       setFoodTypeOptionId,
     },
@@ -102,12 +129,14 @@ const useVenueDetailsForm = (
     venueTypeOptions,
     foodTypeOptions,
     areOptionsLoading,
+    todayDateInputValue: todayDateInputValue(),
     isUpdating,
     isDeleting,
     canSave,
     initialise,
     onSelectPlace,
     onNameChange,
+    onVisitedChange,
     save,
     remove,
   };

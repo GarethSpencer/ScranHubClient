@@ -1,6 +1,6 @@
 export const GroupVenueSortParameters = {
   VenueName: "VenueName",
-  Visited: "Visited",
+  VisitedOn: "VisitedOn",
   FoodType: "FoodType",
   VenueType: "VenueType",
   AvgCostRating: "AvgCostRating",

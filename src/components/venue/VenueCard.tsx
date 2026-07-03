@@ -1,7 +1,7 @@
-import { FaCheck, FaXmark } from "react-icons/fa6";
 import type GroupVenueResult from "../../models/results/GroupVenueResult";
 import type RatingOptionResult from "../../models/results/generic/RatingOptionResult";
 import RatingBar from "../common/RatingBar";
+import VisitedIndicator from "./VisitedIndicator";
 
 interface Props {
   venue: GroupVenueResult;
@@ -30,19 +30,10 @@ const VenueCard = ({
       >
         <div className="venue-card-title">
           <span className="text-break">{venue.venueName}</span>
-          {venue.visited ? (
-            <FaCheck
-              className="text-success flex-shrink-0"
-              aria-label="Visited"
-              role="img"
-            />
-          ) : (
-            <FaXmark
-              className="text-danger flex-shrink-0"
-              aria-label="Not visited"
-              role="img"
-            />
-          )}
+          <VisitedIndicator
+            visited={venue.visited}
+            visitedOn={venue.visitedOn}
+          />
         </div>
         {summaryParts.length > 0 && (
           <div className="venue-card-subheading text-break">

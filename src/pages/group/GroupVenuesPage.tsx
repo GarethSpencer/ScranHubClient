@@ -38,7 +38,7 @@ type SortableColumn = {
 
 const COLUMNS: SortableColumn[] = [
   { label: "Name", sortBy: GroupVenueSortParameters.VenueName },
-  { label: "Visited", sortBy: GroupVenueSortParameters.Visited },
+  { label: "Visited", sortBy: GroupVenueSortParameters.VisitedOn },
   { label: "Venue Type", sortBy: GroupVenueSortParameters.VenueType },
   { label: "Food Type", sortBy: GroupVenueSortParameters.FoodType },
   {

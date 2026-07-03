@@ -26,34 +26,44 @@ const VenueDetailsFields = ({ form, isPending }: Props) => {
           />
         </Form.Group>
       )}
+      <Form.Group className="mb-3" controlId="updateVenueName">
+        <Form.Label>Venue Name</Form.Label>
+        <Form.Control
+          type="text"
+          placeholder="Enter venue name"
+          value={values.venueName}
+          onChange={(e) => form.onNameChange(e.target.value)}
+          disabled={isPending}
+          maxLength={MAX_VENUE_NAME_LENGTH}
+        />
+        {placeSearch.displayedAddress && (
+          <Form.Text className="venue-primary">
+            {placeSearch.displayedAddress}
+          </Form.Text>
+        )}
+      </Form.Group>
       <Row className="g-3 mb-3">
-        <Col xs={9}>
-          <Form.Group controlId="updateVenueName">
-            <Form.Label>Venue Name</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="Enter venue name"
-              value={values.venueName}
-              onChange={(e) => form.onNameChange(e.target.value)}
-              disabled={isPending}
-              maxLength={MAX_VENUE_NAME_LENGTH}
-            />
-            {placeSearch.displayedAddress && (
-              <Form.Text className="venue-primary">
-                {placeSearch.displayedAddress}
-              </Form.Text>
-            )}
-          </Form.Group>
-        </Col>
-        <Col xs={3}>
+        <Col xs={6}>
           <Form.Group controlId="updateVenueVisited">
             <Form.Label>Visited</Form.Label>
             <Form.Check
               type="switch"
               checked={values.visited}
-              onChange={(e) => setters.setVisited(e.target.checked)}
+              onChange={(e) => form.onVisitedChange(e.target.checked)}
               disabled={isPending}
               style={{ marginLeft: "0.25rem", fontSize: "1.5rem" }}
+            />
+          </Form.Group>
+        </Col>
+        <Col xs={6}>
+          <Form.Group controlId="updateVenueVisitedOn">
+            <Form.Label>Visited On</Form.Label>
+            <Form.Control
+              type="date"
+              value={values.visitedOn}
+              onChange={(e) => setters.setVisitedOn(e.target.value)}
+              disabled={isPending || !values.visited}
+              max={form.todayDateInputValue}
             />
           </Form.Group>
         </Col>
