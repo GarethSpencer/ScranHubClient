@@ -221,6 +221,7 @@
 .group-users-table th:not(:first-child),
 .group-users-table td:not(:first-child) {
   width: 1%;
+  min-width: 7rem;
   white-space: nowrap;
 }
 
