@@ -218,6 +218,12 @@
   white-space: nowrap;
 }
 
+.group-users-table th:not(:first-child),
+.group-users-table td:not(:first-child) {
+  width: 1%;
+  white-space: nowrap;
+}
+
 .section-rule {
   border-top: 2px solid var(--bs-border-color);
   opacity: 1;

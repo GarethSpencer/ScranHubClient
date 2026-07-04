@@ -61,7 +61,7 @@ const GroupUsersPage = () => {
           <Table
             responsive
             striped="columns"
-            className="align-middle text-center border-top"
+            className="align-middle text-center border-top group-users-table"
           >
             <thead>
               <tr>
