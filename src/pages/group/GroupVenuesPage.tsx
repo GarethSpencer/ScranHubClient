@@ -150,7 +150,7 @@ const GroupVenuesPage = () => {
       <h2 className="mb-1 lead">Venue Management</h2>
       <p className="text-muted small mb-3">
         Add, view, edit and rate the venues for the group. Select a venue to
-        amend details and enter your own ratings.
+        amend details, and add your own ratings.
       </p>
 
       <div className="d-grid mx-auto mb-3">

@@ -187,8 +187,8 @@ const RatingDetailsPage = () => {
     <>
       <h2 className="mb-1 lead">Venue Summary</h2>
       <p className="text-muted small mb-3">
-        A read-only summary of every venue in the group. Select a venue to view
-        user ratings, and the map location if available.
+        A summary of every venue in the group. Select a venue to view more
+        details if available, and view all user ratings.
       </p>
 
       {!isMobile && (
