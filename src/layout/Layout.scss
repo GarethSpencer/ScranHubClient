@@ -771,30 +771,21 @@
 }
 
 @include media-breakpoint-down(md) {
+  .section-tabs {
+    align-items: stretch;
+  }
+
   .section-tabs .nav-item {
     flex: 1 1 0;
     min-width: 0;
+    display: flex;
   }
 
   .section-tabs .nav-link {
+    width: 100%;
     text-align: center;
     padding-left: 0.5rem;
     padding-right: 0.5rem;
-    line-height: 1.2;
-    min-height: 3.5rem;
-  }
-
-  .section-tabs-grid .nav-item {
-    flex: 0 0 50%;
-    max-width: 50%;
-    min-width: 0;
-  }
-
-  .section-tabs-grid .nav-link {
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
-    text-align: center;
-    white-space: normal;
     line-height: 1.2;
     min-height: 3.5rem;
   }
@@ -816,21 +807,6 @@
   text-shadow: none;
   background-color: var(--bs-nav-tabs-link-active-bg);
   margin-bottom: -1px;
-}
-
-.section-tabs-grid .nav-item:nth-child(-n + 2) .nav-link:not(.active) {
-  background-color: rgba(var(--bs-primary-rgb), 0.35);
-}
-
-.section-tabs-grid .nav-item:nth-child(-n + 2) .nav-link:not(.active):hover {
-  background-color: rgba(var(--bs-primary-rgb), 0.5);
-}
-
-.section-tabs-grid .nav-item:nth-child(-n + 2) .nav-link.active {
-  background-color: var(--bs-primary);
-  color: #fff;
-  margin-bottom: 0;
-  border-bottom-color: var(--bs-primary);
 }
 
 .section-panel {

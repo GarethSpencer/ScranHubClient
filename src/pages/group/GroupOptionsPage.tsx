@@ -50,7 +50,7 @@ const GroupOptionsPage = () => {
 
   return (
     <>
-      <h2 className="lead mb-1">Options</h2>
+      <h2 className="lead mb-1">Manage Options</h2>
       <p className="text-muted small mb-3">
         Configure the option sets which can be applied to the venues in this
         group. Expand a section to view and edit its options.

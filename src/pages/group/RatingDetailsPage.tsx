@@ -185,7 +185,7 @@ const RatingDetailsPage = () => {
 
   return (
     <>
-      <h2 className="mb-1 lead">Venue Summary</h2>
+      <h2 className="mb-1 lead">Summary</h2>
       <p className="text-muted small mb-3">
         A summary of every venue in the group. Select a venue to view more
         details if available, and view all user ratings.

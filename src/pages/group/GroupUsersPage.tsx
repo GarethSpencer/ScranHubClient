@@ -47,7 +47,7 @@ const GroupUsersPage = () => {
 
   return (
     <>
-      <h2 className="mb-1 lead">Users</h2>
+      <h2 className="mb-1 lead">Group Members</h2>
       <p className="text-muted small mb-3">All members of this group.</p>
 
       {isError ? (
