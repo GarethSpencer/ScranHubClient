@@ -1,13 +1,11 @@
-import { useState } from "react";
+import { lazy, Suspense, useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import Spinner from "react-bootstrap/Spinner";
-import EmojiPicker, {
-  EmojiStyle,
-  Theme,
-  type EmojiClickData,
-} from "emoji-picker-react";
+import type { EmojiClickData } from "emoji-picker-react";
 import useDarkMode from "../contexts/darkMode/useDarkMode";
+
+const LazyEmojiPicker = lazy(() => import("./LazyEmojiPicker"));
 import { useUpdateGroup } from "../api/controllerHooks/useGroupController";
 import type GroupResult from "../models/results/GroupResult";
 
@@ -70,13 +68,15 @@ const GroupIconModal = ({ group, onHide }: Props) => {
         <span className="group-card-avatar group-icon-preview flex-shrink-0">
           {previewIcon ?? group?.groupName.charAt(0).toUpperCase()}
         </span>
-        <EmojiPicker
-          onEmojiClick={onEmojiClick}
-          emojiStyle={EmojiStyle.NATIVE}
-          theme={isDarkMode ? Theme.DARK : Theme.LIGHT}
-          width="100%"
-          lazyLoadEmojis
-        />
+        <Suspense
+          fallback={
+            <Spinner animation="border" role="status" className="my-5">
+              <span className="visually-hidden">Loading emoji picker...</span>
+            </Spinner>
+          }
+        >
+          <LazyEmojiPicker onEmojiClick={onEmojiClick} isDarkMode={isDarkMode} />
+        </Suspense>
       </Modal.Body>
       <Modal.Footer className="justify-content-between">
         <Button

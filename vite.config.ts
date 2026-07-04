@@ -19,8 +19,23 @@ export default defineConfig({
               test: /[\\/]node_modules[\\/]@auth0[\\/]/,
             },
             {
+              name: "react",
+              test: /[\\/]node_modules[\\/](react|react-dom|react-router|react-router-dom|scheduler)[\\/]/,
+            },
+            {
+              name: "react-query",
+              test: /[\\/]node_modules[\\/]@tanstack[\\/]/,
+            },
+            {
+              name: "dnd-kit",
+              test: /[\\/]node_modules[\\/]@dnd-kit[\\/]/,
+            },
+            {
+              // Exclude emoji-picker-react so it stays in its own async
+              // chunk (loaded on demand via React.lazy) instead of being
+              // pulled into the eager vendor bundle.
               name: "vendor",
-              test: /[\\/]node_modules[\\/]/,
+              test: /[\\/]node_modules[\\/](?!emoji-picker-react[\\/])/,
             },
           ],
         },
