@@ -2,16 +2,16 @@
 
 > Plan and rate your scranning adventures with your friends! Create a group, rate everywhere you eat, and see what comes out on top.
 
-ScranHub is a web app for groups of friends to track and rate the places they eat together. Create a group, add the venues you visit, rate them on quality and cost, and let the app calculate and display the group's favourites. This repository contains the **frontend client** of the application. It talks to the [ScranHub API](https://github.com/garethspencer/ScranHub) backend.
+ScranHub is a web app for groups of friends to track and rate the places they eat together. Create a group, add the venues you visit, rate them on quality, cost and vibe, and let the app calculate and display the group's favourites. This repository contains the **frontend client** of the application. It talks to the [ScranHub API](https://github.com/garethspencer/ScranHub) backend.
 
 ## Features
 
 - **Friends** — add friends by their email or display name and manage pending/declined requests.
 - **Groups** — create groups, manage them and search to join groups created by your friends.
-- **Venues & ratings** — add places to a group that you'd like to dine together, and then rate them on configurable **quality** and **cost** scales.
+- **Venues & ratings** — add places to a group that you'd like to dine together, and then rate them on configurable **quality**, **cost** and **vibe** scales.
 - **Google Maps integration** — _(optional)_ search real places via Google Places autocomplete when adding or editing a venue, and view the selected venue on a map (with a link to Google Maps) on the summary screen. The map follows the app's light/dark theme. Degrades gracefully to plain text entry when no key is configured.
 - **Summaries** — two summary views of every venue in a group showing average ratings and how each member voted, with sorting and filtering.
-- **Custom rating options** — each group can configure its own food types, venue types, and quality/cost rating scales, with drag-and-drop reordering. So you can personalise each group to the people using it.
+- **Custom rating options** — each group can configure its own food types, venue types, and quality/cost/vibe rating scales, with drag-and-drop reordering. So you can personalise each group to the people using it.
 - **Admin** — an API-protected area for managing users and groups across the platform.
 - **Light/dark mode** — respects the OS preference and remembers your choice.
 - **Auth0 Login process** — third-party implementation of a renowned authentication and authorisation provider.
@@ -27,7 +27,7 @@ ScranHub is a web app for groups of friends to track and rate the places they ea
 | UI            | [React-Bootstrap](https://react-bootstrap.netlify.app/) + [Bootstrap 5](https://getbootstrap.com/) (SCSS) |
 | Drag & drop   | [dnd kit](https://dndkit.com/)                                                                            |
 | Auth          | [Auth0](https://auth0.com/) (`@auth0/auth0-react`)                                                        |
-| Maps          | [Google Maps Platform](https://developers.google.com/maps) — Places autocomplete + Maps JS _(optional)_  |
+| Maps          | [Google Maps Platform](https://developers.google.com/maps) — Places autocomplete + Maps JS _(optional)_   |
 | Hosting       | [Azure Static Web Apps](https://azure.microsoft.com/products/app-service/static)                          |
 
 ## Getting started
@@ -50,14 +50,14 @@ npm install
 
 The app reads its configuration from Vite environment variables. A `.env.development` file is used in development; create one (or a `.env.local`) with the following keys:
 
-| Variable                     | Description                                                          |
-| ---------------------------- | ------------------------------------------------------------------- |
-| `VITE_AUTH0_DOMAIN`          | Your Auth0 tenant domain (e.g. `your-tenant.eu.auth0.com`).         |
-| `VITE_AUTH0_CLIENT_ID`       | The Client ID of your Auth0 SPA application.                        |
-| `VITE_AUTH0_AUDIENCE`        | The API audience/identifier registered in Auth0.                    |
-| `VITE_API_BASE_URL`          | Base URL of the ScranHub API the client should call.                |
-| `VITE_GOOGLE_MAPS_API_KEY`   | _Optional._ Google Maps key for venue autocomplete + maps (see below). |
-| `VITE_GOOGLE_MAPS_MAP_ID`    | _Optional._ Cloud Map ID for the venue detail map (falls back to `DEMO_MAP_ID`). |
+| Variable                   | Description                                                                      |
+| -------------------------- | -------------------------------------------------------------------------------- |
+| `VITE_AUTH0_DOMAIN`        | Your Auth0 tenant domain (e.g. `your-tenant.eu.auth0.com`).                      |
+| `VITE_AUTH0_CLIENT_ID`     | The Client ID of your Auth0 SPA application.                                     |
+| `VITE_AUTH0_AUDIENCE`      | The API audience/identifier registered in Auth0.                                 |
+| `VITE_API_BASE_URL`        | Base URL of the ScranHub API the client should call.                             |
+| `VITE_GOOGLE_MAPS_API_KEY` | _Optional._ Google Maps key for venue autocomplete + maps (see below).           |
+| `VITE_GOOGLE_MAPS_MAP_ID`  | _Optional._ Cloud Map ID for the venue detail map (falls back to `DEMO_MAP_ID`). |
 
 ```dotenv
 VITE_AUTH0_DOMAIN=your-tenant.eu.auth0.com
@@ -104,6 +104,7 @@ src/
     common/       Shared across features (tables, pagination, modals)
     layout/       App chrome (navbar, footers, account modals)
     options/      Rating-option editor pieces
+    venue/        Venue cards, detail/ratings/breakdown modals and their fields
   constants/    Shared constants (pagination, validation limits)
   contexts/     React context providers (dark mode, toasts)
   enums/        Shared enums
