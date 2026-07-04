@@ -7,8 +7,10 @@ import RatingBar from "../common/RatingBar";
 interface Props {
   qualityRatings: RatingVenueResult[];
   costRatings: RatingVenueResult[];
+  vibeRatings: RatingVenueResult[];
   qualityOptions: RatingOptionResult[];
   costOptions: RatingOptionResult[];
+  vibeOptions: RatingOptionResult[];
 }
 
 interface UserRatingRow {
@@ -16,6 +18,7 @@ interface UserRatingRow {
   displayName: string;
   qualityOptionId?: string;
   costOptionId?: string;
+  vibeOptionId?: string;
 }
 
 const displayOrderForOption = (
@@ -32,6 +35,7 @@ const displayNameForUser = (row: UserRatingRow, currentUserId?: string) =>
 const buildUserRatingRows = (
   qualityRatings: RatingVenueResult[],
   costRatings: RatingVenueResult[],
+  vibeRatings: RatingVenueResult[],
 ): UserRatingRow[] => {
   const rowsByUser = new Map<string, UserRatingRow>();
 
@@ -50,6 +54,9 @@ const buildUserRatingRows = (
   for (const rating of costRatings) {
     ensureRow(rating).costOptionId = rating.optionId;
   }
+  for (const rating of vibeRatings) {
+    ensureRow(rating).vibeOptionId = rating.optionId;
+  }
 
   return [...rowsByUser.values()];
 };
@@ -57,13 +64,15 @@ const buildUserRatingRows = (
 const VenueBreakdownBody = ({
   qualityRatings,
   costRatings,
+  vibeRatings,
   qualityOptions,
   costOptions,
+  vibeOptions,
 }: Props) => {
   const { data: currentUserData } = useGetCurrentUser();
   const currentUserId = currentUserData?.user?.userId;
 
-  const rows = buildUserRatingRows(qualityRatings, costRatings);
+  const rows = buildUserRatingRows(qualityRatings, costRatings, vibeRatings);
 
   rows.sort((a, b) => {
     if (a.userId === currentUserId) return -1;
@@ -91,6 +100,7 @@ const VenueBreakdownBody = ({
                 <th className="text-start">Member</th>
                 <th>Quality</th>
                 <th>Cost</th>
+                <th>Vibe</th>
               </tr>
             </thead>
             <tbody>
@@ -115,6 +125,15 @@ const VenueBreakdownBody = ({
                         row.costOptionId,
                       )}
                       options={costOptions}
+                    />
+                  </td>
+                  <td>
+                    <RatingBar
+                      average={displayOrderForOption(
+                        vibeOptions,
+                        row.vibeOptionId,
+                      )}
+                      options={vibeOptions}
                     />
                   </td>
                 </tr>
@@ -146,6 +165,16 @@ const VenueBreakdownBody = ({
                       row.costOptionId,
                     )}
                     options={costOptions}
+                  />
+                </div>
+                <div className="venue-card-rating-row">
+                  <span className="venue-card-rating-label">Vibe</span>
+                  <RatingBar
+                    average={displayOrderForOption(
+                      vibeOptions,
+                      row.vibeOptionId,
+                    )}
+                    options={vibeOptions}
                   />
                 </div>
               </div>

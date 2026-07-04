@@ -51,11 +51,14 @@ const useVenueRatingsForm = (
 
   const [qualityOptionId, setQualityOptionId] = useState<string | null>(null);
   const [costOptionId, setCostOptionId] = useState<string | null>(null);
+  const [vibeOptionId, setVibeOptionId] = useState<string | null>(null);
 
   const { data: qualityOptionData, isLoading: isQualityOptionsLoading } =
     useGetOptionsForGroup("QualityOption", groupId);
   const { data: costOptionData, isLoading: isCostOptionsLoading } =
     useGetOptionsForGroup("CostOption", groupId);
+  const { data: vibeOptionData, isLoading: isVibeOptionsLoading } =
+    useGetOptionsForGroup("VibeOption", groupId);
 
   const qualityOptions = [...(qualityOptionData?.options ?? [])].sort(
     (a, b) => a.displayOrder - b.displayOrder,
@@ -63,8 +66,12 @@ const useVenueRatingsForm = (
   const costOptions = [...(costOptionData?.options ?? [])].sort(
     (a, b) => a.displayOrder - b.displayOrder,
   );
+  const vibeOptions = [...(vibeOptionData?.options ?? [])].sort(
+    (a, b) => a.displayOrder - b.displayOrder,
+  );
 
-  const areOptionsLoading = isQualityOptionsLoading || isCostOptionsLoading;
+  const areOptionsLoading =
+    isQualityOptionsLoading || isCostOptionsLoading || isVibeOptionsLoading;
 
   const { data: currentUserData } = useGetCurrentUser();
   const currentUserId = currentUserData?.user?.userId;
@@ -73,6 +80,8 @@ const useVenueRatingsForm = (
     useGetRatingsForGroupVenue("QualityRating", groupId, groupVenueId);
   const { data: costRatingsData, isLoading: isCostRatingLoading } =
     useGetRatingsForGroupVenue("CostRating", groupId, groupVenueId);
+  const { data: vibeRatingsData, isLoading: isVibeRatingLoading } =
+    useGetRatingsForGroupVenue("VibeRating", groupId, groupVenueId);
 
   const currentQualityRating = qualityRatingsData?.ratings?.find(
     (rating) => rating.userId === currentUserId,
@@ -80,12 +89,17 @@ const useVenueRatingsForm = (
   const currentCostRating = costRatingsData?.ratings?.find(
     (rating) => rating.userId === currentUserId,
   );
+  const currentVibeRating = vibeRatingsData?.ratings?.find(
+    (rating) => rating.userId === currentUserId,
+  );
 
-  const areRatingsLoading = isQualityRatingLoading || isCostRatingLoading;
+  const areRatingsLoading =
+    isQualityRatingLoading || isCostRatingLoading || isVibeRatingLoading;
 
   const qualitySelection =
     qualityOptionId ?? currentQualityRating?.optionId ?? "";
   const costSelection = costOptionId ?? currentCostRating?.optionId ?? "";
+  const vibeSelection = vibeOptionId ?? currentVibeRating?.optionId ?? "";
 
   const { mutateAsync: createQualityRating } = useCreateRating(
     "QualityRating",
@@ -119,9 +133,26 @@ const useVenueRatingsForm = (
     { silent: true },
   );
 
+  const { mutateAsync: createVibeRating } = useCreateRating(
+    "VibeRating",
+    groupId,
+    { silent: true },
+  );
+  const { mutateAsync: updateVibeRating } = useUpdateRating(
+    "VibeRating",
+    groupId,
+    { silent: true },
+  );
+  const { mutateAsync: deleteVibeRating } = useDeleteRating(
+    "VibeRating",
+    groupId,
+    { silent: true },
+  );
+
   const reset = () => {
     setQualityOptionId(null);
     setCostOptionId(null);
+    setVibeOptionId(null);
   };
 
   const save = () => {
@@ -143,16 +174,27 @@ const useVenueRatingsForm = (
         updateCostRating,
         deleteCostRating,
       ),
+      persistRating(
+        venue.groupVenueId,
+        currentVibeRating,
+        vibeSelection,
+        createVibeRating,
+        updateVibeRating,
+        deleteVibeRating,
+      ),
     ]);
   };
 
   return {
     qualitySelection,
     costSelection,
+    vibeSelection,
     setQualityOptionId,
     setCostOptionId,
+    setVibeOptionId,
     qualityOptions,
     costOptions,
+    vibeOptions,
     areOptionsLoading,
     areRatingsLoading,
     reset,

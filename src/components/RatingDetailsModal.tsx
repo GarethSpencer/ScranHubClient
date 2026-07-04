@@ -11,8 +11,10 @@ interface Props {
   venue: GroupVenueResult | null;
   qualityRatings: RatingVenueResult[];
   costRatings: RatingVenueResult[];
+  vibeRatings: RatingVenueResult[];
   qualityOptions: RatingOptionResult[];
   costOptions: RatingOptionResult[];
+  vibeOptions: RatingOptionResult[];
   isLoading: boolean;
   onClose: () => void;
 }
@@ -21,8 +23,10 @@ const RatingDetailsModal = ({
   venue,
   qualityRatings,
   costRatings,
+  vibeRatings,
   qualityOptions,
   costOptions,
+  vibeOptions,
   isLoading,
   onClose,
 }: Props) => {
@@ -58,8 +62,10 @@ const RatingDetailsModal = ({
               <VenueBreakdownBody
                 qualityRatings={qualityRatings}
                 costRatings={costRatings}
+                vibeRatings={vibeRatings}
                 qualityOptions={qualityOptions}
                 costOptions={costOptions}
+                vibeOptions={vibeOptions}
               />
             )}
           </>

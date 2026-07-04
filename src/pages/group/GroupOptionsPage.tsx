@@ -36,6 +36,12 @@ const sections: OptionSection[] = [
     title: "Cost Ratings",
     helperText: "These options should be ordered from 'best' to 'worst'.",
   },
+  {
+    eventKey: "viberatings",
+    controller: "VibeOption",
+    title: "Vibe Ratings",
+    helperText: "These options should be ordered from 'best' to 'worst'.",
+  },
 ];
 
 const GroupOptionsPage = () => {

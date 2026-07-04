@@ -8,6 +8,7 @@ interface Props {
   venue: GroupVenueResult;
   qualityOptions: RatingOptionResult[];
   costOptions: RatingOptionResult[];
+  vibeOptions: RatingOptionResult[];
   memberCount: number;
   onViewInfo: (venue: GroupVenueResult) => void;
   onViewBreakdown: (venue: GroupVenueResult) => void;
@@ -41,6 +42,7 @@ const VenueSummaryCard = ({
   venue,
   qualityOptions,
   costOptions,
+  vibeOptions,
   memberCount,
   onViewInfo,
   onViewBreakdown,
@@ -98,6 +100,13 @@ const VenueSummaryCard = ({
           average={venue.averageCostRating}
           options={costOptions}
           votes={venue.costRatingVotes ?? 0}
+          memberCount={memberCount}
+        />
+        <RatingSummaryRow
+          label="Vibe"
+          average={venue.averageVibeRating}
+          options={vibeOptions}
+          votes={venue.vibeRatingVotes ?? 0}
           memberCount={memberCount}
         />
       </button>

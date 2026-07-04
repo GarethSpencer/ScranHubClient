@@ -60,6 +60,29 @@ const VenueRatingsFields = ({ form, isPending }: Props) => {
           </Form.Select>
         </Form.Group>
       </Col>
+      <Col xs={12}>
+        <Form.Group controlId="updateVibeRating">
+          <Form.Label>Vibe Rating</Form.Label>
+          <Form.Select
+            value={form.areRatingsLoading ? "" : form.vibeSelection}
+            onChange={(e) => form.setVibeOptionId(e.target.value)}
+            disabled={disabled}
+          >
+            {form.areRatingsLoading ? (
+              <option value="">Loading...</option>
+            ) : (
+              <>
+                <option value="">None</option>
+                {form.vibeOptions.map((option) => (
+                  <option key={option.optionId} value={option.optionId}>
+                    {option.label}
+                  </option>
+                ))}
+              </>
+            )}
+          </Form.Select>
+        </Form.Group>
+      </Col>
     </Row>
   );
 };

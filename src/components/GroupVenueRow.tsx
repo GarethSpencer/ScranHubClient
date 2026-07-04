@@ -7,6 +7,7 @@ interface Props {
   venue: GroupVenueResult;
   qualityOptions: RatingOptionResult[];
   costOptions: RatingOptionResult[];
+  vibeOptions: RatingOptionResult[];
   onSelect: (venue: GroupVenueResult) => void;
 }
 
@@ -14,6 +15,7 @@ const GroupVenueRow = ({
   venue,
   qualityOptions,
   costOptions,
+  vibeOptions,
   onSelect,
 }: Props) => (
   <tr
@@ -36,6 +38,9 @@ const GroupVenueRow = ({
     </td>
     <td>
       <RatingBar average={venue.myCostRating} options={costOptions} />
+    </td>
+    <td>
+      <RatingBar average={venue.myVibeRating} options={vibeOptions} />
     </td>
   </tr>
 );

@@ -7,6 +7,7 @@ interface Props {
   venue: GroupVenueResult;
   qualityOptions: RatingOptionResult[];
   costOptions: RatingOptionResult[];
+  vibeOptions: RatingOptionResult[];
   onEditDetails: (venue: GroupVenueResult) => void;
   onEditRatings: (venue: GroupVenueResult) => void;
 }
@@ -15,6 +16,7 @@ const VenueCard = ({
   venue,
   qualityOptions,
   costOptions,
+  vibeOptions,
   onEditDetails,
   onEditRatings,
 }: Props) => {
@@ -56,6 +58,10 @@ const VenueCard = ({
         <div className="venue-card-rating-row">
           <span className="venue-card-rating-label">Cost</span>
           <RatingBar average={venue.myCostRating} options={costOptions} />
+        </div>
+        <div className="venue-card-rating-row">
+          <span className="venue-card-rating-label">Vibe</span>
+          <RatingBar average={venue.myVibeRating} options={vibeOptions} />
         </div>
       </button>
     </div>

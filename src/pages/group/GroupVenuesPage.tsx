@@ -46,6 +46,7 @@ const COLUMNS: SortableColumn[] = [
     sortBy: GroupVenueSortParameters.MyQualityRating,
   },
   { label: "My Cost Rating", sortBy: GroupVenueSortParameters.MyCostRating },
+  { label: "My Vibe Rating", sortBy: GroupVenueSortParameters.MyVibeRating },
 ];
 
 const GroupVenuesPage = () => {
@@ -116,8 +117,10 @@ const GroupVenuesPage = () => {
     id,
   );
   const { data: costOptionData } = useGetOptionsForGroup("CostOption", id);
+  const { data: vibeOptionData } = useGetOptionsForGroup("VibeOption", id);
   const qualityOptions = qualityOptionData?.options ?? [];
   const costOptions = costOptionData?.options ?? [];
+  const vibeOptions = vibeOptionData?.options ?? [];
 
   const {
     data: searchData,
@@ -227,6 +230,7 @@ const GroupVenuesPage = () => {
                   venue={x}
                   qualityOptions={qualityOptions}
                   costOptions={costOptions}
+                  vibeOptions={vibeOptions}
                   onSelect={setDetailsVenue}
                 />
               ))}
@@ -240,6 +244,7 @@ const GroupVenuesPage = () => {
                 venue={x}
                 qualityOptions={qualityOptions}
                 costOptions={costOptions}
+                vibeOptions={vibeOptions}
                 onEditDetails={setDetailsVenue}
                 onEditRatings={setRatingsVenue}
               />
@@ -309,6 +314,7 @@ const GroupVenuesPage = () => {
                       venue={x}
                       qualityOptions={qualityOptions}
                       costOptions={costOptions}
+                      vibeOptions={vibeOptions}
                       onSelect={setDetailsVenue}
                     />
                   ))}
@@ -349,6 +355,7 @@ const GroupVenuesPage = () => {
                     venue={x}
                     qualityOptions={qualityOptions}
                     costOptions={costOptions}
+                    vibeOptions={vibeOptions}
                     onEditDetails={setDetailsVenue}
                     onEditRatings={setRatingsVenue}
                   />

@@ -8,10 +8,13 @@ export default interface GroupVenueResult {
   visitedOn?: string;
   averageCostRating?: number;
   averageQualityRating?: number;
+  averageVibeRating?: number;
   myCostRating?: number;
   myQualityRating?: number;
+  myVibeRating?: number;
   costRatingVotes?: number;
   qualityRatingVotes?: number;
+  vibeRatingVotes?: number;
   googlePlaceId?: string;
   formattedAddress?: string;
   latitude?: number;

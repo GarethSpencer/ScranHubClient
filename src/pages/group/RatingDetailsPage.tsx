@@ -48,8 +48,10 @@ const COLUMNS: Column[] = [
     sortBy: GroupVenueSortParameters.QualityRatingVotes,
   },
   { label: "Cost Votes", sortBy: GroupVenueSortParameters.CostRatingVotes },
+  { label: "Vibe Votes", sortBy: GroupVenueSortParameters.VibeRatingVotes },
   { label: "Avg Quality", sortBy: GroupVenueSortParameters.AvgQualityRating },
   { label: "Avg Cost", sortBy: GroupVenueSortParameters.AvgCostRating },
+  { label: "Avg Vibe", sortBy: GroupVenueSortParameters.AvgVibeRating },
 ];
 
 const ratingsForVenue = (
@@ -122,15 +124,20 @@ const RatingDetailsPage = () => {
     id,
   );
   const { data: costOptionData } = useGetOptionsForGroup("CostOption", id);
+  const { data: vibeOptionData } = useGetOptionsForGroup("VibeOption", id);
   const qualityOptions = qualityOptionData?.options ?? [];
   const costOptions = costOptionData?.options ?? [];
+  const vibeOptions = vibeOptionData?.options ?? [];
 
   const { data: qualityRatingsData, isLoading: isQualityRatingsLoading } =
     useGetRatingsForGroup("QualityRating", id);
   const { data: costRatingsData, isLoading: isCostRatingsLoading } =
     useGetRatingsForGroup("CostRating", id);
+  const { data: vibeRatingsData, isLoading: isVibeRatingsLoading } =
+    useGetRatingsForGroup("VibeRating", id);
 
-  const areRatingsLoading = isQualityRatingsLoading || isCostRatingsLoading;
+  const areRatingsLoading =
+    isQualityRatingsLoading || isCostRatingsLoading || isVibeRatingsLoading;
 
   const { data: membersData } = useGetGroupMembers(id, {
     pageNumber: 1,
@@ -166,6 +173,10 @@ const RatingDetailsPage = () => {
     costRatingsData?.groupVenueRatingsResults,
     breakdownVenueId,
   );
+  const breakdownVibeRatings = ratingsForVenue(
+    vibeRatingsData?.groupVenueRatingsResults,
+    breakdownVenueId,
+  );
 
   const skeletonRowCount =
     totalCount > 0
@@ -185,8 +196,10 @@ const RatingDetailsPage = () => {
           venue={breakdownVenue}
           qualityRatings={breakdownQualityRatings}
           costRatings={breakdownCostRatings}
+          vibeRatings={breakdownVibeRatings}
           qualityOptions={qualityOptions}
           costOptions={costOptions}
+          vibeOptions={vibeOptions}
           isLoading={areRatingsLoading}
           onClose={() => setBreakdownVenue(null)}
         />
@@ -201,8 +214,10 @@ const RatingDetailsPage = () => {
             venue={breakdownVenue}
             qualityRatings={breakdownQualityRatings}
             costRatings={breakdownCostRatings}
+            vibeRatings={breakdownVibeRatings}
             qualityOptions={qualityOptions}
             costOptions={costOptions}
+            vibeOptions={vibeOptions}
             isLoading={areRatingsLoading}
             onClose={() => setBreakdownVenue(null)}
           />
@@ -252,6 +267,7 @@ const RatingDetailsPage = () => {
                   venue={x}
                   qualityOptions={qualityOptions}
                   costOptions={costOptions}
+                  vibeOptions={vibeOptions}
                   memberCount={memberCount}
                   onSelect={setBreakdownVenue}
                 />
@@ -266,6 +282,7 @@ const RatingDetailsPage = () => {
                 venue={x}
                 qualityOptions={qualityOptions}
                 costOptions={costOptions}
+                vibeOptions={vibeOptions}
                 memberCount={memberCount}
                 onViewInfo={setInfoVenue}
                 onViewBreakdown={setBreakdownVenue}
@@ -340,6 +357,7 @@ const RatingDetailsPage = () => {
                       venue={x}
                       qualityOptions={qualityOptions}
                       costOptions={costOptions}
+                      vibeOptions={vibeOptions}
                       memberCount={memberCount}
                       onSelect={setBreakdownVenue}
                     />
@@ -381,6 +399,7 @@ const RatingDetailsPage = () => {
                     venue={x}
                     qualityOptions={qualityOptions}
                     costOptions={costOptions}
+                    vibeOptions={vibeOptions}
                     memberCount={memberCount}
                     onViewInfo={setInfoVenue}
                     onViewBreakdown={setBreakdownVenue}

@@ -3,6 +3,7 @@ import type ApiClient from "../apiClient";
 import costOptionControllerService from "../controllerServices/costOptionControllerService";
 import foodTypeOptionControllerService from "../controllerServices/foodTypeOptionControllerService";
 import qualityOptionControllerService from "../controllerServices/qualityOptionControllerService";
+import vibeOptionControllerService from "../controllerServices/vibeOptionControllerService";
 import venueTypeOptionControllerService from "../controllerServices/venueTypeOptionControllerService";
 import type GetRatingOptionsResponse from "../../models/responses/options/GetRatingOptionsResponse";
 import useToast from "../../contexts/toast/useToast";
@@ -20,14 +21,19 @@ export type OptionController =
   | "CostOption"
   | "FoodTypeOption"
   | "QualityOption"
+  | "VibeOption"
   | "VenueTypeOption";
 
-export type RatingOptionController = "CostOption" | "QualityOption";
+export type RatingOptionController =
+  | "CostOption"
+  | "QualityOption"
+  | "VibeOption";
 export type TypeOptionController = "FoodTypeOption" | "VenueTypeOption";
 
 const ratingControllers: RatingOptionController[] = [
   "CostOption",
   "QualityOption",
+  "VibeOption",
 ];
 
 export const isRatingController = (
@@ -39,6 +45,7 @@ const optionServices: Record<OptionController, ApiClient> = {
   CostOption: costOptionControllerService,
   FoodTypeOption: foodTypeOptionControllerService,
   QualityOption: qualityOptionControllerService,
+  VibeOption: vibeOptionControllerService,
   VenueTypeOption: venueTypeOptionControllerService,
 };
 

@@ -3,6 +3,7 @@ import type ApiClient from "../apiClient";
 import useToast from "../../contexts/toast/useToast";
 import qualityRatingControllerService from "../controllerServices/qualityRatingControllerService";
 import costRatingControllerService from "../controllerServices/costRatingControllerService";
+import vibeRatingControllerService from "../controllerServices/vibeRatingControllerService";
 import type CreateRatingRequest from "../../models/requests/ratings/CreateRatingRequest";
 import type AddRatingResponse from "../../models/responses/ratings/AddRatingResponse";
 import type GetRatingResponse from "../../models/responses/ratings/GetRatingResponse";
@@ -11,11 +12,12 @@ import type UpdateRatingRequest from "../../models/requests/ratings/UpdateRating
 import type GetRatingsResponse from "../../models/responses/ratings/GetRatingsResponse";
 import type GetGroupRatingsResponse from "../../models/responses/ratings/GetGroupRatingsResponse";
 
-export type RatingController = "CostRating" | "QualityRating";
+export type RatingController = "CostRating" | "QualityRating" | "VibeRating";
 
 const ratingServices: Record<RatingController, ApiClient> = {
   CostRating: costRatingControllerService,
   QualityRating: qualityRatingControllerService,
+  VibeRating: vibeRatingControllerService,
 };
 
 const invalidateRatingQueries = (

@@ -21,6 +21,12 @@ const RatingDetailsSkeletonRow = () => (
       <Placeholder xs={2} />
     </Placeholder>
     <Placeholder as="td" animation="glow">
+      <Placeholder xs={2} />
+    </Placeholder>
+    <Placeholder as="td" animation="glow">
+      <Placeholder xs={9} />
+    </Placeholder>
+    <Placeholder as="td" animation="glow">
       <Placeholder xs={9} />
     </Placeholder>
     <Placeholder as="td" animation="glow">
