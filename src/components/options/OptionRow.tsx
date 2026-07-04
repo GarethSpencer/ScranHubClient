@@ -76,32 +76,35 @@ const OptionRow = <T extends OptionResult>({
       </td>
       <td className="option-actions-col text-end">
         <div className="d-flex justify-content-end gap-2">
-          <OverlayTrigger overlay={<Tooltip>Update label</Tooltip>}>
-            <span className={hasChanged ? "d-inline-block" : "d-none"}>
-              <Button
-                variant="secondary"
-                className="icon-btn"
-                onClick={handleUpdate}
-                disabled={isLocked}
-                aria-label={`Update ${option.label}`}
-              >
-                <FaPencilAlt />
-              </Button>
-            </span>
-          </OverlayTrigger>
-          <OverlayTrigger overlay={<Tooltip>Delete option</Tooltip>}>
-            <span className="d-inline-block">
-              <Button
-                variant="danger"
-                className="icon-btn"
-                onClick={() => onRequestDelete(option)}
-                disabled={isLocked}
-                aria-label={`Delete ${option.label}`}
-              >
-                <FaTrash />
-              </Button>
-            </span>
-          </OverlayTrigger>
+          {hasChanged ? (
+            <OverlayTrigger overlay={<Tooltip>Update label</Tooltip>}>
+              <span className="d-inline-block">
+                <Button
+                  variant="secondary"
+                  className="icon-btn"
+                  onClick={handleUpdate}
+                  disabled={isLocked}
+                  aria-label={`Update ${option.label}`}
+                >
+                  <FaPencilAlt />
+                </Button>
+              </span>
+            </OverlayTrigger>
+          ) : (
+            <OverlayTrigger overlay={<Tooltip>Delete option</Tooltip>}>
+              <span className="d-inline-block">
+                <Button
+                  variant="danger"
+                  className="icon-btn"
+                  onClick={() => onRequestDelete(option)}
+                  disabled={isLocked}
+                  aria-label={`Delete ${option.label}`}
+                >
+                  <FaTrash />
+                </Button>
+              </span>
+            </OverlayTrigger>
+          )}
         </div>
       </td>
     </tr>
