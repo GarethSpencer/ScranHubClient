@@ -32,7 +32,12 @@ const ToastProvider = ({ children }: Props) => {
   return (
     <ToastContext.Provider value={{ showToast }}>
       {children}
-      <ToastContainer position="bottom-end" className="p-3">
+      <ToastContainer
+        position="bottom-end"
+        containerPosition="fixed"
+        className="p-3"
+        style={{ zIndex: 1100 }}
+      >
         {toasts.map((toast) => (
           <BootstrapToast
             key={toast.id}
