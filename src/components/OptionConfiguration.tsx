@@ -28,6 +28,7 @@ interface Props {
   groupId: string;
   heading: string;
   helperText: string;
+  hideHeading?: boolean;
 }
 
 const OptionConfiguration = ({
@@ -35,6 +36,7 @@ const OptionConfiguration = ({
   groupId,
   heading,
   helperText,
+  hideHeading = false,
 }: Props) => {
   const reorderable = isRatingController(controller);
 
@@ -143,8 +145,12 @@ const OptionConfiguration = ({
 
   return (
     <>
-      <h2 className="lead mb-1">{heading}</h2>
-      <p className="text-muted small mb-3">{helperText}</p>
+      {!hideHeading && (
+        <>
+          <h2 className="lead mb-1">{heading}</h2>
+          <p className="text-muted small mb-3">{helperText}</p>
+        </>
+      )}
 
       <div className="mb-3 d-flex flex-wrap gap-2">
         {reorder.isReordering ? (

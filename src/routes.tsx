@@ -14,10 +14,7 @@ import JoinedGroupsPage from "./pages/groups/JoinedGroupsPage";
 import ManageCreatedGroupsPage from "./pages/groups/ManageCreatedGroupsPage";
 import GroupVenuesPage from "./pages/group/GroupVenuesPage";
 import GroupSectionLayout from "./layout/GroupSectionLayout";
-import FoodTypeOptionsPage from "./pages/group/FoodTypeOptionsPage";
-import VenueTypeOptionsPage from "./pages/group/VenueTypeOptionsPage";
-import CostRatingOptionsPage from "./pages/group/CostRatingOptionsPage";
-import QualityRatingOptionsPage from "./pages/group/QualityRatingOptionsPage";
+import GroupOptionsPage from "./pages/group/GroupOptionsPage";
 import AdminUsersPage from "./pages/admin/AdminUsersPage";
 import AdminGroupsPage from "./pages/admin/AdminGroupsPage";
 import RatingDetailsPage from "./pages/group/RatingDetailsPage";
@@ -53,20 +50,8 @@ const router = createBrowserRouter([
                 element: <GroupUsersPage />,
               },
               {
-                path: "foodtypes",
-                element: <FoodTypeOptionsPage />,
-              },
-              {
-                path: "venuetypes",
-                element: <VenueTypeOptionsPage />,
-              },
-              {
-                path: "costratings",
-                element: <CostRatingOptionsPage />,
-              },
-              {
-                path: "qualityratings",
-                element: <QualityRatingOptionsPage />,
+                path: "options",
+                element: <GroupOptionsPage />,
               },
             ],
           },
