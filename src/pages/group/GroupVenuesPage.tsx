@@ -11,6 +11,7 @@ import {
 } from "../../api/controllerHooks/useGroupVenueController";
 import { useGetOptionsForGroup } from "../../api/controllerHooks/useOptionController";
 import TableStatus from "../../components/common/TableStatus";
+import TableScrollContainer from "../../components/common/TableScrollContainer";
 import TablePagination from "../../components/common/TablePagination";
 import GroupVenueRow from "../../components/GroupVenueRow";
 import GroupVenueSkeletonRow from "../../components/GroupVenueSkeletonRow";
@@ -211,31 +212,32 @@ const GroupVenuesPage = () => {
           errorText="Couldn't search venues. Please try again."
           emptyText="No venues match your search"
         >
-          <Table
-            responsive
-            striped="columns"
-            className="d-none d-md-table align-middle text-center border-top group-venue-table"
-          >
-            <thead>
-              <tr>
-                {COLUMNS.map((column) => (
-                  <th key={column.sortBy}>{column.label}</th>
+          <TableScrollContainer className="d-none d-md-block">
+            <Table
+              striped="columns"
+              className="align-middle text-center border-top group-venue-table"
+            >
+              <thead>
+                <tr>
+                  {COLUMNS.map((column) => (
+                    <th key={column.sortBy}>{column.label}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {searchResults.map((x: GroupVenueResult) => (
+                  <GroupVenueRow
+                    key={x.groupVenueId}
+                    venue={x}
+                    qualityOptions={qualityOptions}
+                    costOptions={costOptions}
+                    vibeOptions={vibeOptions}
+                    onSelect={setDetailsVenue}
+                  />
                 ))}
-              </tr>
-            </thead>
-            <tbody>
-              {searchResults.map((x: GroupVenueResult) => (
-                <GroupVenueRow
-                  key={x.groupVenueId}
-                  venue={x}
-                  qualityOptions={qualityOptions}
-                  costOptions={costOptions}
-                  vibeOptions={vibeOptions}
-                  onSelect={setDetailsVenue}
-                />
-              ))}
-            </tbody>
-          </Table>
+              </tbody>
+            </Table>
+          </TableScrollContainer>
 
           <div className="d-md-none venue-card-list border-top">
             {searchResults.map((x: GroupVenueResult) => (
@@ -268,58 +270,59 @@ const GroupVenuesPage = () => {
         <p className="text-center mb-0">No venues yet</p>
       ) : (
         <>
-          <Table
-            responsive
-            striped="columns"
-            className="d-none d-md-table align-middle text-center border-top group-venue-table"
-          >
-            <thead>
-              <tr>
-                {COLUMNS.map((column) => (
-                  <th
-                    key={column.sortBy}
-                    role="button"
-                    aria-sort={
-                      sortBy === column.sortBy
-                        ? sortDescending
-                          ? "descending"
-                          : "ascending"
-                        : "none"
-                    }
-                    onClick={() => onSort(column.sortBy)}
-                    className="user-select-none"
-                  >
-                    {column.label}{" "}
-                    {sortBy === column.sortBy ? (
-                      sortDescending ? (
-                        <FaSortDown />
+          <TableScrollContainer className="d-none d-md-block">
+            <Table
+              striped="columns"
+              className="align-middle text-center border-top group-venue-table"
+            >
+              <thead>
+                <tr>
+                  {COLUMNS.map((column) => (
+                    <th
+                      key={column.sortBy}
+                      role="button"
+                      aria-sort={
+                        sortBy === column.sortBy
+                          ? sortDescending
+                            ? "descending"
+                            : "ascending"
+                          : "none"
+                      }
+                      onClick={() => onSort(column.sortBy)}
+                      className="user-select-none"
+                    >
+                      {column.label}{" "}
+                      {sortBy === column.sortBy ? (
+                        sortDescending ? (
+                          <FaSortDown />
+                        ) : (
+                          <FaSortUp />
+                        )
                       ) : (
-                        <FaSortUp />
-                      )
-                    ) : (
-                      <FaSort className="text-muted" />
-                    )}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {isVenuesPending
-                ? Array.from({ length: skeletonRowCount }, (_, index) => (
-                    <GroupVenueSkeletonRow key={index} />
-                  ))
-                : venues.map((x: GroupVenueResult) => (
-                    <GroupVenueRow
-                      key={x.groupVenueId}
-                      venue={x}
-                      qualityOptions={qualityOptions}
-                      costOptions={costOptions}
-                      vibeOptions={vibeOptions}
-                      onSelect={setDetailsVenue}
-                    />
+                        <FaSort className="text-muted" />
+                      )}
+                    </th>
                   ))}
-            </tbody>
-          </Table>
+                </tr>
+              </thead>
+              <tbody>
+                {isVenuesPending
+                  ? Array.from({ length: skeletonRowCount }, (_, index) => (
+                      <GroupVenueSkeletonRow key={index} />
+                    ))
+                  : venues.map((x: GroupVenueResult) => (
+                      <GroupVenueRow
+                        key={x.groupVenueId}
+                        venue={x}
+                        qualityOptions={qualityOptions}
+                        costOptions={costOptions}
+                        vibeOptions={vibeOptions}
+                        onSelect={setDetailsVenue}
+                      />
+                    ))}
+              </tbody>
+            </Table>
+          </TableScrollContainer>
 
           {!isVenuesPending && (
             <div className="d-md-none">

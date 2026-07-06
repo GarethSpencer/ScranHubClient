@@ -890,6 +890,65 @@
   }
 }
 
+.table-scroll-container {
+  position: relative;
+}
+
+.table-scroll-container::before,
+.table-scroll-container::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2rem;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+  z-index: 2;
+}
+
+.table-scroll-container::before {
+  left: 0;
+  background: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0.18),
+    rgba(0, 0, 0, 0)
+  );
+}
+
+.table-scroll-container::after {
+  right: 0;
+  background: linear-gradient(
+    to left,
+    rgba(0, 0, 0, 0.18),
+    rgba(0, 0, 0, 0)
+  );
+}
+
+.table-scroll-container.can-scroll-left::before {
+  opacity: 1;
+}
+
+.table-scroll-container.can-scroll-right::after {
+  opacity: 1;
+}
+
+[data-bs-theme="dark"] .table-scroll-container::before {
+  background: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0.55),
+    rgba(0, 0, 0, 0)
+  );
+}
+
+[data-bs-theme="dark"] .table-scroll-container::after {
+  background: linear-gradient(
+    to left,
+    rgba(0, 0, 0, 0.55),
+    rgba(0, 0, 0, 0)
+  );
+}
+
 .pagination-row {
   position: relative;
   display: flex;

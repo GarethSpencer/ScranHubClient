@@ -7,6 +7,7 @@ import {
   useSearchAllGroups,
 } from "../../api/controllerHooks/useAdminController";
 import TableStatus from "../../components/common/TableStatus";
+import TableScrollContainer from "../../components/common/TableScrollContainer";
 import TablePagination from "../../components/common/TablePagination";
 import AdminGroupRow from "../../components/AdminGroupRow";
 import AdminGroupSkeletonRow from "../../components/AdminGroupSkeletonRow";
@@ -41,28 +42,26 @@ const GroupsTable = ({
   isPending,
   skeletonRowCount,
 }: GroupsTableProps) => (
-  <Table
-    responsive
-    striped="columns"
-    className="align-middle text-center border-top"
-  >
-    <thead>
-      <tr>
-        {COLUMNS.map((column) => (
-          <th key={column} className="text-nowrap">
-            {column}
-          </th>
-        ))}
-      </tr>
-    </thead>
-    <tbody>
-      {isPending
-        ? Array.from({ length: skeletonRowCount }, (_, index) => (
-            <AdminGroupSkeletonRow key={index} />
-          ))
-        : groups.map((x) => <AdminGroupRow key={x.groupId} group={x} />)}
-    </tbody>
-  </Table>
+  <TableScrollContainer>
+    <Table striped="columns" className="align-middle text-center border-top">
+      <thead>
+        <tr>
+          {COLUMNS.map((column) => (
+            <th key={column} className="text-nowrap">
+              {column}
+            </th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {isPending
+          ? Array.from({ length: skeletonRowCount }, (_, index) => (
+              <AdminGroupSkeletonRow key={index} />
+            ))
+          : groups.map((x) => <AdminGroupRow key={x.groupId} group={x} />)}
+      </tbody>
+    </Table>
+  </TableScrollContainer>
 );
 
 const AdminGroupsPage = () => {

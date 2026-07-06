@@ -9,6 +9,7 @@ import {
 } from "../../api/controllerHooks/useAdminController";
 import { useGetCurrentUser } from "../../api/controllerHooks/useUserController";
 import TableStatus from "../../components/common/TableStatus";
+import TableScrollContainer from "../../components/common/TableScrollContainer";
 import TablePagination from "../../components/common/TablePagination";
 import AdminUserRow from "../../components/AdminUserRow";
 import AdminUserSkeletonRow from "../../components/AdminUserSkeletonRow";
@@ -45,34 +46,32 @@ const UsersTable = ({
   isPending,
   skeletonRowCount,
 }: UsersTableProps) => (
-  <Table
-    responsive
-    striped="columns"
-    className="align-middle text-center border-top"
-  >
-    <thead>
-      <tr>
-        {COLUMNS.map((column) => (
-          <th key={column} className="text-nowrap">
-            {column}
-          </th>
-        ))}
-      </tr>
-    </thead>
-    <tbody>
-      {isPending
-        ? Array.from({ length: skeletonRowCount }, (_, index) => (
-            <AdminUserSkeletonRow key={index} />
-          ))
-        : users.map((x) => (
-            <AdminUserRow
-              key={x.userId}
-              user={x}
-              isCurrentUser={x.userId === currentUserId}
-            />
+  <TableScrollContainer>
+    <Table striped="columns" className="align-middle text-center border-top">
+      <thead>
+        <tr>
+          {COLUMNS.map((column) => (
+            <th key={column} className="text-nowrap">
+              {column}
+            </th>
           ))}
-    </tbody>
-  </Table>
+        </tr>
+      </thead>
+      <tbody>
+        {isPending
+          ? Array.from({ length: skeletonRowCount }, (_, index) => (
+              <AdminUserSkeletonRow key={index} />
+            ))
+          : users.map((x) => (
+              <AdminUserRow
+                key={x.userId}
+                user={x}
+                isCurrentUser={x.userId === currentUserId}
+              />
+            ))}
+      </tbody>
+    </Table>
+  </TableScrollContainer>
 );
 
 const AdminUsersPage = () => {
