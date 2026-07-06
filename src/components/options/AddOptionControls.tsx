@@ -1,5 +1,9 @@
 import Button from "react-bootstrap/Button";
 import Spinner from "react-bootstrap/Spinner";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Tooltip from "react-bootstrap/Tooltip";
+import { FaPlus, FaCheck } from "react-icons/fa";
+import { RxReset } from "react-icons/rx";
 
 interface Props {
   isAdding: boolean;
@@ -20,35 +24,49 @@ const AddOptionControls = ({
 }: Props) => {
   if (!isAdding) {
     return (
-      <Button
-        variant="success"
-        size="sm"
-        onClick={onStart}
-        aria-label="Add option"
-      >
-        + Add
-      </Button>
+      <OverlayTrigger overlay={<Tooltip>Add option</Tooltip>}>
+        <span className="d-inline-block">
+          <Button
+            variant="success"
+            className="icon-btn"
+            onClick={onStart}
+            aria-label="Add option"
+          >
+            <FaPlus />
+          </Button>
+        </span>
+      </OverlayTrigger>
     );
   }
 
   return (
     <div className="d-flex justify-content-end gap-2">
-      <Button
-        variant="outline-secondary"
-        size="sm"
-        onClick={onReset}
-        disabled={isPending}
-      >
-        Reset
-      </Button>
-      <Button
-        variant="primary"
-        size="sm"
-        onClick={onSave}
-        disabled={!canSave || isPending}
-      >
-        {isPending ? <Spinner animation="border" size="sm" /> : "Save"}
-      </Button>
+      <OverlayTrigger overlay={<Tooltip>Reset</Tooltip>}>
+        <span className="d-inline-block">
+          <Button
+            variant="outline-secondary"
+            className="icon-btn"
+            onClick={onReset}
+            disabled={isPending}
+            aria-label="Reset new option"
+          >
+            <RxReset />
+          </Button>
+        </span>
+      </OverlayTrigger>
+      <OverlayTrigger overlay={<Tooltip>Save</Tooltip>}>
+        <span className="d-inline-block">
+          <Button
+            variant="primary"
+            className="icon-btn"
+            onClick={onSave}
+            disabled={!canSave || isPending}
+            aria-label="Save new option"
+          >
+            {isPending ? <Spinner animation="border" size="sm" /> : <FaCheck />}
+          </Button>
+        </span>
+      </OverlayTrigger>
     </div>
   );
 };

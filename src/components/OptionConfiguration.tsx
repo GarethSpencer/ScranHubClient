@@ -152,88 +152,6 @@ const OptionConfiguration = ({
         </>
       )}
 
-      <div className="mb-3 d-flex flex-wrap gap-2">
-        {reorder.isReordering ? (
-          <>
-            <Button
-              variant="primary"
-              onClick={reorder.save}
-              disabled={reorder.isSaving}
-            >
-              {reorder.isSaving ? (
-                <Spinner animation="border" size="sm" />
-              ) : (
-                "Save Order"
-              )}
-            </Button>
-            <Button
-              key="reorder-cancel"
-              variant="outline-secondary"
-              onClick={reorder.cancel}
-              disabled={reorder.isSaving}
-            >
-              Cancel
-            </Button>
-          </>
-        ) : (
-          <>
-            {hasCustomOptions ? (
-              <Button
-                variant="danger"
-                onClick={() => setShowRemoveAll(true)}
-                disabled={isToggling}
-              >
-                {isToggling ? (
-                  <Spinner animation="border" size="sm" />
-                ) : (
-                  "Remove Custom Options"
-                )}
-              </Button>
-            ) : (
-              <Button
-                variant="primary"
-                onClick={
-                  isEditing ? () => setIsEditing(false) : handleOpenEditor
-                }
-                disabled={isToggling}
-                aria-expanded={isEditing}
-              >
-                {isEditing ? "Cancel" : "Set Custom Options"}
-              </Button>
-            )}
-            {reorderable && hasCustomOptions && sortedOptions.length > 1 && (
-              <Button
-                key="reorder-start"
-                variant="secondary"
-                onClick={() => reorder.start(sortedOptions)}
-                disabled={hasOtherPendingWork}
-                title={
-                  hasOtherPendingWork
-                    ? "Finish or cancel your other changes before reordering"
-                    : undefined
-                }
-              >
-                Reorder Options
-              </Button>
-            )}
-          </>
-        )}
-      </div>
-
-      <OptionEditorPanel
-        key={editorKey}
-        show={isEditing && !reorder.isReordering}
-        heading={heading}
-        groupId={groupId}
-        initialLabels={
-          sortedOptions.length > 0
-            ? sortedOptions.map((option) => option.label)
-            : [""]
-        }
-        setCustomOptions={setCustomOptions}
-        onClose={() => setIsEditing(false)}
-      />
-
       <TableStatus
         isLoading={isLoading}
         isError={isError}
@@ -309,6 +227,86 @@ const OptionConfiguration = ({
           </tbody>
         </Table>
       </TableStatus>
+
+      <OptionEditorPanel
+        key={editorKey}
+        show={isEditing && !reorder.isReordering}
+        heading={heading}
+        groupId={groupId}
+        initialLabels={
+          sortedOptions.length > 0
+            ? sortedOptions.map((option) => option.label)
+            : [""]
+        }
+        setCustomOptions={setCustomOptions}
+        onClose={() => setIsEditing(false)}
+      />
+
+      {reorder.isReordering && (
+        <div className="mt-3 d-grid gap-2">
+          <Button
+            key="reorder-cancel"
+            variant="outline-secondary"
+            onClick={reorder.cancel}
+            disabled={reorder.isSaving}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="success"
+            onClick={reorder.save}
+            disabled={reorder.isSaving}
+          >
+            {reorder.isSaving ? (
+              <Spinner animation="border" size="sm" />
+            ) : (
+              "Save Order"
+            )}
+          </Button>
+        </div>
+      )}
+
+      {!reorder.isReordering && (
+        <div className="mt-3 d-grid gap-2">
+          {reorderable && hasCustomOptions && sortedOptions.length > 1 && (
+            <Button
+              key="reorder-start"
+              variant="secondary"
+              onClick={() => reorder.start(sortedOptions)}
+              disabled={hasOtherPendingWork}
+              title={
+                hasOtherPendingWork
+                  ? "Finish or cancel your other changes before reordering"
+                  : undefined
+              }
+            >
+              Reorder Options
+            </Button>
+          )}
+          {hasCustomOptions ? (
+            <Button
+              variant="danger"
+              onClick={() => setShowRemoveAll(true)}
+              disabled={isToggling}
+            >
+              {isToggling ? (
+                <Spinner animation="border" size="sm" />
+              ) : (
+                "Remove Custom Options"
+              )}
+            </Button>
+          ) : (
+            <Button
+              variant="primary"
+              onClick={isEditing ? () => setIsEditing(false) : handleOpenEditor}
+              disabled={isToggling}
+              aria-expanded={isEditing}
+            >
+              {isEditing ? "Cancel" : "Set Custom Options"}
+            </Button>
+          )}
+        </div>
+      )}
 
       <ConfirmModal
         show={optionToDelete !== null}

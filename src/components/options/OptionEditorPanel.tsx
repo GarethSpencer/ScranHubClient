@@ -75,7 +75,7 @@ const OptionEditorPanel = ({
                   maxLength={MAX_NAME_LENGTH}
                 />
                 <Button
-                  variant="outline-secondary"
+                  variant="outline-danger"
                   onClick={() => handleRemoveLabel(index)}
                   aria-label={`Remove option ${index + 1}`}
                 >
@@ -83,12 +83,12 @@ const OptionEditorPanel = ({
                 </Button>
               </InputGroup>
             ))}
-            <div className="d-flex justify-content-between gap-2 mt-3">
+            <div className="d-grid gap-2 mt-3">
               <Button variant="outline-secondary" onClick={handleAddLabel}>
-                + Add option
+                Add option
               </Button>
               <Button
-                variant="primary"
+                variant="success"
                 onClick={handleSave}
                 disabled={!canSave || setCustomOptions.isPending}
               >
