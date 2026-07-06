@@ -16,6 +16,7 @@ const AuthProvider = ({ children }: Props) => {
         audience: import.meta.env.VITE_AUTH0_AUDIENCE,
       }}
       cacheLocation="localstorage"
+      useRefreshTokens
     >
       {children}
     </Auth0Provider>
