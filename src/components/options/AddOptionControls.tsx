@@ -44,7 +44,7 @@ const AddOptionControls = ({
       <OverlayTrigger overlay={<Tooltip>Reset</Tooltip>}>
         <span className="d-inline-block">
           <Button
-            variant="outline-secondary"
+            variant="secondary"
             className="icon-btn"
             onClick={onReset}
             disabled={isPending}
