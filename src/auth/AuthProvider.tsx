@@ -17,6 +17,7 @@ const AuthProvider = ({ children }: Props) => {
       }}
       cacheLocation="localstorage"
       useRefreshTokens
+      useRefreshTokensFallback
     >
       {children}
     </Auth0Provider>
