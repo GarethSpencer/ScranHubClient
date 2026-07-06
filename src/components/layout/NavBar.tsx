@@ -12,6 +12,7 @@ import DeactivateAccountModal from "./DeactivateAccountModal";
 import NotificationIcon from "./NotificationIcon";
 import NotificationsModal from "./NotificationsModal";
 import { Link, NavLink } from "react-router-dom";
+import { FaHome } from "react-icons/fa";
 import { sections } from "../../navigation/sections";
 
 function NavBar() {
@@ -64,7 +65,15 @@ function NavBar() {
             <img src="/favicon.svg" alt="" className="navbar-brand-logo me-2" />
             ScranHub
           </Navbar.Brand>
-          <Nav className="d-none d-lg-flex me-auto ms-3 align-items-center">
+          <Nav className="d-none d-lg-flex me-auto ms-3 align-items-center gap-1">
+            <Nav.Link
+              as={NavLink}
+              to="/"
+              className="navbar-section-link d-flex align-items-center gap-2"
+            >
+              <FaHome aria-hidden="true" />
+              Home
+            </Nav.Link>
             {visibleSections.map((section) => {
               const Icon = section.icon;
               return (
@@ -100,6 +109,7 @@ function NavBar() {
                 onClick={() => setExpanded(false)}
                 className="text-white navbar-mobile-link d-flex align-items-center gap-2"
               >
+                <FaHome aria-hidden="true" />
                 Home
               </Nav.Link>
               {visibleSections.map((section) => {
