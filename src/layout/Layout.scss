@@ -31,6 +31,14 @@
   }
 }
 
+.navbar-brand-logo {
+  height: calc(var(--navbar-content-height) - 0.5rem);
+  width: auto;
+  background-color: #fff;
+  border-radius: 50%;
+  padding: 0.125rem;
+}
+
 .main-layout-container {
   min-height: 100vh;
   min-height: 100svh;

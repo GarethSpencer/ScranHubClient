@@ -61,6 +61,7 @@ function NavBar() {
       >
         <Container fluid>
           <Navbar.Brand as={Link} to="/" onClick={() => setExpanded(false)}>
+            <img src="/favicon.svg" alt="" className="navbar-brand-logo me-2" />
             ScranHub
           </Navbar.Brand>
           <Nav className="d-none d-lg-flex me-auto ms-3 align-items-center">
@@ -92,6 +93,15 @@ function NavBar() {
             <Nav className="ms-auto d-lg-none">
               <Navbar.Text className="fw-bold">{dropdownText}</Navbar.Text>
               <hr className="dropdown-divider navbar-divider" />
+              <Nav.Link
+                key="/"
+                as={NavLink}
+                to="/"
+                onClick={() => setExpanded(false)}
+                className="text-white navbar-mobile-link d-flex align-items-center gap-2"
+              >
+                Home
+              </Nav.Link>
               {visibleSections.map((section) => {
                 const Icon = section.icon;
                 return (
