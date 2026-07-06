@@ -6,7 +6,9 @@
     <link rel="icon" type="image/png" sizes="256x256" href="/favicon.png" />
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ScranHub</title>
+    <title>
+      ScranHub - Plan and rate your scranning adventures with friends
+    </title>
     <meta
       name="description"
       content="Plan and rate your scranning adventures with your friends! Form a group, rate everywhere you eat together and see what comes out on top."
@@ -51,6 +53,15 @@
         ]
       }
     </script>
+    <style>
+      .crawler-fallback {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+      }
+    </style>
     <script>
       (function () {
         var stored = localStorage.getItem("darkMode");
@@ -66,7 +77,16 @@
     </script>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!--Static fallback content for crawlers and no-JS visitors-->
+      <h1 class="crawler-fallback">
+        ScranHub — plan and rate your scranning adventures with friends
+      </h1>
+      <p class="crawler-fallback">
+        Form a group, rate everywhere you eat together and see what comes out on
+        top.
+      </p>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
