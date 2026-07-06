@@ -11,6 +11,7 @@ interface Props {
   show: boolean;
   heading: string;
   groupId: string;
+  reorderable: boolean;
   initialLabels: string[];
   setCustomOptions: ReturnType<typeof useSetCustomOptions>;
   onClose: () => void;
@@ -20,6 +21,7 @@ const OptionEditorPanel = ({
   show,
   heading,
   groupId,
+  reorderable,
   initialLabels,
   setCustomOptions,
   onClose,
@@ -60,9 +62,9 @@ const OptionEditorPanel = ({
         <div className="section-panel option-editor-panel mb-3">
           <h3 className="lead mb-1">Custom {heading}</h3>
           <p className="text-muted small mb-3">
-            Add the labels you want this group to use. These will replace the
-            default options and unset all venues which don't map to a custom
-            option.
+            {reorderable
+              ? "Add the labels you want this group to use. These will replace the default options and existing ratings will be mapped across."
+              : "Add the labels you want this group to use. These will replace the default options and unset all venues which can't be mapped."}
           </p>
           <Form onSubmit={(e) => e.preventDefault()}>
             {labels.map((label, index) => (

@@ -233,6 +233,7 @@ const OptionConfiguration = ({
         show={isEditing && !reorder.isReordering}
         heading={heading}
         groupId={groupId}
+        reorderable={reorderable}
         initialLabels={
           sortedOptions.length > 0
             ? sortedOptions.map((option) => option.label)
