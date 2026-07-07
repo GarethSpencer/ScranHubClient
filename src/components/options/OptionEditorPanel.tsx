@@ -90,7 +90,7 @@ const OptionEditorPanel = ({
                 Add option
               </Button>
               <Button
-                variant="success"
+                variant="secondary"
                 onClick={handleSave}
                 disabled={!canSave || setCustomOptions.isPending}
               >
