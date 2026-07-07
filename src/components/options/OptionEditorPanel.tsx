@@ -86,7 +86,7 @@ const OptionEditorPanel = ({
               </InputGroup>
             ))}
             <div className="d-grid gap-2 mt-3">
-              <Button variant="outline-secondary" onClick={handleAddLabel}>
+              <Button variant="primary" onClick={handleAddLabel}>
                 Add option
               </Button>
               <Button

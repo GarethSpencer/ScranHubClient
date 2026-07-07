@@ -57,7 +57,7 @@ const AddOptionControls = ({
       <OverlayTrigger overlay={<Tooltip>Save</Tooltip>}>
         <span className="d-inline-block">
           <Button
-            variant="primary"
+            variant="success"
             className="icon-btn"
             onClick={onSave}
             disabled={!canSave || isPending}
