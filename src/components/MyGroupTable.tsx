@@ -101,6 +101,8 @@ const MyGroupTable = () => {
     );
   };
 
+  if (isLoading || (!isError && myGroups.length === 0)) return null;
+
   return (
     <>
       <h2 className="mb-1 lead">My Created Groups</h2>
@@ -113,9 +115,7 @@ const MyGroupTable = () => {
         isError={isError}
         isEmpty={myGroups.length === 0}
         isFetching={isFetching}
-        loadingText="Loading your groups..."
         errorText="Couldn't load your groups. Please try again."
-        emptyText="You haven't created any groups yet."
       >
         <Table
           striped="columns"
