@@ -33,6 +33,13 @@ const MyGroupTable = () => {
   const groups = data?.userGroups ?? [];
   const currentUserId = currentUser?.user?.userId;
 
+  const myGroups = groups
+    .filter((x) => x.createdBy === currentUserId)
+    .sort(
+      (a, b) =>
+        new Date(b.createdOn).getTime() - new Date(a.createdOn).getTime(),
+    );
+
   const getDraftName = (group: GroupResult) =>
     draftNames[group.groupId] ?? group.groupName;
 
@@ -104,10 +111,11 @@ const MyGroupTable = () => {
       <TableStatus
         isLoading={isLoading}
         isError={isError}
-        isEmpty={groups.length === 0}
+        isEmpty={myGroups.length === 0}
         isFetching={isFetching}
         loadingText="Loading your groups..."
         errorText="Couldn't load your groups. Please try again."
+        emptyText="You haven't created any groups yet."
       >
         <Table
           striped="columns"
@@ -121,114 +129,101 @@ const MyGroupTable = () => {
             </tr>
           </thead>
           <tbody>
-            {groups
-              .filter((x) => x.createdBy === currentUserId)
-              .sort(
-                (a, b) =>
-                  new Date(b.createdOn).getTime() -
-                  new Date(a.createdOn).getTime(),
-              )
-              .map((x: GroupResult) => (
-                <tr key={x.groupId}>
-                  <td className="text-start">
-                    <div className="d-flex align-items-center gap-2">
-                      <Form.Control
-                        type="text"
-                        value={getDraftName(x)}
-                        onChange={(e) =>
-                          onChangeName(x.groupId, e.target.value)
+            {myGroups.map((x: GroupResult) => (
+              <tr key={x.groupId}>
+                <td className="text-start">
+                  <div className="d-flex align-items-center gap-2">
+                    <Form.Control
+                      type="text"
+                      value={getDraftName(x)}
+                      onChange={(e) => onChangeName(x.groupId, e.target.value)}
+                      disabled={isPending}
+                      maxLength={MAX_NAME_LENGTH}
+                    />
+                    <Button
+                      variant="link"
+                      className={`p-0 ${hasNameChanged(x) ? "" : " invisible"}`}
+                      onClick={() => onResetName(x.groupId)}
+                      disabled={isPending || !hasNameChanged(x)}
+                      title="Reset name"
+                      aria-label="Reset name"
+                    >
+                      <RxReset size={25} />
+                    </Button>
+                  </div>
+                </td>
+                <td>{x.active ? "Active" : "Inactive"}</td>
+                <td>
+                  <div className="d-flex flex-column flex-md-row justify-content-center gap-2">
+                    <OverlayTrigger overlay={<Tooltip>Update name</Tooltip>}>
+                      <span
+                        className={
+                          hasNameChanged(x) ? "d-inline-block" : "d-none"
                         }
-                        disabled={isPending}
-                        maxLength={MAX_NAME_LENGTH}
-                      />
-                      <Button
-                        variant="link"
-                        className={`p-0 ${
-                          hasNameChanged(x) ? "" : " invisible"
-                        }`}
-                        onClick={() => onResetName(x.groupId)}
-                        disabled={isPending || !hasNameChanged(x)}
-                        title="Reset name"
-                        aria-label="Reset name"
                       >
-                        <RxReset size={25} />
-                      </Button>
-                    </div>
-                  </td>
-                  <td>{x.active ? "Active" : "Inactive"}</td>
-                  <td>
-                    <div className="d-flex flex-column flex-md-row justify-content-center gap-2">
-                      <OverlayTrigger overlay={<Tooltip>Update name</Tooltip>}>
-                        <span
-                          className={
-                            hasNameChanged(x) ? "d-inline-block" : "d-none"
+                        <Button
+                          variant="secondary"
+                          className="icon-btn"
+                          onClick={() => onUpdateGroupName(x)}
+                          disabled={isPending || isDeleting}
+                          aria-label="Update name"
+                        >
+                          {isActing(x.groupId, "updateName") ? (
+                            <Spinner animation="border" size="sm" />
+                          ) : (
+                            <FaPencilAlt />
+                          )}
+                        </Button>
+                      </span>
+                    </OverlayTrigger>
+                    <OverlayTrigger
+                      overlay={
+                        <Tooltip>
+                          {x.active ? "Deactivate group" : "Activate group"}
+                        </Tooltip>
+                      }
+                    >
+                      <span className="d-inline-block">
+                        <Button
+                          variant={x.active ? "primary" : "success"}
+                          className="icon-btn"
+                          onClick={() => onSetGroupActive(x, !x.active)}
+                          disabled={isPending || isDeleting}
+                          aria-label={
+                            x.active ? "Deactivate group" : "Activate group"
                           }
                         >
-                          <Button
-                            variant="secondary"
-                            className="icon-btn"
-                            onClick={() => onUpdateGroupName(x)}
-                            disabled={isPending || isDeleting}
-                            aria-label="Update name"
-                          >
-                            {isActing(x.groupId, "updateName") ? (
-                              <Spinner animation="border" size="sm" />
-                            ) : (
-                              <FaPencilAlt />
-                            )}
-                          </Button>
-                        </span>
-                      </OverlayTrigger>
-                      <OverlayTrigger
-                        overlay={
-                          <Tooltip>
-                            {x.active ? "Deactivate group" : "Activate group"}
-                          </Tooltip>
-                        }
-                      >
+                          {isActing(x.groupId, "setActive") ? (
+                            <Spinner animation="border" size="sm" />
+                          ) : (
+                            <FaPowerOff />
+                          )}
+                        </Button>
+                      </span>
+                    </OverlayTrigger>
+                    {!x.active && (
+                      <OverlayTrigger overlay={<Tooltip>Delete group</Tooltip>}>
                         <span className="d-inline-block">
                           <Button
-                            variant={x.active ? "primary" : "success"}
+                            variant="danger"
                             className="icon-btn"
-                            onClick={() => onSetGroupActive(x, !x.active)}
+                            onClick={() => setGroupToDelete(x)}
                             disabled={isPending || isDeleting}
-                            aria-label={
-                              x.active ? "Deactivate group" : "Activate group"
-                            }
+                            aria-label="Delete group"
                           >
-                            {isActing(x.groupId, "setActive") ? (
+                            {isActing(x.groupId, "delete") ? (
                               <Spinner animation="border" size="sm" />
                             ) : (
-                              <FaPowerOff />
+                              <FaTrash />
                             )}
                           </Button>
                         </span>
                       </OverlayTrigger>
-                      {!x.active && (
-                        <OverlayTrigger
-                          overlay={<Tooltip>Delete group</Tooltip>}
-                        >
-                          <span className="d-inline-block">
-                            <Button
-                              variant="danger"
-                              className="icon-btn"
-                              onClick={() => setGroupToDelete(x)}
-                              disabled={isPending || isDeleting}
-                              aria-label="Delete group"
-                            >
-                              {isActing(x.groupId, "delete") ? (
-                                <Spinner animation="border" size="sm" />
-                              ) : (
-                                <FaTrash />
-                              )}
-                            </Button>
-                          </span>
-                        </OverlayTrigger>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              ))}
+                    )}
+                  </div>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </Table>
       </TableStatus>
