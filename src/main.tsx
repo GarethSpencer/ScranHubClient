@@ -1,5 +1,6 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import { registerSW } from "virtual:pwa-register";
 import {
   MutationCache,
   QueryCache,
@@ -15,6 +16,13 @@ import { RouterProvider } from "react-router-dom";
 import DarkModeProvider from "./contexts/darkMode/DarkModeProvider";
 import ToastProvider from "./contexts/toast/ToastProvider";
 import { queryErrorHandler } from "./contexts/toast/queryErrorHandler";
+
+registerSW({
+  immediate: true,
+  onRegisterError(error: unknown) {
+    console.warn("Service worker registration failed:", error);
+  },
+});
 
 const queryClient = new QueryClient({
   queryCache: new QueryCache({ onError: queryErrorHandler }),
