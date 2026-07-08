@@ -1,8 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 import Accordion from "react-bootstrap/Accordion";
 import OptionConfiguration from "../../components/OptionConfiguration";
-import type { OptionController } from "../../api/controllerHooks/useOptionController";
+import {
+  optionsForGroupQueryOptions,
+  type OptionController,
+} from "../../api/controllerHooks/useOptionController";
 
 interface OptionSection {
   eventKey: string;
@@ -47,6 +51,16 @@ const sections: OptionSection[] = [
 const GroupOptionsPage = () => {
   const { id = "" } = useParams();
   const [activeKey, setActiveKey] = useState<string | null>(null);
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    if (!id) return;
+    sections.forEach((section) => {
+      queryClient.prefetchQuery(
+        optionsForGroupQueryOptions(section.controller, id),
+      );
+    });
+  }, [id, queryClient]);
 
   return (
     <>

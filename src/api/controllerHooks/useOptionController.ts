@@ -1,4 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  queryOptions,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import type ApiClient from "../apiClient";
 import costOptionControllerService from "../controllerServices/costOptionControllerService";
 import foodTypeOptionControllerService from "../controllerServices/foodTypeOptionControllerService";
@@ -160,18 +165,23 @@ export const useRemoveCustomOption = (
   });
 };
 
+export const optionsForGroupQueryOptions = (
+  controller: OptionController,
+  groupId: string,
+) =>
+  queryOptions<GetRatingOptionsResponse, Error>({
+    queryKey: [controller, groupId],
+    queryFn: () =>
+      optionServices[controller].get<GetRatingOptionsResponse>(
+        `?GroupId=${groupId}`,
+      ),
+    staleTime: 10 * 1000,
+  });
+
 export const useGetOptionsForGroup = (
   controller: OptionController,
   groupId: string,
-) => {
-  const service = optionServices[controller];
-
-  return useQuery<GetRatingOptionsResponse, Error>({
-    queryKey: [controller, groupId],
-    queryFn: () => service.get<GetRatingOptionsResponse>(`?GroupId=${groupId}`),
-    staleTime: 10 * 1000,
-  });
-};
+) => useQuery(optionsForGroupQueryOptions(controller, groupId));
 
 export const useGetRatingOption = (
   controller: RatingOptionController,
