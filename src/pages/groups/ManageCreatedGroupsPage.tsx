@@ -9,9 +9,7 @@ const ManageCreatedGroupsPage = () => {
       <Col xs={12}>
         <CreateGroupForm />
       </Col>
-      <Col xs={12} className="mt-4">
-        <MyGroupTable />
-      </Col>
+      <MyGroupTable />
     </Row>
   );
 };

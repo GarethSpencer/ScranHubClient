@@ -1,4 +1,5 @@
 import Table from "react-bootstrap/Table";
+import Col from "react-bootstrap/Col";
 import { MAX_NAME_LENGTH } from "../constants/validation";
 import {
   useDeleteGroup,
@@ -104,7 +105,7 @@ const MyGroupTable = () => {
   if (isLoading || (!isError && myGroups.length === 0)) return null;
 
   return (
-    <>
+    <Col xs={12} className="mt-4">
       <h2 className="mb-1 lead">My Created Groups</h2>
       <p className="text-muted small mb-3">
         Rename, deactivate, or delete the groups you've created. Deactivated
@@ -276,7 +277,7 @@ const MyGroupTable = () => {
           </Button>
         </Modal.Footer>
       </Modal>
-    </>
+    </Col>
   );
 };
 
