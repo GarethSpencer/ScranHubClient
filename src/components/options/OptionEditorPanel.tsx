@@ -86,11 +86,11 @@ const OptionEditorPanel = ({
               </InputGroup>
             ))}
             <div className="d-grid gap-2 mt-3">
-              <Button variant="primary" onClick={handleAddLabel}>
+              <Button variant="outline-secondary" onClick={handleAddLabel}>
                 Add option
               </Button>
               <Button
-                variant="secondary"
+                variant="success"
                 onClick={handleSave}
                 disabled={!canSave || setCustomOptions.isPending}
               >
