@@ -2,7 +2,7 @@ import type GroupVenueResult from "../models/results/GroupVenueResult";
 import type RatingOptionResult from "../models/results/generic/RatingOptionResult";
 import RatingBar from "./common/RatingBar";
 import VisitedIndicator from "./venue/VisitedIndicator";
-import { formatDistanceMiles } from "./venue/venueInfo";
+import { formatDistanceMiles } from "../lib/venueInfo";
 
 interface Props {
   venue: GroupVenueResult;

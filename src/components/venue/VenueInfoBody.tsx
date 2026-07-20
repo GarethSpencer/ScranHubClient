@@ -6,7 +6,7 @@ import useGooglePlaceDetails, {
   summariseOpeningHours,
 } from "../../hooks/useGooglePlaceDetails";
 import { useGetCurrentUser } from "../../api/controllerHooks/useUserController";
-import { venueHasInfo } from "./venueInfo";
+import { venueHasInfo } from "../../lib/venueInfo";
 
 interface Props {
   venue: GroupVenueResult;

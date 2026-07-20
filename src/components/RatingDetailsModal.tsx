@@ -5,7 +5,7 @@ import type RatingVenueResult from "../models/results/generic/RatingVenueResult"
 import type RatingOptionResult from "../models/results/generic/RatingOptionResult";
 import VenueInfoBody from "./venue/VenueInfoBody";
 import VenueBreakdownBody from "./venue/VenueBreakdownBody";
-import { venueHasInfo } from "./venue/venueInfo";
+import { venueHasInfo } from "../lib/venueInfo";
 
 interface Props {
   venue: GroupVenueResult | null;

@@ -9,8 +9,9 @@ ScranHub is a web app for groups of friends to track and rate the places they ea
 - **Friends** — add friends by their email or display name and manage pending/declined requests.
 - **Groups** — create groups, manage them and search to join groups created by your friends.
 - **Venues & ratings** — add places to a group that you'd like to dine together, and then rate them on configurable **quality**, **cost** and **vibe** scales.
-- **Google Maps integration** — _(optional)_ search real places via Google Places autocomplete when adding or editing a venue, and view the selected venue on a map (with a link to Google Maps) on the summary screen. The map follows the app's light/dark theme. Degrades gracefully to plain text entry when no key is configured.
+- **Google Maps integration** — _(optional)_ search real places via Google Places autocomplete when adding or editing a venue, or when setting your personal start location in **My Details**. View the selected venue on a map on the summary screen, with a link through to Google Maps — showing directions from your start location when one is set. The map follows the app's light/dark theme. Degrades gracefully to plain text entry when no key is configured.
 - **Summaries** — two summary views of every venue in a group showing average ratings and how each member voted, with sorting and filtering.
+- **Distance to venues** — once you've set a start location, each venue shows how far it is from you in miles across the venue and summary pages, as a sortable column so you can surface what's nearest. _(Requires Google Maps.)_
 - **Custom rating options** — each group can configure its own food types, venue types, and quality/cost/vibe rating scales, with drag-and-drop reordering. So you can personalise each group to the people using it.
 - **Admin** — an API-protected area for managing users and groups across the platform.
 - **Light/dark mode** — respects the OS preference and remembers your choice.
@@ -110,6 +111,7 @@ src/
   enums/        Shared enums
   hooks/        Reusable hooks (e.g. debounce)
   layout/       Route layouts and section scaffolding
+  lib/          Framework-agnostic helpers (Google Maps loader, venue utilities)
   models/       Request/response/result types
   navigation/   Section and tab definitions
   pages/        Route-level pages, grouped by feature

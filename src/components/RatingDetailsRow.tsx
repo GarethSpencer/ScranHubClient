@@ -3,7 +3,7 @@ import type RatingOptionResult from "../models/results/generic/RatingOptionResul
 import RatingBar from "./common/RatingBar";
 import VoteProgressBar from "./VoteProgressBar";
 import VisitedIndicator from "./venue/VisitedIndicator";
-import { formatDistanceMiles } from "./venue/venueInfo";
+import { formatDistanceMiles } from "../lib/venueInfo";
 
 interface Props {
   venue: GroupVenueResult;
