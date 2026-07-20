@@ -5,10 +5,18 @@ import VenueMap from "../common/VenueMap";
 import useGooglePlaceDetails, {
   summariseOpeningHours,
 } from "../../hooks/useGooglePlaceDetails";
+import { useGetCurrentUser } from "../../api/controllerHooks/useUserController";
 import { venueHasInfo } from "./venueInfo";
 
 interface Props {
   venue: GroupVenueResult;
+}
+
+interface MapsOrigin {
+  formattedAddress?: string;
+  googlePlaceId?: string;
+  latitude?: number;
+  longitude?: number;
 }
 
 const googleMapsUrl = (venue: GroupVenueResult) => {
@@ -17,6 +25,26 @@ const googleMapsUrl = (venue: GroupVenueResult) => {
   return venue.googlePlaceId
     ? `${url}&query_place_id=${encodeURIComponent(venue.googlePlaceId)}`
     : url;
+};
+
+const googleMapsDirectionsUrl = (
+  venue: GroupVenueResult,
+  origin: MapsOrigin,
+) => {
+  const originText = encodeURIComponent(
+    origin.formattedAddress ?? `${origin.latitude},${origin.longitude}`,
+  );
+  const destinationText = encodeURIComponent(
+    venue.formattedAddress ?? venue.venueName,
+  );
+  let url = `https://www.google.com/maps/dir/?api=1&origin=${originText}&destination=${destinationText}`;
+  if (origin.googlePlaceId) {
+    url += `&origin_place_id=${encodeURIComponent(origin.googlePlaceId)}`;
+  }
+  if (venue.googlePlaceId) {
+    url += `&destination_place_id=${encodeURIComponent(venue.googlePlaceId)}`;
+  }
+  return url;
 };
 
 const ExternalLink = ({
@@ -36,6 +64,15 @@ const ExternalLink = ({
 const VenueInfoBody = ({ venue }: Props) => {
   const { data: placeDetails, isLoading: isPlaceDetailsLoading } =
     useGooglePlaceDetails(venue.googlePlaceId);
+
+  const { data: currentUserData } = useGetCurrentUser();
+  const currentUser = currentUserData?.user;
+  const hasUserLocation =
+    currentUser?.latitude != null && currentUser?.longitude != null;
+
+  const mapsUrl = hasUserLocation
+    ? googleMapsDirectionsUrl(venue, currentUser)
+    : googleMapsUrl(venue);
 
   if (!venueHasInfo(venue)) return null;
 
@@ -58,8 +95,9 @@ const VenueInfoBody = ({ venue }: Props) => {
       />
       {venue.formattedAddress && (
         <p className="small mt-2 mb-0">
-          <ExternalLink href={googleMapsUrl(venue)}>
+          <ExternalLink href={mapsUrl}>
             {venue.formattedAddress}
+            {hasUserLocation && " · Directions"}
           </ExternalLink>
         </p>
       )}
