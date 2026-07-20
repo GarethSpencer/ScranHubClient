@@ -16,6 +16,8 @@ import useToast from "../../contexts/toast/useToast";
 import type UpdateGroupVenueRequest from "../../models/requests/groupVenues/UpdateGroupVenueRequest";
 import type CommonResponse from "../../models/responses/generic/CommonResponse";
 
+const VENUE_STALE_TIME = 5 * 60 * 1000;
+
 export const useGetGroupVenue = (groupId: string, groupVenueId: string) => {
   const queryClient = useQueryClient();
 
@@ -23,7 +25,7 @@ export const useGetGroupVenue = (groupId: string, groupVenueId: string) => {
     queryKey: ["groups", groupId, "venues", groupVenueId],
     queryFn: () =>
       groupVenueControllerService.get<GetGroupVenueResponse>(groupVenueId),
-    staleTime: 10 * 1000,
+    staleTime: VENUE_STALE_TIME,
     placeholderData: () => {
       const cachedVenue = queryClient
         .getQueriesData<GetGroupVenuesResponse>({
@@ -61,7 +63,7 @@ export const useGetVenuesForGroup = (
       groupVenueControllerService.get<GetGroupVenuesResponse>(
         `group/${groupId}?PageNumber=${request.pageNumber}&PageSize=${request.pageSize}&SortBy=${request.sortBy}&SortDescending=${request.sortDescending}`,
       ),
-    staleTime: 10 * 1000,
+    staleTime: VENUE_STALE_TIME,
     placeholderData: keepPreviousData,
   });
 };
@@ -79,7 +81,7 @@ export const useSearchGroupVenues = (
       groupVenueControllerService.get<GetGroupVenuesResponse>(
         `search/${groupId}?SearchText=${encodeURIComponent(request.searchText)}&PageNumber=${request.pageNumber}&PageSize=${request.pageSize}`,
       ),
-    staleTime: 10 * 1000,
+    staleTime: VENUE_STALE_TIME,
     enabled: request.searchText.length >= 3,
   });
 };
