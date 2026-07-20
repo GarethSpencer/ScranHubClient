@@ -40,6 +40,11 @@ const useVenuePlaceSearch = (options: Options = {}) => {
     setCleared(false);
   };
 
+  const clear = () => {
+    setNewPlace(null);
+    setCleared(true);
+  };
+
   const onNameChange = (name: string) => {
     if (name.trim() === "") {
       setNewPlace(null);
@@ -61,6 +66,7 @@ const useVenuePlaceSearch = (options: Options = {}) => {
     useAutocomplete,
     onAutocompleteUnavailable: () => setUseAutocomplete(false),
     selectPlace,
+    clear,
     onNameChange,
     displayedAddress,
     placeFields,

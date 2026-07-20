@@ -45,6 +45,12 @@ function UserDetailsModal({
           <Placeholder as="p" animation="glow">
             <Placeholder xs={12} size="lg" />
           </Placeholder>
+          <Placeholder as="p" animation="glow">
+            <Placeholder xs={3} size="sm" />
+          </Placeholder>
+          <Placeholder as="p" animation="glow">
+            <Placeholder xs={12} size="lg" />
+          </Placeholder>
           <Placeholder.Button xs={12} aria-hidden="true" />
         </Modal.Body>
       </Modal>
@@ -65,6 +71,7 @@ function UserDetailsModal({
       </Modal.Header>
       <Modal.Body>
         <UserDetailsForm
+          key={showUserDetailsModal ? "open" : "closed"}
           setShowUserDetailsModal={setShowUserDetailsModal}
           updateUserMutation={updateUserMutation}
         />

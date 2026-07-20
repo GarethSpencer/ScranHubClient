@@ -5,6 +5,7 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import groupVenueControllerService from "../controllerServices/groupVenueControllerService";
+import { useGetCurrentUser } from "./useUserController";
 import type GetGroupVenueResponse from "../../models/responses/groupVenues/GetGroupVenueResponse";
 import type GetGroupVenuesResponse from "../../models/responses/groupVenues/GetGroupVenuesResponse";
 import type SortablePaginationRequest from "../../models/requests/generic/SortablePaginationRequest";
@@ -42,11 +43,15 @@ export const useGetVenuesForGroup = (
   groupId: string,
   request: SortablePaginationRequest,
 ) => {
+  const { data: currentUserData } = useGetCurrentUser();
+  const userId = currentUserData?.user?.userId;
+
   return useQuery<GetGroupVenuesResponse, Error>({
     queryKey: [
       "groups",
       groupId,
       "venues",
+      userId,
       request.pageNumber,
       request.pageSize,
       request.sortBy,
@@ -65,8 +70,11 @@ export const useSearchGroupVenues = (
   groupId: string,
   request: SearchGroupVenueRequest,
 ) => {
+  const { data: currentUserData } = useGetCurrentUser();
+  const userId = currentUserData?.user?.userId;
+
   return useQuery<GetGroupVenuesResponse, Error>({
-    queryKey: ["groups", groupId, "venues", "search", request],
+    queryKey: ["groups", groupId, "venues", "search", userId, request],
     queryFn: () =>
       groupVenueControllerService.get<GetGroupVenuesResponse>(
         `search/${groupId}?SearchText=${encodeURIComponent(request.searchText)}&PageNumber=${request.pageNumber}&PageSize=${request.pageSize}`,

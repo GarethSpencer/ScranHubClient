@@ -7,6 +7,10 @@ export default interface UserDetailedResult {
   admin: boolean;
   friendCount: number;
   pendingReceivedFriendshipCount: number;
+  googlePlaceId?: string;
+  formattedAddress?: string;
+  latitude?: number;
+  longitude?: number;
   createdOn: Date;
   createdBy: string;
   updatedOn?: Date;

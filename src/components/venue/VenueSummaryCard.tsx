@@ -2,7 +2,7 @@ import type GroupVenueResult from "../../models/results/GroupVenueResult";
 import type RatingOptionResult from "../../models/results/generic/RatingOptionResult";
 import RatingBar from "../common/RatingBar";
 import VisitedIndicator from "./VisitedIndicator";
-import { venueHasInfo } from "./venueInfo";
+import { formatDistanceMiles, venueHasInfo } from "./venueInfo";
 
 interface Props {
   venue: GroupVenueResult;
@@ -53,7 +53,14 @@ const VenueSummaryCard = ({
   const titleContent = (
     <>
       <div className="venue-card-title">
-        <span className="text-break">{venue.venueName}</span>
+        <span className="text-break">
+          {venue.venueName}
+          {venue.distanceMiles != null && (
+            <span className="text-muted fw-normal ms-2">
+              ({formatDistanceMiles(venue.distanceMiles)})
+            </span>
+          )}
+        </span>
         <VisitedIndicator visited={venue.visited} visitedOn={venue.visitedOn} />
       </div>
       {summaryParts.length > 0 && (

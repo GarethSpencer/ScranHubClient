@@ -19,4 +19,5 @@ export default interface GroupVenueResult {
   formattedAddress?: string;
   latitude?: number;
   longitude?: number;
+  distanceMiles?: number;
 }

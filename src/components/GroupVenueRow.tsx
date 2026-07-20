@@ -2,12 +2,14 @@ import type GroupVenueResult from "../models/results/GroupVenueResult";
 import type RatingOptionResult from "../models/results/generic/RatingOptionResult";
 import RatingBar from "./common/RatingBar";
 import VisitedIndicator from "./venue/VisitedIndicator";
+import { formatDistanceMiles } from "./venue/venueInfo";
 
 interface Props {
   venue: GroupVenueResult;
   qualityOptions: RatingOptionResult[];
   costOptions: RatingOptionResult[];
   vibeOptions: RatingOptionResult[];
+  showDistance: boolean;
   onSelect: (venue: GroupVenueResult) => void;
 }
 
@@ -16,6 +18,7 @@ const GroupVenueRow = ({
   qualityOptions,
   costOptions,
   vibeOptions,
+  showDistance,
   onSelect,
 }: Props) => (
   <tr
@@ -24,6 +27,13 @@ const GroupVenueRow = ({
     onClick={() => onSelect(venue)}
   >
     <td>{venue.venueName}</td>
+    {showDistance && (
+      <td>
+        {venue.distanceMiles != null
+          ? formatDistanceMiles(venue.distanceMiles)
+          : "—"}
+      </td>
+    )}
     <td>
       <VisitedIndicator
         visited={venue.visited}

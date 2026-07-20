@@ -5,10 +5,6 @@ import Table from "react-bootstrap/Table";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { FaSortUp, FaSortDown, FaSort } from "react-icons/fa";
-import {
-  useGetVenuesForGroup,
-  useSearchGroupVenues,
-} from "../../api/controllerHooks/useGroupVenueController";
 import { useGetOptionsForGroup } from "../../api/controllerHooks/useOptionController";
 import TableStatus from "../../components/common/TableStatus";
 import TableScrollContainer from "../../components/common/TableScrollContainer";
@@ -22,22 +18,15 @@ import VenueDetailsModal from "../../components/venue/VenueDetailsModal";
 import VenueRatingsModal from "../../components/venue/VenueRatingsModal";
 import MobileSortControl from "../../components/venue/MobileSortControl";
 import TablePageSizeSelect from "../../components/common/TablePageSizeSelect";
-import useDebounce from "../../hooks/useDebounce";
+import useGroupVenueListing, {
+  type VenueListingColumn,
+} from "../../hooks/useGroupVenueListing";
 import useIsMobile from "../../hooks/useIsMobile";
 import type GroupVenueResult from "../../models/results/GroupVenueResult";
 import { GroupVenueSortParameters } from "../../enums/GroupVenueSortParameters";
-import {
-  DEFAULT_PAGE_SIZE,
-  SEARCH_PAGE_SIZE,
-  SEARCH_MIN_LENGTH,
-} from "../../constants/pagination";
+import { SEARCH_PAGE_SIZE } from "../../constants/pagination";
 
-type SortableColumn = {
-  label: string;
-  sortBy: GroupVenueSortParameters;
-};
-
-const COLUMNS: SortableColumn[] = [
+const BASE_COLUMNS: VenueListingColumn[] = [
   { label: "Name", sortBy: GroupVenueSortParameters.VenueName },
   { label: "Visited", sortBy: GroupVenueSortParameters.VisitedOn },
   { label: "Venue Type", sortBy: GroupVenueSortParameters.VenueType },
@@ -55,7 +44,6 @@ const GroupVenuesPage = () => {
 
   const isMobile = useIsMobile();
 
-  const [searchText, setSearchText] = useState("");
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [detailsVenue, setDetailsVenue] = useState<GroupVenueResult | null>(
     null,
@@ -64,54 +52,35 @@ const GroupVenuesPage = () => {
     null,
   );
 
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
-  const [sortBy, setSortBy] = useState<GroupVenueSortParameters>(
-    GroupVenueSortParameters.VenueName,
-  );
-  const [sortDescending, setSortDescending] = useState(false);
-
-  const [searchPage, setSearchPage] = useState(1);
-  const searchPageSize = SEARCH_PAGE_SIZE;
-
-  const debouncedSearchText = useDebounce(searchText);
-  const isSearching = debouncedSearchText.length >= SEARCH_MIN_LENGTH;
-
-  const onSearchTextChange = (newSearchText: string) => {
-    setSearchText(newSearchText);
-    setSearchPage(1);
-  };
-
-  const onPageSizeChange = (newPageSize: number) => {
-    setPageSize(newPageSize);
-    setPage(1);
-  };
-
-  const onSort = (column: GroupVenueSortParameters) => {
-    if (sortBy === column) {
-      setSortDescending((prev) => !prev);
-    } else {
-      setSortBy(column);
-      setSortDescending(false);
-    }
-    setPage(1);
-  };
-
   const {
-    data: venuesData,
-    isLoading: isVenuesLoading,
-    isPlaceholderData: isVenuesPlaceholder,
-    isFetching: isVenuesFetching,
-    isError: isVenuesError,
-  } = useGetVenuesForGroup(id, {
-    pageNumber: page,
-    pageSize: pageSize,
-    sortBy: sortBy,
-    sortDescending: sortDescending,
-  });
-
-  const isVenuesPending =
-    isVenuesLoading || isVenuesPlaceholder || isVenuesFetching;
+    columns,
+    hasUserLocation,
+    searchText,
+    onSearchTextChange,
+    isSearching,
+    searchResults,
+    searchTotalCount,
+    isSearchLoading,
+    isSearchError,
+    searchPage,
+    setSearchPage,
+    venues,
+    totalCount,
+    isVenuesLoading,
+    isVenuesPending,
+    isVenuesError,
+    page,
+    setPage,
+    pageSize,
+    onPageSizeChange,
+    sortBy,
+    sortDescending,
+    onSort,
+    onSortByChange,
+    onToggleDirection,
+    showSearch,
+    skeletonRowCount,
+  } = useGroupVenueListing(id, BASE_COLUMNS);
 
   const { data: qualityOptionData } = useGetOptionsForGroup(
     "QualityOption",
@@ -122,29 +91,6 @@ const GroupVenuesPage = () => {
   const qualityOptions = qualityOptionData?.options ?? [];
   const costOptions = costOptionData?.options ?? [];
   const vibeOptions = vibeOptionData?.options ?? [];
-
-  const {
-    data: searchData,
-    isLoading: isSearchLoading,
-    isError: isSearchError,
-  } = useSearchGroupVenues(id, {
-    searchText: debouncedSearchText,
-    pageNumber: searchPage,
-    pageSize: searchPageSize,
-  });
-
-  const venues = venuesData?.groupVenues ?? [];
-  const totalCount = venuesData?.totalCount ?? 0;
-
-  const searchResults = searchData?.groupVenues ?? [];
-  const searchTotalCount = searchData?.totalCount ?? 0;
-
-  const showSearch = totalCount > 0 || isVenuesPending || isSearching;
-
-  const skeletonRowCount =
-    totalCount > 0
-      ? Math.min(pageSize, Math.max(1, totalCount - (page - 1) * pageSize))
-      : pageSize;
 
   return (
     <>
@@ -219,8 +165,8 @@ const GroupVenuesPage = () => {
             >
               <thead>
                 <tr>
-                  {COLUMNS.map((column) => (
-                    <th key={column.sortBy}>{column.label}</th>
+                  {columns.map((column) => (
+                    <th key={column.label}>{column.label}</th>
                   ))}
                 </tr>
               </thead>
@@ -232,6 +178,7 @@ const GroupVenuesPage = () => {
                     qualityOptions={qualityOptions}
                     costOptions={costOptions}
                     vibeOptions={vibeOptions}
+                    showDistance={hasUserLocation}
                     onSelect={setDetailsVenue}
                   />
                 ))}
@@ -257,7 +204,7 @@ const GroupVenuesPage = () => {
             <TablePagination
               page={searchPage}
               totalCount={searchTotalCount}
-              pageSize={searchPageSize}
+              pageSize={SEARCH_PAGE_SIZE}
               onPageChange={setSearchPage}
             />
           </div>
@@ -277,38 +224,45 @@ const GroupVenuesPage = () => {
             >
               <thead>
                 <tr>
-                  {COLUMNS.map((column) => (
-                    <th
-                      key={column.sortBy}
-                      role="button"
-                      aria-sort={
-                        sortBy === column.sortBy
-                          ? sortDescending
-                            ? "descending"
-                            : "ascending"
-                          : "none"
-                      }
-                      onClick={() => onSort(column.sortBy)}
-                      className="user-select-none"
-                    >
-                      {column.label}{" "}
-                      {sortBy === column.sortBy ? (
-                        sortDescending ? (
-                          <FaSortDown />
+                  {columns.map((column) =>
+                    column.sortBy === undefined ? (
+                      <th key={column.label}>{column.label}</th>
+                    ) : (
+                      <th
+                        key={column.label}
+                        role="button"
+                        aria-sort={
+                          sortBy === column.sortBy
+                            ? sortDescending
+                              ? "descending"
+                              : "ascending"
+                            : "none"
+                        }
+                        onClick={() => onSort(column.sortBy!)}
+                        className="user-select-none"
+                      >
+                        {column.label}{" "}
+                        {sortBy === column.sortBy ? (
+                          sortDescending ? (
+                            <FaSortDown />
+                          ) : (
+                            <FaSortUp />
+                          )
                         ) : (
-                          <FaSortUp />
-                        )
-                      ) : (
-                        <FaSort className="text-muted" />
-                      )}
-                    </th>
-                  ))}
+                          <FaSort className="text-muted" />
+                        )}
+                      </th>
+                    ),
+                  )}
                 </tr>
               </thead>
               <tbody>
                 {isVenuesPending
                   ? Array.from({ length: skeletonRowCount }, (_, index) => (
-                      <GroupVenueSkeletonRow key={index} />
+                      <GroupVenueSkeletonRow
+                        key={index}
+                        showDistance={hasUserLocation}
+                      />
                     ))
                   : venues.map((x: GroupVenueResult) => (
                       <GroupVenueRow
@@ -317,6 +271,7 @@ const GroupVenuesPage = () => {
                         qualityOptions={qualityOptions}
                         costOptions={costOptions}
                         vibeOptions={vibeOptions}
+                        showDistance={hasUserLocation}
                         onSelect={setDetailsVenue}
                       />
                     ))}
@@ -328,21 +283,19 @@ const GroupVenuesPage = () => {
             <div className="d-md-none">
               <MobileSortControl
                 id="venuesMobileSort"
-                options={COLUMNS.map((c) => ({
-                  label: c.label,
-                  value: c.sortBy,
-                }))}
+                options={columns
+                  .filter(
+                    (
+                      c,
+                    ): c is VenueListingColumn & {
+                      sortBy: GroupVenueSortParameters;
+                    } => c.sortBy !== undefined,
+                  )
+                  .map((c) => ({ label: c.label, value: c.sortBy }))}
                 sortBy={sortBy}
                 sortDescending={sortDescending}
-                onSortByChange={(value) => {
-                  setSortBy(value);
-                  setSortDescending(false);
-                  setPage(1);
-                }}
-                onToggleDirection={() => {
-                  setSortDescending((prev) => !prev);
-                  setPage(1);
-                }}
+                onSortByChange={onSortByChange}
+                onToggleDirection={onToggleDirection}
               />
             </div>
           )}

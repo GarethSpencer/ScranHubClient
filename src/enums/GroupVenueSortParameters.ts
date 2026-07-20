@@ -12,6 +12,7 @@ export const GroupVenueSortParameters = {
   CostRatingVotes: "CostRatingVotes",
   QualityRatingVotes: "QualityRatingVotes",
   VibeRatingVotes: "VibeRatingVotes",
+  Distance: "Distance",
 } as const;
 
 export type GroupVenueSortParameters =
