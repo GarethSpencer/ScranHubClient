@@ -1,3 +1,4 @@
+import { FaChartSimple, FaCircleInfo } from "react-icons/fa6";
 import type GroupVenueResult from "../../models/results/GroupVenueResult";
 import type RatingOptionResult from "../../models/results/generic/RatingOptionResult";
 import RatingBar from "../common/RatingBar";
@@ -61,7 +62,6 @@ const VenueSummaryCard = ({
             </span>
           )}
         </span>
-        <VisitedIndicator visited={venue.visited} visitedOn={venue.visitedOn} />
       </div>
       {summaryParts.length > 0 && (
         <div className="venue-card-subheading text-break">
@@ -69,6 +69,10 @@ const VenueSummaryCard = ({
         </div>
       )}
     </>
+  );
+
+  const visitedIndicator = (
+    <VisitedIndicator visited={venue.visited} visitedOn={venue.visitedOn} />
   );
 
   return (
@@ -80,11 +84,16 @@ const VenueSummaryCard = ({
           onClick={() => onViewInfo(venue)}
           aria-label={`View location details for ${venue.venueName}`}
         >
-          {titleContent}
+          <div className="venue-card-zone-content">{titleContent}</div>
+          {visitedIndicator}
+          <span className="venue-card-zone-icon" aria-hidden="true">
+            <FaCircleInfo size={18} />
+          </span>
         </button>
       ) : (
         <div className="venue-card-zone venue-card-zone-static">
-          {titleContent}
+          <div className="venue-card-zone-content">{titleContent}</div>
+          {visitedIndicator}
         </div>
       )}
 
@@ -94,28 +103,33 @@ const VenueSummaryCard = ({
         onClick={() => onViewBreakdown(venue)}
         aria-label={`View rating breakdown for ${venue.venueName}`}
       >
-        <div className="text-muted small mb-1">Average ratings</div>
-        <RatingSummaryRow
-          label="Quality"
-          average={venue.averageQualityRating}
-          options={qualityOptions}
-          votes={venue.qualityRatingVotes ?? 0}
-          memberCount={memberCount}
-        />
-        <RatingSummaryRow
-          label="Cost"
-          average={venue.averageCostRating}
-          options={costOptions}
-          votes={venue.costRatingVotes ?? 0}
-          memberCount={memberCount}
-        />
-        <RatingSummaryRow
-          label="Vibe"
-          average={venue.averageVibeRating}
-          options={vibeOptions}
-          votes={venue.vibeRatingVotes ?? 0}
-          memberCount={memberCount}
-        />
+        <div className="venue-card-zone-content">
+          <div className="text-muted small fw-bold mb-1">Average Ratings</div>
+          <RatingSummaryRow
+            label="Quality"
+            average={venue.averageQualityRating}
+            options={qualityOptions}
+            votes={venue.qualityRatingVotes ?? 0}
+            memberCount={memberCount}
+          />
+          <RatingSummaryRow
+            label="Cost"
+            average={venue.averageCostRating}
+            options={costOptions}
+            votes={venue.costRatingVotes ?? 0}
+            memberCount={memberCount}
+          />
+          <RatingSummaryRow
+            label="Vibe"
+            average={venue.averageVibeRating}
+            options={vibeOptions}
+            votes={venue.vibeRatingVotes ?? 0}
+            memberCount={memberCount}
+          />
+        </div>
+        <span className="venue-card-zone-icon" aria-hidden="true">
+          <FaChartSimple size={18} />
+        </span>
       </button>
     </div>
   );

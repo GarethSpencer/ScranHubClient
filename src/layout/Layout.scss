@@ -368,7 +368,9 @@
 }
 
 .venue-card-zone {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
   width: 100%;
   text-align: left;
   border: 0;
@@ -378,10 +380,38 @@
   transition: background-color 0.15s ease-in-out;
 }
 
+.venue-card-zone-content {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.venue-card-zone-icon {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  color: var(--bs-secondary-color);
+  opacity: 0.6;
+  transition:
+    color 0.15s ease-in-out,
+    opacity 0.15s ease-in-out,
+    transform 0.15s ease-in-out;
+}
+
 @media (hover: hover) {
   .venue-card-zone:hover {
     background-color: rgba(var(--bs-primary-rgb), 0.18);
   }
+
+  .venue-card-zone:hover .venue-card-zone-icon {
+    color: rgba(var(--bs-primary-rgb), 1);
+    opacity: 1;
+    transform: translateX(2px);
+  }
+}
+
+.venue-card-zone:active .venue-card-zone-icon {
+  color: rgba(var(--bs-primary-rgb), 1);
+  opacity: 1;
 }
 
 .venue-card-zone:active {
@@ -446,7 +476,7 @@
 
 .venue-card-rating-row {
   display: grid;
-  grid-template-columns: minmax(4rem, 5.5rem) 1fr;
+  grid-template-columns: minmax(3.5rem, 4.5rem) 1fr;
   align-items: center;
   column-gap: 0.75rem;
 
@@ -918,20 +948,12 @@
 
 .table-scroll-container::before {
   left: 0;
-  background: linear-gradient(
-    to right,
-    rgba(0, 0, 0, 0.18),
-    rgba(0, 0, 0, 0)
-  );
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.18), rgba(0, 0, 0, 0));
 }
 
 .table-scroll-container::after {
   right: 0;
-  background: linear-gradient(
-    to left,
-    rgba(0, 0, 0, 0.18),
-    rgba(0, 0, 0, 0)
-  );
+  background: linear-gradient(to left, rgba(0, 0, 0, 0.18), rgba(0, 0, 0, 0));
 }
 
 .table-scroll-container.can-scroll-left::before {
@@ -943,19 +965,11 @@
 }
 
 [data-bs-theme="dark"] .table-scroll-container::before {
-  background: linear-gradient(
-    to right,
-    rgba(0, 0, 0, 0.55),
-    rgba(0, 0, 0, 0)
-  );
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0));
 }
 
 [data-bs-theme="dark"] .table-scroll-container::after {
-  background: linear-gradient(
-    to left,
-    rgba(0, 0, 0, 0.55),
-    rgba(0, 0, 0, 0)
-  );
+  background: linear-gradient(to left, rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0));
 }
 
 .pagination-row {
