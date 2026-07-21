@@ -1,4 +1,4 @@
-import { FaChartSimple, FaCircleInfo } from "react-icons/fa6";
+import { FaChartSimple, FaPencil } from "react-icons/fa6";
 import type GroupVenueResult from "../../models/results/GroupVenueResult";
 import type RatingOptionResult from "../../models/results/generic/RatingOptionResult";
 import RatingBar from "../common/RatingBar";
@@ -37,7 +37,7 @@ const VenueCard = ({
             <span className="text-break">
               {venue.venueName}
               {venue.distanceMiles != null && (
-                <span className="text-muted fw-normal ms-2">
+                <span className="venue-card-subheading ms-2">
                   ({formatDistanceMiles(venue.distanceMiles)})
                 </span>
               )}
@@ -51,7 +51,7 @@ const VenueCard = ({
         </div>
         <VisitedIndicator visited={venue.visited} visitedOn={venue.visitedOn} />
         <span className="venue-card-zone-icon" aria-hidden="true">
-          <FaCircleInfo size={18} />
+          <FaPencil size={18} />
         </span>
       </button>
 
@@ -62,7 +62,7 @@ const VenueCard = ({
         aria-label={`Edit your ratings for ${venue.venueName}`}
       >
         <div className="venue-card-zone-content">
-          <div className="text-muted small fw-bold mb-1">My Ratings</div>
+          <div className="venue-card-subheading mb-1">My Ratings</div>
           <div className="venue-card-rating-row">
             <span className="venue-card-rating-label">Quality</span>
             <RatingBar

@@ -463,9 +463,14 @@
   white-space: nowrap;
 }
 
-.venue-visited-date {
-  font-size: 0.8125rem;
+%venue-card-meta-text {
+  font-size: 0.875rem;
   font-weight: 400;
+  color: var(--bs-secondary-color);
+}
+
+.venue-visited-date {
+  @extend %venue-card-meta-text;
 }
 
 .venue-card-subheading {
@@ -493,8 +498,7 @@
 }
 
 .venue-card-rating-label {
-  color: var(--bs-secondary-color);
-  font-size: 0.875rem;
+  @extend %venue-card-meta-text;
 }
 
 .venue-summary-value {
@@ -509,9 +513,8 @@
 }
 
 .venue-summary-votes {
+  @extend %venue-card-meta-text;
   flex-shrink: 0;
-  font-size: 0.8rem;
-  color: var(--bs-secondary-color);
   font-variant-numeric: tabular-nums;
 }
 
