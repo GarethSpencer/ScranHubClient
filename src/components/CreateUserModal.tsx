@@ -82,14 +82,17 @@ const CreateUserModal = ({ show, onClose }: Props) => {
               autoFocus
             />
           </Form.Group>
-          <Form.Check
-            type="switch"
-            id="createUserAdmin"
-            label="Make this user an admin"
-            checked={admin}
-            onChange={(e) => setAdmin(e.target.checked)}
-            disabled={isPending}
-          />
+          <Form.Group className="mb-3" controlId="createUserAdmin">
+            <Form.Label>Admin</Form.Label>
+            <Form.Check
+              type="switch"
+              id="createUserAdmin"
+              checked={admin}
+              onChange={(e) => setAdmin(e.target.checked)}
+              disabled={isPending}
+              className="form-switch-lg"
+            />
+          </Form.Group>
         </Modal.Body>
         <Modal.Footer>
           <Button

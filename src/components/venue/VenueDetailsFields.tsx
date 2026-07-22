@@ -87,7 +87,7 @@ const VenueDetailsFields = ({ form, isPending }: Props) => {
               checked={values.visited}
               onChange={(e) => form.onVisitedChange(e.target.checked)}
               disabled={isPending}
-              style={{ marginLeft: "0.25rem", fontSize: "1.5rem" }}
+              className="form-switch-lg"
             />
           </Form.Group>
         </Col>
