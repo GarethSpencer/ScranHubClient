@@ -136,8 +136,8 @@ const RatingDetailsPage = () => {
     <>
       <h2 className="mb-1 lead">Summary</h2>
       <p className="text-muted small mb-3">
-        A summary of every venue in the group. Select a venue to view more
-        details if available, and view all user ratings.
+        View the details of each venue, plus Google Maps info if available. You
+        can view ratings once a venue has been visited.
       </p>
 
       {!isMobile && (
