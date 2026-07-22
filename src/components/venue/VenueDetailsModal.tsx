@@ -5,7 +5,12 @@ import Form from "react-bootstrap/Form";
 import Spinner from "react-bootstrap/Spinner";
 import type GroupVenueResult from "../../models/results/GroupVenueResult";
 import useVenueDetailsForm from "../../hooks/useVenueDetailsForm";
+import useVenueDelete from "../../hooks/useVenueDelete";
 import VenueDetailsFields from "./VenueDetailsFields";
+import {
+  VenueDeleteConfirmMessage,
+  VenueDeleteFooter,
+} from "./VenueDeleteControls";
 
 interface Props {
   groupId: string;
@@ -14,14 +19,13 @@ interface Props {
 }
 
 const VenueDetailsModal = ({ groupId, venue, onClose }: Props) => {
-  const [confirmingDelete, setConfirmingDelete] = useState(false);
-  const [isDeletingVenue, setIsDeletingVenue] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
   const details = useVenueDetailsForm(groupId, venue);
+  const deleteFlow = useVenueDelete(details.remove, onClose);
 
   const isPending =
-    details.isUpdating || details.isDeleting || isDeletingVenue || isSaving;
+    details.isUpdating || details.isDeleting || deleteFlow.isDeleting || isSaving;
 
   const handleClose = () => {
     if (isPending) return;
@@ -43,20 +47,12 @@ const VenueDetailsModal = ({ groupId, venue, onClose }: Props) => {
     }
   };
 
-  const handleDelete = () => {
-    setIsDeletingVenue(true);
-    details.remove({
-      onSuccess: onClose,
-      onSettled: () => setIsDeletingVenue(false),
-    });
-  };
-
   return (
     <Modal
       show={venue !== null}
       onHide={handleClose}
       onEntered={details.initialise}
-      onExited={() => setConfirmingDelete(false)}
+      onExited={deleteFlow.reset}
       backdrop={isPending ? "static" : true}
       keyboard={!isPending}
       scrollable
@@ -67,11 +63,8 @@ const VenueDetailsModal = ({ groupId, venue, onClose }: Props) => {
         <Modal.Title as="h2">Venue Details</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        {confirmingDelete ? (
-          <p className="mb-0">
-            Are you sure you want to delete <strong>{venue?.venueName}</strong>?
-            This action cannot be undone.
-          </p>
+        {deleteFlow.confirmingDelete ? (
+          <VenueDeleteConfirmMessage venueName={venue?.venueName} />
         ) : (
           <Form
             onSubmit={(e) => {
@@ -87,71 +80,32 @@ const VenueDetailsModal = ({ groupId, venue, onClose }: Props) => {
         )}
       </Modal.Body>
       <Modal.Footer className="modal-footer-stacked gap-2">
-        {confirmingDelete ? (
-          <>
-            <Button
-              variant="danger"
-              onClick={handleDelete}
-              disabled={isPending}
-            >
-              {isDeletingVenue ? (
-                <>
-                  <Spinner
-                    as="span"
-                    animation="border"
-                    size="sm"
-                    role="status"
-                    aria-hidden="true"
-                    className="me-2"
-                  />
-                  Deleting...
-                </>
-              ) : (
-                "Delete"
-              )}
-            </Button>
-            <Button
-              variant="outline-secondary"
-              onClick={() => setConfirmingDelete(false)}
-              disabled={isPending}
-            >
-              Cancel
-            </Button>
-          </>
-        ) : (
-          <>
-            <Button
-              variant="primary"
-              onClick={handleSave}
-              disabled={
-                isPending || !details.canSave || details.areOptionsLoading
-              }
-            >
-              {isSaving ? (
-                <>
-                  <Spinner
-                    as="span"
-                    animation="border"
-                    size="sm"
-                    role="status"
-                    aria-hidden="true"
-                    className="me-2"
-                  />
-                  Saving...
-                </>
-              ) : (
-                "Save Changes"
-              )}
-            </Button>
-            <Button
-              variant="outline-danger"
-              onClick={() => setConfirmingDelete(true)}
-              disabled={isPending}
-            >
-              Delete Venue
-            </Button>
-          </>
-        )}
+        <VenueDeleteFooter deleteFlow={deleteFlow} isPending={isPending}>
+          <Button
+            key="save"
+            variant="primary"
+            onClick={handleSave}
+            disabled={
+              isPending || !details.canSave || details.areOptionsLoading
+            }
+          >
+            {isSaving ? (
+              <>
+                <Spinner
+                  as="span"
+                  animation="border"
+                  size="sm"
+                  role="status"
+                  aria-hidden="true"
+                  className="me-2"
+                />
+                Saving...
+              </>
+            ) : (
+              "Save Changes"
+            )}
+          </Button>
+        </VenueDeleteFooter>
       </Modal.Footer>
     </Modal>
   );
