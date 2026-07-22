@@ -596,6 +596,37 @@
   font-size: 1.5rem;
 }
 
+@function switch-knob-bg($icon-path, $icon-color) {
+  $knob: "<circle r='3' fill='#{$white}' stroke='#{rgba($black, 0.25)}' stroke-width='0.25'/>";
+  $icon: "<path d='#{$icon-path}' fill='none' stroke='#{$icon-color}' stroke-width='0.9' stroke-linecap='round' stroke-linejoin='round'/>";
+
+  @return escape-svg(
+    url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'>#{$knob}#{$icon}</svg>")
+  );
+}
+
+$switch-knob-cross-bg: switch-knob-bg(
+  "M-1.2 -1.2 1.2 1.2 M1.2 -1.2 -1.2 1.2",
+  $danger
+);
+$switch-knob-tick-bg: switch-knob-bg("M-1.5 0.1 -0.5 1.2 1.5 -1.1", $success);
+
+.form-switch-lg .form-check-input,
+.form-switch-lg .form-check-input:focus {
+  --bs-form-switch-bg: #{$switch-knob-cross-bg};
+}
+
+.form-switch-lg .form-check-input:checked,
+.form-switch-lg .form-check-input:checked:focus {
+  --bs-form-switch-bg: #{$switch-knob-tick-bg};
+}
+
+[data-bs-theme="dark"]
+  .form-switch-lg
+  .form-check-input:not(:checked):not(:focus) {
+  --bs-form-switch-bg: #{$switch-knob-cross-bg};
+}
+
 .navbar-desktop-switch .form-check-input {
   margin-top: 0.3em;
 }
