@@ -97,6 +97,7 @@ const VenueSummaryCard = ({
         </div>
       )}
 
+      {venue.visited && (
       <button
         type="button"
         className="venue-card-zone venue-card-ratings"
@@ -131,6 +132,7 @@ const VenueSummaryCard = ({
           <FaRankingStar size={18} />
         </span>
       </button>
+      )}
     </div>
   );
 };

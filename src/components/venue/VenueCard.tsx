@@ -1,4 +1,4 @@
-import { FaChartSimple, FaPencil } from "react-icons/fa6";
+import { FaChartSimple, FaPencil, FaCirclePlus } from "react-icons/fa6";
 import type GroupVenueResult from "../../models/results/GroupVenueResult";
 import type RatingOptionResult from "../../models/results/generic/RatingOptionResult";
 import RatingBar from "../common/RatingBar";
@@ -23,6 +23,10 @@ const VenueCard = ({
   onEditRatings,
 }: Props) => {
   const summaryParts = [venue.venueType, venue.foodType].filter(Boolean);
+  const hasRatings =
+    venue.myQualityRating != null ||
+    venue.myCostRating != null ||
+    venue.myVibeRating != null;
 
   return (
     <div className="venue-card">
@@ -55,34 +59,55 @@ const VenueCard = ({
         </span>
       </button>
 
-      <button
-        type="button"
-        className="venue-card-zone venue-card-ratings"
-        onClick={() => onEditRatings(venue)}
-        aria-label={`Edit your ratings for ${venue.venueName}`}
-      >
-        <div className="venue-card-zone-content">
-          <div className="venue-card-subheading mb-1">My Ratings</div>
-          <div className="venue-card-rating-row">
-            <span className="venue-card-rating-label">Quality</span>
-            <RatingBar
-              average={venue.myQualityRating}
-              options={qualityOptions}
-            />
-          </div>
-          <div className="venue-card-rating-row">
-            <span className="venue-card-rating-label">Cost</span>
-            <RatingBar average={venue.myCostRating} options={costOptions} />
-          </div>
-          <div className="venue-card-rating-row">
-            <span className="venue-card-rating-label">Vibe</span>
-            <RatingBar average={venue.myVibeRating} options={vibeOptions} />
-          </div>
-        </div>
-        <span className="venue-card-zone-icon" aria-hidden="true">
-          <FaChartSimple size={18} />
-        </span>
-      </button>
+      {venue.visited && (
+        <button
+          type="button"
+          className="venue-card-zone venue-card-ratings"
+          onClick={() => onEditRatings(venue)}
+          aria-label={`${hasRatings ? "Edit" : "Add"} your ratings for ${venue.venueName}`}
+        >
+          {hasRatings ? (
+            <>
+              <div className="venue-card-zone-content">
+                <div className="venue-card-subheading mb-1">My Ratings</div>
+                <div className="venue-card-rating-row">
+                  <span className="venue-card-rating-label">Quality</span>
+                  <RatingBar
+                    average={venue.myQualityRating}
+                    options={qualityOptions}
+                  />
+                </div>
+                <div className="venue-card-rating-row">
+                  <span className="venue-card-rating-label">Cost</span>
+                  <RatingBar
+                    average={venue.myCostRating}
+                    options={costOptions}
+                  />
+                </div>
+                <div className="venue-card-rating-row">
+                  <span className="venue-card-rating-label">Vibe</span>
+                  <RatingBar
+                    average={venue.myVibeRating}
+                    options={vibeOptions}
+                  />
+                </div>
+              </div>
+              <span className="venue-card-zone-icon" aria-hidden="true">
+                <FaChartSimple size={18} />
+              </span>
+            </>
+          ) : (
+            <>
+              <div className="venue-card-zone-content">
+                <div className="venue-card-subheading">Add your ratings</div>
+              </div>
+              <span className="venue-card-zone-icon" aria-hidden="true">
+                <FaCirclePlus size={18} />
+              </span>
+            </>
+          )}
+        </button>
+      )}
     </div>
   );
 };
