@@ -39,9 +39,9 @@ const BASE_COLUMNS: VenueListingColumn[] = [
   },
   { label: "Cost Votes", sortBy: GroupVenueSortParameters.CostRatingVotes },
   { label: "Vibe Votes", sortBy: GroupVenueSortParameters.VibeRatingVotes },
-  { label: "Avg Quality", sortBy: GroupVenueSortParameters.AvgQualityRating },
-  { label: "Avg Cost", sortBy: GroupVenueSortParameters.AvgCostRating },
-  { label: "Avg Vibe", sortBy: GroupVenueSortParameters.AvgVibeRating },
+  { label: "Avg. Quality", sortBy: GroupVenueSortParameters.AvgQualityRating },
+  { label: "Avg. Cost", sortBy: GroupVenueSortParameters.AvgCostRating },
+  { label: "Avg. Vibe", sortBy: GroupVenueSortParameters.AvgVibeRating },
 ];
 
 const ratingsForVenue = (

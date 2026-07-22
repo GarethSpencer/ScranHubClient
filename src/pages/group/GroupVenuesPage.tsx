@@ -32,11 +32,11 @@ const BASE_COLUMNS: VenueListingColumn[] = [
   { label: "Venue Type", sortBy: GroupVenueSortParameters.VenueType },
   { label: "Food Type", sortBy: GroupVenueSortParameters.FoodType },
   {
-    label: "My Quality Rating",
+    label: "My Quality",
     sortBy: GroupVenueSortParameters.MyQualityRating,
   },
-  { label: "My Cost Rating", sortBy: GroupVenueSortParameters.MyCostRating },
-  { label: "My Vibe Rating", sortBy: GroupVenueSortParameters.MyVibeRating },
+  { label: "My Cost", sortBy: GroupVenueSortParameters.MyCostRating },
+  { label: "My Vibe", sortBy: GroupVenueSortParameters.MyVibeRating },
 ];
 
 const GroupVenuesPage = () => {
