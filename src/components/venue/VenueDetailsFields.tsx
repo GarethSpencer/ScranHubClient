@@ -91,18 +91,20 @@ const VenueDetailsFields = ({ form, isPending }: Props) => {
             />
           </Form.Group>
         </Col>
-        <Col xs={6}>
-          <Form.Group controlId="updateVenueVisitedOn">
-            <Form.Label>Visited On</Form.Label>
-            <Form.Control
-              type="date"
-              value={values.visitedOn}
-              onChange={(e) => setters.setVisitedOn(e.target.value)}
-              disabled={isPending || !values.visited}
-              max={form.todayDateInputValue}
-            />
-          </Form.Group>
-        </Col>
+        {values.visited && (
+          <Col xs={6}>
+            <Form.Group controlId="updateVenueVisitedOn">
+              <Form.Label>Visited On</Form.Label>
+              <Form.Control
+                type="date"
+                value={values.visitedOn}
+                onChange={(e) => setters.setVisitedOn(e.target.value)}
+                disabled={isPending}
+                max={form.todayDateInputValue}
+              />
+            </Form.Group>
+          </Col>
+        )}
       </Row>
     </>
   );
