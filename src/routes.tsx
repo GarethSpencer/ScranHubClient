@@ -19,6 +19,7 @@ import AdminUsersPage from "./pages/admin/AdminUsersPage";
 import AdminGroupsPage from "./pages/admin/AdminGroupsPage";
 import RatingDetailsPage from "./pages/group/RatingDetailsPage";
 import GroupUsersPage from "./pages/group/GroupUsersPage";
+import HelpPage from "./pages/HelpPage";
 
 const router = createBrowserRouter([
   {
@@ -106,6 +107,18 @@ const router = createBrowserRouter([
               {
                 path: "manage",
                 element: <ManageCreatedGroupsPage />,
+              },
+            ],
+          },
+          {
+            path: "help",
+            element: (
+              <SectionLayout title={<h1 className="visually-hidden">Help</h1>} />
+            ),
+            children: [
+              {
+                index: true,
+                element: <HelpPage />,
               },
             ],
           },

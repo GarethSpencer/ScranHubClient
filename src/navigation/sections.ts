@@ -1,7 +1,7 @@
 import type { IconType } from "react-icons";
 import { FaUserFriends } from "react-icons/fa";
 import { RiGroup2Line } from "react-icons/ri";
-import { MdAdminPanelSettings } from "react-icons/md";
+import { MdAdminPanelSettings, MdHelpOutline } from "react-icons/md";
 
 export interface Section {
   label: string;
@@ -34,5 +34,12 @@ export const sections: Section[] = [
     icon: MdAdminPanelSettings,
     variant: "menu3",
     adminOnly: true,
+  },
+  {
+    label: "Help",
+    cardText: "Help",
+    path: "/help",
+    icon: MdHelpOutline,
+    variant: "menu4",
   },
 ];
