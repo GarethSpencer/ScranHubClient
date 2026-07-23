@@ -17,9 +17,9 @@ const VenueRatingsFields = ({ form, isPending, notVisited = false }: Props) => {
     <Row className="g-3 mb-3">
       {notVisited && (
         <Col xs={12}>
-          <p className="text-muted small mb-0">
+          <Form.Text className="venue-primary">
             Mark this venue as visited to add your ratings.
-          </p>
+          </Form.Text>
         </Col>
       )}
       <Col xs={12}>
