@@ -14,6 +14,7 @@ ScranHub is a web app for groups of friends to track and rate the places they ea
 - **Distance to venues** — once you've set a start location, each venue shows how far it is from you in miles across the venue and summary pages, as a sortable column so you can surface what's nearest. _(Requires Google Maps.)_
 - **Custom rating options** — each group can configure its own food types, venue types, and quality/cost/vibe rating scales, with drag-and-drop reordering. So you can personalise each group to the people using it.
 - **Admin** — an API-protected area for managing users and groups across the platform.
+- **Help** — an in-app help section with a getting-started guide and further information on each part of the app.
 - **Light/dark mode** — respects the OS preference and remembers your choice.
 - **Auth0 Login process** — third-party implementation of a renowned authentication and authorisation provider.
 
