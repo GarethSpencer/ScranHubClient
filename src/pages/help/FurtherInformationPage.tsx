@@ -24,12 +24,15 @@ const FurtherInformationPage = () => {
       <p className="text-muted small mb-3">
         Here you can view and manage your own groups, and search for groups
         created by your friends to join. Your groups are split into those you
-        have created yourself, and those you have joined. You can leave groups
-        you have joined at any time. Similarly, you can delete groups you have
-        created at any time, which will also delete all venues and ratings
-        associated with the group. You can also rename your groups at any time,
-        and optionally set a group icon on the ScranHub home page which every
-        group member will be able to see.
+        have created yourself, and those you have joined. You can rename your
+        created groups at any time, and optionally set a group icon on the
+        ScranHub home page which every group member will be able to see.
+      </p>
+      <p className="text-muted small mb-3">
+        You can leave groups you have joined at any time, as well as deactivate
+        and delete groups that you have created. Deactivating a group will make
+        it inaccessible; deletion is permanent and will delete all venues and
+        ratings associated with the group.
       </p>
       <h2 className="mb-3 lead">My Groups</h2>
       <p className="text-muted small mb-3">

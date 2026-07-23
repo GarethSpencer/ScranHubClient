@@ -140,7 +140,7 @@ const RatingDetailsPage = () => {
   );
 
   return (
-    <>
+    <div className="summary-page">
       <h2 className="mb-1 lead">Summary</h2>
       <p className="text-muted small mb-3">
         View the details of each venue, plus Google Maps info if available. You
@@ -383,7 +383,7 @@ const RatingDetailsPage = () => {
           </div>
         </>
       )}
-    </>
+    </div>
   );
 };
 

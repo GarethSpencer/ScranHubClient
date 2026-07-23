@@ -100,7 +100,7 @@ const GroupVenuesPage = () => {
   const vibeOptions = vibeOptionData?.options ?? [];
 
   return (
-    <>
+    <div className="manage-venues-page">
       <h2 className="mb-1 lead">Manage Venues</h2>
       <p className="text-muted small mb-3">
         Add, edit and rate the venues for this group. You can add your ratings
@@ -340,7 +340,7 @@ const GroupVenuesPage = () => {
           </div>
         </>
       )}
-    </>
+    </div>
   );
 };
 

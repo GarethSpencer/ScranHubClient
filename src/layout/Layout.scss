@@ -834,7 +834,7 @@ $switch-knob-tick-bg: switch-knob-bg("M-1.5 0.1 -0.5 1.2 1.5 -1.1", $success);
   --bs-nav-tabs-link-active-color: var(--bs-body-color);
   --bs-nav-tabs-link-active-bg: var(--bs-body-bg);
   --bs-nav-tabs-link-active-border-color: rgba(255, 255, 255, 0.25)
-    rgba(255, 255, 255, 0.25) var(--bs-body-bg);
+    rgba(255, 255, 255, 0.25) var(--bs-nav-tabs-link-active-bg);
   margin-bottom: 0;
   border-bottom: 0;
 }
@@ -885,6 +885,23 @@ $switch-knob-tick-bg: switch-knob-bg("M-1.5 0.1 -0.5 1.2 1.5 -1.1", $success);
   border-radius: 0.5rem;
   padding: 1.5rem;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.content-wrapper:has(.summary-page) {
+  --section-accent: var(--bs-primary);
+}
+
+.content-wrapper:has(.manage-venues-page) {
+  --section-accent: var(--bs-secondary);
+}
+
+.content-wrapper:has(.summary-page, .manage-venues-page) .section-tabs {
+  --bs-nav-tabs-link-active-bg: var(--section-accent);
+  --bs-nav-tabs-link-active-color: #fff;
+}
+
+.content-wrapper:has(.summary-page, .manage-venues-page) .section-panel {
+  border-top: 0.375rem solid var(--section-accent);
 }
 
 .table > :not(caption) > tr > .option-actions-col {
