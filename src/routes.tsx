@@ -19,7 +19,8 @@ import AdminUsersPage from "./pages/admin/AdminUsersPage";
 import AdminGroupsPage from "./pages/admin/AdminGroupsPage";
 import RatingDetailsPage from "./pages/group/RatingDetailsPage";
 import GroupUsersPage from "./pages/group/GroupUsersPage";
-import HelpPage from "./pages/HelpPage";
+import GettingStartedPage from "./pages/help/GettingStartedPage";
+import FurtherInformationPage from "./pages/help/FurtherInformationPage";
 
 const router = createBrowserRouter([
   {
@@ -113,12 +114,22 @@ const router = createBrowserRouter([
           {
             path: "help",
             element: (
-              <SectionLayout title={<h1 className="visually-hidden">Help</h1>} />
+              <SectionLayout
+                title={<h1 className="visually-hidden">Help</h1>}
+                tabs={[
+                  { label: "Getting Started", to: "/help", end: true },
+                  { label: "Further Information", to: "/help/info" },
+                ]}
+              />
             ),
             children: [
               {
                 index: true,
-                element: <HelpPage />,
+                element: <GettingStartedPage />,
+              },
+              {
+                path: "info",
+                element: <FurtherInformationPage />,
               },
             ],
           },
