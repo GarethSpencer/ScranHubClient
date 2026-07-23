@@ -136,7 +136,7 @@ const UserDetailsForm = ({
         )}
         {displayedAddress && (
           <div className="d-flex justify-content-between align-items-start mt-1 gap-2">
-            <Form.Text className="venue-primary mb-0">
+            <Form.Text className="venue-primary mt-0 mb-0">
               {displayedAddress}
             </Form.Text>
             <Button
