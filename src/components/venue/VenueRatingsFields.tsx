@@ -6,14 +6,22 @@ import type useVenueRatingsForm from "../../hooks/useVenueRatingsForm";
 interface Props {
   form: ReturnType<typeof useVenueRatingsForm>;
   isPending: boolean;
+  notVisited?: boolean;
 }
 
-const VenueRatingsFields = ({ form, isPending }: Props) => {
+const VenueRatingsFields = ({ form, isPending, notVisited = false }: Props) => {
   const disabled =
-    isPending || form.areOptionsLoading || form.areRatingsLoading;
+    isPending || notVisited || form.areOptionsLoading || form.areRatingsLoading;
 
   return (
     <Row className="g-3 mb-3">
+      {notVisited && (
+        <Col xs={12}>
+          <p className="text-muted small mb-0">
+            Mark this venue as visited to add your ratings.
+          </p>
+        </Col>
+      )}
       <Col xs={12}>
         <Form.Group controlId="updateQualityRating">
           <Form.Label>Quality Rating</Form.Label>

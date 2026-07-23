@@ -61,6 +61,13 @@ const RatingDetailsPage = () => {
     null,
   );
 
+  const [prevIsMobile, setPrevIsMobile] = useState(isMobile);
+  if (prevIsMobile !== isMobile) {
+    setPrevIsMobile(isMobile);
+    setInfoVenue(null);
+    setBreakdownVenue(null);
+  }
+
   const {
     columns,
     hasUserLocation,

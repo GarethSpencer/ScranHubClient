@@ -30,7 +30,10 @@ const GroupVenueModal = ({ groupId, venue, onClose }: Props) => {
   const deleteFlow = useVenueDelete(details.remove, onClose);
 
   const isPending =
-    details.isUpdating || details.isDeleting || deleteFlow.isDeleting || isSaving;
+    details.isUpdating ||
+    details.isDeleting ||
+    deleteFlow.isDeleting ||
+    isSaving;
 
   const canSave = details.canSave;
 
@@ -44,7 +47,10 @@ const GroupVenueModal = ({ groupId, venue, onClose }: Props) => {
 
     setIsSaving(true);
     try {
-      await Promise.all([details.save(), ratings.save()]);
+      await Promise.all([
+        details.save(),
+        details.values.visited ? ratings.save() : Promise.resolve(),
+      ]);
       onClose();
     } catch {
       // A failed mutation already surfaces its own error toast; keep the modal
@@ -109,7 +115,11 @@ const GroupVenueModal = ({ groupId, venue, onClose }: Props) => {
                 <p className="text-muted small mb-3">
                   These cannot be amended by anybody else in your group.
                 </p>
-                <VenueRatingsFields form={ratings} isPending={isPending} />
+                <VenueRatingsFields
+                  form={ratings}
+                  isPending={isPending}
+                  notVisited={!details.values.visited}
+                />
               </Col>
             </Row>
           </Form>

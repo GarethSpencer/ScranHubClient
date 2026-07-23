@@ -52,6 +52,13 @@ const GroupVenuesPage = () => {
     null,
   );
 
+  const [prevIsMobile, setPrevIsMobile] = useState(isMobile);
+  if (prevIsMobile !== isMobile) {
+    setPrevIsMobile(isMobile);
+    setDetailsVenue(null);
+    setRatingsVenue(null);
+  }
+
   const {
     columns,
     hasUserLocation,
