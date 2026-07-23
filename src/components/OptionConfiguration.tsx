@@ -89,6 +89,8 @@ const OptionConfiguration = ({
 
   const hasCustomOptions = options.some((option) => option.groupId === groupId);
 
+  const isEditorOpen = isEditing && !reorder.isReordering;
+
   const isToggling =
     setCustomOptions.isPending || removeCustomOptions.isPending;
 
@@ -152,81 +154,83 @@ const OptionConfiguration = ({
         </>
       )}
 
-      <TableStatus
-        isLoading={isLoading}
-        isError={isError}
-        isEmpty={options.length === 0}
-        isFetching={isFetching}
-        loadingText={`Loading ${heading.toLowerCase()}...`}
-        errorText={`Couldn't load ${heading.toLowerCase()}. Please try again.`}
-        emptyText={`No ${heading.toLowerCase()} configured yet.`}
-      >
-        <Table
-          striped="columns"
-          className="align-middle border-top option-table"
+      {!isEditorOpen && (
+        <TableStatus
+          isLoading={isLoading}
+          isError={isError}
+          isEmpty={options.length === 0}
+          isFetching={isFetching}
+          loadingText={`Loading ${heading.toLowerCase()}...`}
+          errorText={`Couldn't load ${heading.toLowerCase()}. Please try again.`}
+          emptyText={`No ${heading.toLowerCase()} configured yet.`}
         >
-          <thead>
-            <tr>
-              <th>Options</th>
-              {hasCustomOptions && !reorder.isReordering && (
-                <th className="w-25 text-end option-actions-col">
-                  <AddOptionControls
-                    isAdding={isAdding}
-                    canSave={newLabel.trim().length > 0}
-                    isPending={addCustomOption.isPending}
-                    onStart={handleStartAdding}
-                    onReset={handleResetAdding}
-                    onSave={handleSaveNewOption}
-                  />
-                </th>
-              )}
-            </tr>
-          </thead>
-          <tbody>
-            {reorder.isReordering ? (
-              <ReorderableOptionList
-                items={reorder.items}
-                sensors={reorder.sensors}
-                disabled={reorder.isSaving}
-                onDragEnd={reorder.handleDragEnd}
-              />
-            ) : (
-              <>
-                {isAdding && (
-                  <tr>
-                    <td className="text-break">
-                      <Form.Control
-                        type="text"
-                        placeholder="New label"
-                        value={newLabel}
-                        onChange={(e) => setNewLabel(e.target.value)}
-                        autoFocus
-                        maxLength={MAX_NAME_LENGTH}
-                      />
-                    </td>
-                    <td className="option-actions-col" />
-                  </tr>
+          <Table
+            striped="columns"
+            className="align-middle border-top option-table"
+          >
+            <thead>
+              <tr>
+                <th>Options</th>
+                {hasCustomOptions && !reorder.isReordering && (
+                  <th className="w-25 text-end option-actions-col">
+                    <AddOptionControls
+                      isAdding={isAdding}
+                      canSave={newLabel.trim().length > 0}
+                      isPending={addCustomOption.isPending}
+                      onStart={handleStartAdding}
+                      onReset={handleResetAdding}
+                      onSave={handleSaveNewOption}
+                    />
+                  </th>
                 )}
-                {hasCustomOptions
-                  ? sortedOptions.map((option) => (
-                      <OptionRow
-                        key={option.optionId}
-                        option={option}
-                        updateCustomOption={updateCustomOption}
-                        onRequestDelete={setOptionToDelete}
-                        onDirtyChange={handleRowDirtyChange}
-                      />
-                    ))
-                  : sortedOptions.map((option) => (
-                      <tr key={option.optionId}>
-                        <td className="text-break">{option.label}</td>
-                      </tr>
-                    ))}
-              </>
-            )}
-          </tbody>
-        </Table>
-      </TableStatus>
+              </tr>
+            </thead>
+            <tbody>
+              {reorder.isReordering ? (
+                <ReorderableOptionList
+                  items={reorder.items}
+                  sensors={reorder.sensors}
+                  disabled={reorder.isSaving}
+                  onDragEnd={reorder.handleDragEnd}
+                />
+              ) : (
+                <>
+                  {isAdding && (
+                    <tr>
+                      <td className="text-break">
+                        <Form.Control
+                          type="text"
+                          placeholder="New label"
+                          value={newLabel}
+                          onChange={(e) => setNewLabel(e.target.value)}
+                          autoFocus
+                          maxLength={MAX_NAME_LENGTH}
+                        />
+                      </td>
+                      <td className="option-actions-col" />
+                    </tr>
+                  )}
+                  {hasCustomOptions
+                    ? sortedOptions.map((option) => (
+                        <OptionRow
+                          key={option.optionId}
+                          option={option}
+                          updateCustomOption={updateCustomOption}
+                          onRequestDelete={setOptionToDelete}
+                          onDirtyChange={handleRowDirtyChange}
+                        />
+                      ))
+                    : sortedOptions.map((option) => (
+                        <tr key={option.optionId}>
+                          <td className="text-break">{option.label}</td>
+                        </tr>
+                      ))}
+                </>
+              )}
+            </tbody>
+          </Table>
+        </TableStatus>
+      )}
 
       <OptionEditorPanel
         key={editorKey}

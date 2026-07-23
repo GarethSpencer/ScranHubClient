@@ -905,6 +905,19 @@ $switch-knob-tick-bg: switch-knob-bg("M-1.5 0.1 -0.5 1.2 1.5 -1.1", $success);
   border-color: rgba(255, 255, 255, 0.35);
 }
 
+.option-table .form-control:not(:focus) {
+  background-color: rgba(0, 0, 0, 0.07);
+  border-color: transparent;
+}
+
+.option-table .form-control:not(:focus):hover {
+  border-color: var(--bs-border-color);
+}
+
+[data-bs-theme="dark"] .option-table .form-control:not(:focus) {
+  background-color: rgba(255, 255, 255, 0.07);
+}
+
 .option-table > thead > tr > th {
   --bs-table-bg-type: transparent;
   background-image: linear-gradient(rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.05));

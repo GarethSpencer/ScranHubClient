@@ -2,9 +2,11 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import Accordion from "react-bootstrap/Accordion";
+import Badge from "react-bootstrap/Badge";
 import OptionConfiguration from "../../components/OptionConfiguration";
 import {
   optionsForGroupQueryOptions,
+  useGetOptionsForGroup,
   type OptionController,
 } from "../../api/controllerHooks/useOptionController";
 
@@ -48,6 +50,31 @@ const sections: OptionSection[] = [
   },
 ];
 
+const OptionSourceBadge = ({
+  controller,
+  groupId,
+}: {
+  controller: OptionController;
+  groupId: string;
+}) => {
+  const { data } = useGetOptionsForGroup(controller, groupId);
+
+  if (!data) return null;
+
+  const isCustom = (data.options ?? []).some(
+    (option) => option.groupId === groupId,
+  );
+
+  return (
+    <Badge
+      bg={isCustom ? "warning" : "primary"}
+      className="ms-auto me-3 fw-normal"
+    >
+      {isCustom ? "Custom" : "Default"}
+    </Badge>
+  );
+};
+
 const GroupOptionsPage = () => {
   const { id = "" } = useParams();
   const [activeKey, setActiveKey] = useState<string | null>(null);
@@ -77,11 +104,17 @@ const GroupOptionsPage = () => {
         {sections.map((section) => (
           <Accordion.Item eventKey={section.eventKey} key={section.eventKey}>
             <Accordion.Header>
-              <div>
-                <span className="fw-semibold">{section.title}</span>
-                <span className="d-block text-muted small">
-                  {section.helperText}
-                </span>
+              <div className="d-flex align-items-center flex-grow-1">
+                <div>
+                  <span className="fw-semibold">{section.title}</span>
+                  <span className="d-block text-muted small">
+                    {section.helperText}
+                  </span>
+                </div>
+                <OptionSourceBadge
+                  controller={section.controller}
+                  groupId={id}
+                />
               </div>
             </Accordion.Header>
             <Accordion.Body>
