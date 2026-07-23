@@ -70,9 +70,9 @@ const FurtherInformationPage = () => {
             <p className="text-muted small mb-3">
               Here you can add and remove venues, amend the details of every
               venue associated with the group, and provide your ratings for each
-              venue. This is where you enter and update venue information. Group
-              venues can be sorted in multiple ways, and can also be filtered by
-              name or type using the input box at the top of the page.
+              venue. Group venues can be sorted in multiple ways, and can also
+              be filtered by name or type using the input box at the top of the
+              page.
             </p>
             <p className="text-muted small mb-3">
               To add a venue to the group, click the Add Venue button at the top
