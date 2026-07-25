@@ -892,15 +892,35 @@ $switch-knob-tick-bg: switch-knob-bg("M-1.5 0.1 -0.5 1.2 1.5 -1.1", $success);
 }
 
 .content-wrapper:has(.manage-venues-page) {
-  --section-accent: var(--bs-secondary);
+  --section-accent: var(--bs-menu1);
 }
 
-.content-wrapper:has(.summary-page, .manage-venues-page) .section-tabs {
+.content-wrapper:has(.manage-options-page) {
+  --section-accent: var(--bs-menu2);
+}
+
+.content-wrapper:has(.group-members-page) {
+  --section-accent: var(--bs-menu3);
+}
+
+.content-wrapper:has(
+    .summary-page,
+    .manage-venues-page,
+    .manage-options-page,
+    .group-members-page
+  )
+  .section-tabs {
   --bs-nav-tabs-link-active-bg: var(--section-accent);
   --bs-nav-tabs-link-active-color: #fff;
 }
 
-.content-wrapper:has(.summary-page, .manage-venues-page) .section-panel {
+.content-wrapper:has(
+    .summary-page,
+    .manage-venues-page,
+    .manage-options-page,
+    .group-members-page
+  )
+  .section-panel {
   border-top: 0.375rem solid var(--section-accent);
 }
 

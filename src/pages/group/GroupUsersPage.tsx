@@ -46,7 +46,7 @@ const GroupUsersPage = () => {
       : pageSize;
 
   return (
-    <>
+    <div className="group-members-page">
       <h2 className="mb-1 lead">Group Members</h2>
       <p className="text-muted small mb-3">All members of this group.</p>
 
@@ -126,7 +126,7 @@ const GroupUsersPage = () => {
           </div>
         </>
       )}
-    </>
+    </div>
   );
 };
 

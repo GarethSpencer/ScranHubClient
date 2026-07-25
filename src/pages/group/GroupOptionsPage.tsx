@@ -90,7 +90,7 @@ const GroupOptionsPage = () => {
   }, [id, queryClient]);
 
   return (
-    <>
+    <div className="manage-options-page">
       <h2 className="lead mb-1">Manage Options</h2>
       <p className="text-muted small mb-3">
         Configure the option sets which can be applied to the venues in this
@@ -131,7 +131,7 @@ const GroupOptionsPage = () => {
           </Accordion.Item>
         ))}
       </Accordion>
-    </>
+    </div>
   );
 };
 
