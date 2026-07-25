@@ -888,19 +888,19 @@ $switch-knob-tick-bg: switch-knob-bg("M-1.5 0.1 -0.5 1.2 1.5 -1.1", $success);
 }
 
 .content-wrapper:has(.summary-page) {
-  --section-accent: var(--bs-primary);
-}
-
-.content-wrapper:has(.manage-venues-page) {
   --section-accent: var(--bs-menu1);
 }
 
-.content-wrapper:has(.manage-options-page) {
+.content-wrapper:has(.manage-venues-page) {
   --section-accent: var(--bs-menu2);
 }
 
-.content-wrapper:has(.group-members-page) {
+.content-wrapper:has(.manage-options-page) {
   --section-accent: var(--bs-menu3);
+}
+
+.content-wrapper:has(.group-members-page) {
+  --section-accent: var(--bs-menu4);
 }
 
 .content-wrapper:has(
@@ -922,6 +922,44 @@ $switch-knob-tick-bg: switch-knob-bg("M-1.5 0.1 -0.5 1.2 1.5 -1.1", $success);
   )
   .section-panel {
   border-top: 0.375rem solid var(--section-accent);
+}
+
+@include media-breakpoint-down(md) {
+  .summary-page .venue-card,
+  .manage-venues-page .venue-card {
+    background-color: color-mix(in srgb, var(--section-accent) 18%, #fff);
+    border-color: color-mix(in srgb, var(--section-accent) 36%, #fff);
+  }
+
+  [data-bs-theme="dark"] .summary-page .venue-card,
+  [data-bs-theme="dark"] .manage-venues-page .venue-card {
+    background-color: color-mix(
+      in srgb,
+      var(--section-accent) 10%,
+      var(--bs-body-bg)
+    );
+    border-color: color-mix(
+      in srgb,
+      var(--section-accent) 20%,
+      var(--bs-body-bg)
+    );
+  }
+}
+
+@include media-breakpoint-up(md) {
+  .summary-page .group-venue-table,
+  .manage-venues-page .group-venue-table {
+    --bs-table-striped-bg: color-mix(in srgb, var(--section-accent) 18%, #fff);
+  }
+
+  [data-bs-theme="dark"] .summary-page .group-venue-table,
+  [data-bs-theme="dark"] .manage-venues-page .group-venue-table {
+    --bs-table-striped-bg: color-mix(
+      in srgb,
+      var(--section-accent) 10%,
+      var(--bs-body-bg)
+    );
+  }
 }
 
 .table > :not(caption) > tr > .option-actions-col {
