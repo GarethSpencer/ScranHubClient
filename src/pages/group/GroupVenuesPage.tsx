@@ -101,7 +101,7 @@ const GroupVenuesPage = () => {
 
   return (
     <div className="manage-venues-page">
-      <h2 className="mb-1 lead">Manage Venues</h2>
+      <h2 className="mb-1 lead">Create & Rate</h2>
       <p className="text-muted small mb-3">
         Add, edit and rate the venues for this group. You can add your ratings
         once a venue has been visited.
