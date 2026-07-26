@@ -1,25 +1,27 @@
 import Alert from "react-bootstrap/Alert";
 import { MAX_EMAIL_LENGTH } from "../constants/validation";
-import Button from "react-bootstrap/Button";
-import Spinner from "react-bootstrap/Spinner";
 import Form from "react-bootstrap/Form";
 import { useAddFriendByEmail } from "../api/controllerHooks/useUserController";
 import { useState } from "react";
+import SaveButton from "./common/SaveButton";
+import useSaveFeedback from "../hooks/useSaveFeedback";
 
 function AddFriendByEmailForm() {
-  const { mutate, isPending, isError } = useAddFriendByEmail();
+  const { mutateAsync, isError } = useAddFriendByEmail();
+  const saveFeedback = useSaveFeedback();
   const [email, setEmail] = useState("");
 
-  const canSubmit = email.trim() !== "" && !isPending;
+  const canSubmit = email.trim() !== "" && !saveFeedback.isBusy;
 
   const handleSubmit = (event: React.SyntheticEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!canSubmit) return;
 
-    mutate(
-      { email: email.trim() },
-      {
-        onSuccess: () => setEmail(""),
+    saveFeedback.save(
+      () => mutateAsync({ email: email.trim() }),
+      () => {
+        setEmail("");
+        saveFeedback.reset();
       },
     );
   };
@@ -39,7 +41,7 @@ function AddFriendByEmailForm() {
             placeholder="Enter email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            disabled={isPending}
+            disabled={saveFeedback.isBusy}
             maxLength={MAX_EMAIL_LENGTH}
           />
         </Form.Group>
@@ -49,23 +51,14 @@ function AddFriendByEmailForm() {
           </Alert>
         )}
         <div className="d-grid">
-          <Button variant="primary" type="submit" disabled={!canSubmit}>
-            {isPending ? (
-              <>
-                <Spinner
-                  as="span"
-                  animation="border"
-                  size="sm"
-                  role="status"
-                  aria-hidden="true"
-                  className="me-2"
-                />
-                Processing...
-              </>
-            ) : (
-              "Send Request"
-            )}
-          </Button>
+          <SaveButton
+            type="submit"
+            status={saveFeedback.status}
+            label="Send Request"
+            savingLabel="Sending..."
+            savedLabel="Request Sent!"
+            disabled={email.trim() === ""}
+          />
         </div>
       </Form>
     </>

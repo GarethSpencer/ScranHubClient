@@ -5,6 +5,8 @@ import Form from "react-bootstrap/Form";
 import Table from "react-bootstrap/Table";
 import Spinner from "react-bootstrap/Spinner";
 import TableStatus from "./common/TableStatus";
+import SaveButton from "./common/SaveButton";
+import useSaveFeedback from "../hooks/useSaveFeedback";
 import { useGetFriendsInfinite } from "../api/controllerHooks/useUserController";
 import { useCreateGroup } from "../api/controllerHooks/useGroupController";
 import { FriendshipStatus } from "../enums/FriendshipStatus";
@@ -33,7 +35,10 @@ const CreateGroupModal = ({ show, groupName, onClose, onCreated }: Props) => {
     status: FriendshipStatus.Accepted,
   });
 
-  const { mutate, isPending } = useCreateGroup();
+  const { mutateAsync } = useCreateGroup();
+  const saveFeedback = useSaveFeedback();
+
+  const isPending = saveFeedback.isBusy;
 
   const sentinelRef = useRef<HTMLTableRowElement>(null);
 
@@ -76,12 +81,13 @@ const CreateGroupModal = ({ show, groupName, onClose, onCreated }: Props) => {
   const handleCreate = () => {
     if (isPending) return;
 
-    mutate(
-      {
-        groupName: groupName.trim(),
-        initialMemberIds: selectedIds.length > 0 ? selectedIds : undefined,
-      },
-      { onSuccess: onCreated },
+    saveFeedback.save(
+      () =>
+        mutateAsync({
+          groupName: groupName.trim(),
+          initialMemberIds: selectedIds.length > 0 ? selectedIds : undefined,
+        }),
+      onCreated,
     );
   };
 
@@ -90,6 +96,7 @@ const CreateGroupModal = ({ show, groupName, onClose, onCreated }: Props) => {
       show={show}
       onHide={handleClose}
       onEntered={resetForm}
+      onExited={saveFeedback.reset}
       backdrop={isPending ? "static" : true}
       keyboard={!isPending}
       scrollable
@@ -156,23 +163,13 @@ const CreateGroupModal = ({ show, groupName, onClose, onCreated }: Props) => {
         </TableStatus>
       </Modal.Body>
       <Modal.Footer className="modal-footer-stacked gap-2">
-        <Button variant="primary" onClick={handleCreate} disabled={isPending}>
-          {isPending ? (
-            <>
-              <Spinner
-                as="span"
-                animation="border"
-                size="sm"
-                role="status"
-                aria-hidden="true"
-                className="me-2"
-              />
-              Creating...
-            </>
-          ) : (
-            "Create Group"
-          )}
-        </Button>
+        <SaveButton
+          status={saveFeedback.status}
+          label="Create Group"
+          savingLabel="Creating..."
+          savedLabel="Group Created!"
+          onClick={handleCreate}
+        />
         <Button
           variant="outline-secondary"
           onClick={onClose}

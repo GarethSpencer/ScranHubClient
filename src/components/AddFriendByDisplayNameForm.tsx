@@ -7,10 +7,9 @@ import {
 } from "../api/controllerHooks/useUserController";
 import { useState } from "react";
 import Table from "react-bootstrap/Table";
-import Button from "react-bootstrap/Button";
 import Spinner from "react-bootstrap/Spinner";
 import Pagination from "react-bootstrap/Pagination";
-import useActingState from "../hooks/useActingState";
+import FriendSearchResultRow from "./FriendSearchResultRow";
 import useDebounce from "../hooks/useDebounce";
 import type UserResult from "../models/results/UserResult";
 
@@ -24,22 +23,11 @@ function AddFriendByDisplayNameForm() {
     pageNumber: page,
     pageSize,
   });
-  const { mutate, isPending } = useAddFriend();
-
-  const { isActing, mutationCallbacks } = useActingState();
+  const { mutateAsync, isPending } = useAddFriend();
 
   const isSearching =
     searchText.length >= 3 &&
     (isFetching || debouncedSearchText !== searchText);
-
-  const onAddFriend = (userId: string) => {
-    mutate(
-      userId,
-      mutationCallbacks(userId, "add", {
-        onSuccess: () => setSearchText(""),
-      }),
-    );
-  };
 
   return (
     <>
@@ -82,23 +70,13 @@ function AddFriendByDisplayNameForm() {
             </thead>
             <tbody>
               {data.users.map((x: UserResult) => (
-                <tr key={x.userId}>
-                  <td className="w-50 text-start text-break">
-                    {x.displayName}
-                  </td>
-                  <td className="w-50">
-                    <Button
-                      onClick={() => onAddFriend(x.userId)}
-                      disabled={isPending}
-                    >
-                      {isActing(x.userId, "add") ? (
-                        <Spinner animation="border" size="sm" />
-                      ) : (
-                        "Send Friend Request"
-                      )}
-                    </Button>
-                  </td>
-                </tr>
+                <FriendSearchResultRow
+                  key={x.userId}
+                  user={x}
+                  disabled={isPending}
+                  onSendRequest={mutateAsync}
+                  onSent={() => setSearchText("")}
+                />
               ))}
             </tbody>
           </Table>

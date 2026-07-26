@@ -3,12 +3,13 @@ import { MAX_VENUE_NAME_LENGTH } from "../constants/validation";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
-import Spinner from "react-bootstrap/Spinner";
 import { useCreateGroupVenue } from "../api/controllerHooks/useGroupVenueController";
 import { useGetOptionsForGroup } from "../api/controllerHooks/useOptionController";
 import PlaceAutocomplete, {
   type SelectedPlace,
 } from "./common/PlaceAutocomplete";
+import SaveButton from "./common/SaveButton";
+import useSaveFeedback from "../hooks/useSaveFeedback";
 import useVenuePlaceSearch from "../hooks/useVenuePlaceSearch";
 
 interface Props {
@@ -43,7 +44,10 @@ const CreateGroupVenueModal = ({ show, groupId, onClose }: Props) => {
   const venueTypeOptions = venueTypeData?.options ?? [];
   const foodTypeOptions = foodTypeData?.options ?? [];
 
-  const { mutate, isPending } = useCreateGroupVenue(groupId);
+  const { mutateAsync } = useCreateGroupVenue(groupId);
+  const saveFeedback = useSaveFeedback();
+
+  const isPending = saveFeedback.isBusy;
 
   const resetForm = () => {
     setVenueName("");
@@ -65,16 +69,17 @@ const CreateGroupVenueModal = ({ show, groupId, onClose }: Props) => {
   };
 
   const handleSave = () => {
-    if (!canSave) return;
+    if (!canSave || isPending) return;
 
-    mutate(
-      {
-        venueName: venueName.trim(),
-        venueTypeOptionId: venueTypeOptionId || undefined,
-        foodTypeOptionId: foodTypeOptionId || undefined,
-        ...placeFields,
-      },
-      { onSuccess: onClose },
+    saveFeedback.save(
+      () =>
+        mutateAsync({
+          venueName: venueName.trim(),
+          venueTypeOptionId: venueTypeOptionId || undefined,
+          foodTypeOptionId: foodTypeOptionId || undefined,
+          ...placeFields,
+        }),
+      onClose,
     );
   };
 
@@ -83,6 +88,7 @@ const CreateGroupVenueModal = ({ show, groupId, onClose }: Props) => {
       show={show}
       onHide={handleClose}
       onEntered={resetForm}
+      onExited={saveFeedback.reset}
       backdrop={isPending ? "static" : true}
       keyboard={!isPending}
       centered
@@ -161,27 +167,14 @@ const CreateGroupVenueModal = ({ show, groupId, onClose }: Props) => {
         </Form>
       </Modal.Body>
       <Modal.Footer className="modal-footer-stacked gap-2">
-        <Button
-          variant="primary"
+        <SaveButton
+          status={saveFeedback.status}
+          label="Add Venue"
+          savingLabel="Creating..."
+          savedLabel="Added!"
           onClick={handleSave}
-          disabled={isPending || !canSave}
-        >
-          {isPending ? (
-            <>
-              <Spinner
-                as="span"
-                animation="border"
-                size="sm"
-                role="status"
-                aria-hidden="true"
-                className="me-2"
-              />
-              Creating...
-            </>
-          ) : (
-            "Add Venue"
-          )}
-        </Button>
+          disabled={!canSave}
+        />
         <Button
           variant="outline-secondary"
           onClick={onClose}

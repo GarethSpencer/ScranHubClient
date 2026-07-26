@@ -4,7 +4,8 @@ import Button from "react-bootstrap/Button";
 import Collapse from "react-bootstrap/Collapse";
 import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
-import Spinner from "react-bootstrap/Spinner";
+import SaveButton from "../common/SaveButton";
+import useSaveFeedback from "../../hooks/useSaveFeedback";
 import type { useSetCustomOptions } from "../../api/controllerHooks/useOptionController";
 
 interface Props {
@@ -27,6 +28,7 @@ const OptionEditorPanel = ({
   onClose,
 }: Props) => {
   const [labels, setLabels] = useState<string[]>(initialLabels);
+  const saveFeedback = useSaveFeedback();
 
   const canSave =
     labels.length > 0 && labels.every((label) => label.trim().length > 0);
@@ -48,11 +50,11 @@ const OptionEditorPanel = ({
       .map((label) => label.trim())
       .filter((label) => label.length > 0);
 
-    if (cleanedLabels.length === 0) return;
+    if (cleanedLabels.length === 0 || saveFeedback.isBusy) return;
 
-    setCustomOptions.mutate(
-      { groupId, labels: cleanedLabels },
-      { onSuccess: onClose },
+    saveFeedback.save(
+      () => setCustomOptions.mutateAsync({ groupId, labels: cleanedLabels }),
+      onClose,
     );
   };
 
@@ -89,17 +91,15 @@ const OptionEditorPanel = ({
               <Button variant="outline-secondary" onClick={handleAddLabel}>
                 Add option
               </Button>
-              <Button
+              <SaveButton
                 variant="success"
+                status={saveFeedback.status}
+                label="Save"
+                savingLabel="Saving..."
+                savedLabel="Saved!"
                 onClick={handleSave}
-                disabled={!canSave || setCustomOptions.isPending}
-              >
-                {setCustomOptions.isPending ? (
-                  <Spinner animation="border" size="sm" />
-                ) : (
-                  "Save"
-                )}
-              </Button>
+                disabled={!canSave}
+              />
             </div>
           </Form>
         </div>

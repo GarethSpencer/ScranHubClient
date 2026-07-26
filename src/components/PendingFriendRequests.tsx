@@ -8,8 +8,9 @@ import type FriendResult from "../models/results/FriendResult";
 import Button from "react-bootstrap/Button";
 import Spinner from "react-bootstrap/Spinner";
 import TableStatus from "./common/TableStatus";
+import ApproveFriendButton from "./ApproveFriendButton";
 import useActingState from "../hooks/useActingState";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FriendshipStatus } from "../enums/FriendshipStatus";
 
 interface Props {
@@ -33,10 +34,17 @@ const PendingFriendRequests = ({ showSentRequests, showHeader }: Props) => {
 
   const { mutate: deleteMutate, isPending: isDeletePending } =
     useDeleteFriend();
-  const { mutate: updateMutate, isPending: isUpdatePending } =
-    useUpdateFriend();
+  const {
+    mutate: updateMutate,
+    mutateAsync: updateMutateAsync,
+    isPending: isUpdatePending,
+  } = useUpdateFriend();
 
   const { isActing, mutationCallbacks } = useActingState();
+
+  const [pinnedFriends, setPinnedFriends] = useState<FriendResult[] | null>(
+    null,
+  );
 
   const sentinelRef = useRef<HTMLTableRowElement>(null);
 
@@ -61,22 +69,18 @@ const PendingFriendRequests = ({ showSentRequests, showHeader }: Props) => {
     data?.pages.flatMap((page) => page.friends ?? []) ?? []
   ).filter((x) => showSentRequests || !x.initiator);
 
+  const rows = pinnedFriends ?? friends;
+
   const isPending = isDeletePending || isUpdatePending;
+
+  const onApproveFriend = (friendId: string) =>
+    updateMutateAsync({
+      friendId,
+      requestData: { status: FriendshipStatus.Accepted },
+    });
 
   const onDeleteFriend = (userFriendId: string) => {
     deleteMutate(userFriendId, mutationCallbacks(userFriendId, "delete"));
-  };
-
-  const onAcceptFriend = (friendId: string) => {
-    updateMutate(
-      {
-        friendId: friendId,
-        requestData: {
-          status: FriendshipStatus.Accepted,
-        },
-      },
-      mutationCallbacks(friendId, "approve"),
-    );
   };
 
   const onDeclineFriend = (friendId: string) => {
@@ -118,7 +122,7 @@ const PendingFriendRequests = ({ showSentRequests, showHeader }: Props) => {
             </tr>
           </thead>
           <tbody>
-            {friends.map((x: FriendResult) => (
+            {rows.map((x: FriendResult) => (
               <tr key={x.userFriendId}>
                 <td className="text-start text-break">{x.displayName}</td>
                 {showSentRequests && (
@@ -139,17 +143,13 @@ const PendingFriendRequests = ({ showSentRequests, showHeader }: Props) => {
                     </Button>
                   ) : (
                     <div className="d-flex flex-wrap gap-2 justify-content-center">
-                      <Button
-                        variant="success"
-                        onClick={() => onAcceptFriend(x.friendId)}
+                      <ApproveFriendButton
+                        friendId={x.friendId}
                         disabled={isPending}
-                      >
-                        {isActing(x.friendId, "approve") ? (
-                          <Spinner animation="border" size="sm" />
-                        ) : (
-                          "Approve"
-                        )}
-                      </Button>
+                        onApprove={onApproveFriend}
+                        onApproved={() => setPinnedFriends(friends)}
+                        onFeedbackDone={() => setPinnedFriends(null)}
+                      />
                       <Button
                         onClick={() => onDeclineFriend(x.friendId)}
                         disabled={isPending}
