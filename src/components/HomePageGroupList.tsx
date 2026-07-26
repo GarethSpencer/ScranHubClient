@@ -8,6 +8,7 @@ import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
 import { FaPencilAlt } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import AnimatedCount from "./common/AnimatedCount";
 import TableStatus from "./common/TableStatus";
 import GroupIconModal from "./GroupIconModal";
 import type GroupResult from "../models/results/GroupResult";
@@ -104,9 +105,10 @@ const HomePageGroupList = () => {
                       </Card.Text>
                       {(x.venuesToRate ?? 0) > 0 && (
                         <Badge bg="danger" pill className="group-card-to-rate">
+                          <AnimatedCount value={x.venuesToRate ?? 0} />
                           {x.venuesToRate === 1
-                            ? "1 Venue to Rate"
-                            : `${x.venuesToRate} Venues to Rate`}
+                            ? " Venue to Rate"
+                            : " Venues to Rate"}
                         </Badge>
                       )}
                     </div>

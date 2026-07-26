@@ -1347,3 +1347,135 @@ $switch-knob-tick-bg: switch-knob-bg("M-1.5 0.1 -0.5 1.2 1.5 -1.1", $success);
     background-color: rgba(var(--bs-success-rgb), 0.28);
   }
 }
+
+.count-roll {
+  position: relative;
+  display: inline-block;
+  font-variant-numeric: tabular-nums;
+  vertical-align: bottom;
+}
+
+.count-roll-out {
+  position: absolute;
+  left: 0;
+  right: 0;
+  text-align: center;
+}
+
+.count-roll-down .count-roll-out {
+  animation: count-roll-exit-down 0.4s ease-in forwards;
+}
+
+.count-roll-down .count-roll-in {
+  display: inline-block;
+  animation: count-roll-enter-down 0.4s ease-out;
+}
+
+.count-roll-up .count-roll-out {
+  animation: count-roll-exit-up 0.4s ease-in forwards;
+}
+
+.count-roll-up .count-roll-in {
+  display: inline-block;
+  animation: count-roll-enter-up 0.4s ease-out;
+}
+
+@keyframes count-roll-exit-down {
+  to {
+    opacity: 0;
+    transform: translateY(0.75em);
+  }
+}
+
+@keyframes count-roll-enter-down {
+  from {
+    opacity: 0;
+    transform: translateY(-0.75em);
+  }
+}
+
+@keyframes count-roll-exit-up {
+  to {
+    opacity: 0;
+    transform: translateY(-0.75em);
+  }
+}
+
+@keyframes count-roll-enter-up {
+  from {
+    opacity: 0;
+    transform: translateY(0.75em);
+  }
+}
+
+.section-tab-badge-cleared {
+  animation: section-tab-badge-cleared 0.7s ease-out forwards;
+}
+
+@keyframes section-tab-badge-cleared {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  35% {
+    opacity: 1;
+    transform: scale(1.4);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+}
+
+.celebration {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.celebration-piece {
+  position: absolute;
+  top: 0;
+  display: block;
+  animation-name: celebration-fall;
+  animation-timing-function: linear;
+  animation-fill-mode: both;
+}
+
+@keyframes celebration-fall {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, -10vh, 0) rotate(0deg);
+  }
+  8% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(var(--celebration-drift), 105vh, 0)
+      rotate(var(--celebration-spin));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .count-roll-down .count-roll-out,
+  .count-roll-down .count-roll-in,
+  .count-roll-up .count-roll-out,
+  .count-roll-up .count-roll-in {
+    animation: none;
+  }
+
+  .count-roll-out {
+    display: none;
+  }
+
+  .section-tab-badge-cleared {
+    animation: none;
+    opacity: 0;
+  }
+}

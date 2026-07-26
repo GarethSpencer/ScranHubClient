@@ -1,6 +1,8 @@
-import Badge from "react-bootstrap/Badge";
+import { useCallback, useState } from "react";
 import Nav from "react-bootstrap/Nav";
 import { NavLink } from "react-router-dom";
+import Celebration from "../components/common/Celebration";
+import SectionTabBadge from "./SectionTabBadge";
 
 export interface SectionTab {
   label: string;
@@ -8,6 +10,7 @@ export interface SectionTab {
   end?: boolean;
   badgeCount?: number;
   badgeLabel?: string;
+  celebrateAtZero?: boolean;
 }
 
 interface Props {
@@ -16,29 +19,34 @@ interface Props {
 }
 
 const SectionTabs = ({ tabs, className }: Props) => {
+  const [isCelebrating, setIsCelebrating] = useState(false);
+
+  const startCelebrating = useCallback(() => setIsCelebrating(true), []);
+  const stopCelebrating = useCallback(() => setIsCelebrating(false), []);
+
   if (tabs.length < 2) return null;
 
   return (
-    <Nav
-      variant="tabs"
-      className={["section-tabs", className].filter(Boolean).join(" ")}
-    >
-      {tabs.map((tab) => (
-        <Nav.Item key={tab.to}>
-          <Nav.Link as={NavLink} to={tab.to} end={tab.end}>
-            {tab.label}
-            {(tab.badgeCount ?? 0) > 0 && (
-              <Badge bg="danger" pill className="section-tab-badge">
-                {tab.badgeCount}
-                {tab.badgeLabel && (
-                  <span className="visually-hidden"> {tab.badgeLabel}</span>
-                )}
-              </Badge>
-            )}
-          </Nav.Link>
-        </Nav.Item>
-      ))}
-    </Nav>
+    <>
+      <Nav
+        variant="tabs"
+        className={["section-tabs", className].filter(Boolean).join(" ")}
+      >
+        {tabs.map((tab) => (
+          <Nav.Item key={tab.to}>
+            <Nav.Link as={NavLink} to={tab.to} end={tab.end}>
+              {tab.label}
+              <SectionTabBadge
+                count={tab.badgeCount ?? 0}
+                label={tab.badgeLabel}
+                onCleared={tab.celebrateAtZero ? startCelebrating : undefined}
+              />
+            </Nav.Link>
+          </Nav.Item>
+        ))}
+      </Nav>
+      {isCelebrating && <Celebration onDone={stopCelebrating} />}
+    </>
   );
 };
 

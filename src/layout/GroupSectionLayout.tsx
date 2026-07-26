@@ -39,6 +39,7 @@ const GroupSectionLayout = () => {
           end: true,
           badgeCount: venuesToRate,
           badgeLabel: "venues to rate",
+          celebrateAtZero: true,
         },
         { label: "Manage Options", to: `/group/${id}/options` },
         { label: "Group Members", to: `/group/${id}/users`, end: true },
