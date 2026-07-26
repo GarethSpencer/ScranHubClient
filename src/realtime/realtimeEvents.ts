@@ -91,7 +91,8 @@ export const createRealtimeInvalidator = (queryClient: QueryClient) => {
     pendingKeys.clear();
 
     for (const queryKey of queryKeys) {
-      queryClient.invalidateQueries({ queryKey });
+      //don't restart a refetch that our own mutation already started
+      queryClient.invalidateQueries({ queryKey }, { cancelRefetch: false });
     }
   };
 

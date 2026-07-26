@@ -1,3 +1,4 @@
+import { useCallback } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type ApiClient from "../apiClient";
 import useToast from "../../contexts/toast/useToast";
@@ -20,6 +21,11 @@ const ratingServices: Record<RatingController, ApiClient> = {
   VibeRating: vibeRatingControllerService,
 };
 
+export interface RatingMutationOptions {
+  silent?: boolean;
+  deferInvalidation?: boolean;
+}
+
 const invalidateRatingQueries = (
   queryClient: ReturnType<typeof useQueryClient>,
   controller: RatingController,
@@ -35,10 +41,38 @@ const invalidateRatingQueries = (
   queryClient.invalidateQueries({ queryKey: ["userGroups"] });
 };
 
+export const useInvalidateRatingQueries = () => {
+  const queryClient = useQueryClient();
+
+  return useCallback(
+    (groupId: string, groupVenueId: string) => {
+      for (const controller of Object.keys(
+        ratingServices,
+      ) as RatingController[]) {
+        queryClient.invalidateQueries({
+          queryKey: [controller, groupId, "venues", groupVenueId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: [controller, groupId, "me"],
+        });
+        queryClient.invalidateQueries({
+          queryKey: [controller, groupId, "group"],
+        });
+      }
+
+      queryClient.invalidateQueries({
+        queryKey: ["groups", groupId, "venues"],
+      });
+      queryClient.invalidateQueries({ queryKey: ["userGroups"] });
+    },
+    [queryClient],
+  );
+};
+
 export const useCreateRating = (
   controller: RatingController,
   groupId: string,
-  options?: { silent?: boolean },
+  options?: RatingMutationOptions,
 ) => {
   const service = ratingServices[controller];
   const queryClient = useQueryClient();
@@ -48,12 +82,14 @@ export const useCreateRating = (
     mutationFn: (request: CreateRatingRequest) =>
       service.post<AddRatingResponse, CreateRatingRequest>(undefined, request),
     onSuccess: (data, request) => {
-      invalidateRatingQueries(
-        queryClient,
-        controller,
-        groupId,
-        request.groupVenueId,
-      );
+      if (!options?.deferInvalidation) {
+        invalidateRatingQueries(
+          queryClient,
+          controller,
+          groupId,
+          request.groupVenueId,
+        );
+      }
       if (!options?.silent && data.message) showToast(data.message, "success");
     },
   });
@@ -62,7 +98,7 @@ export const useCreateRating = (
 export const useUpdateRating = (
   controller: RatingController,
   groupId: string,
-  options?: { silent?: boolean },
+  options?: RatingMutationOptions,
 ) => {
   const service = ratingServices[controller];
   const queryClient = useQueryClient();
@@ -76,7 +112,9 @@ export const useUpdateRating = (
     mutationFn: ({ ratingId, request }) =>
       service.patch<CommonResponse, UpdateRatingRequest>(ratingId, request),
     onSuccess: (data, { groupVenueId }) => {
-      invalidateRatingQueries(queryClient, controller, groupId, groupVenueId);
+      if (!options?.deferInvalidation) {
+        invalidateRatingQueries(queryClient, controller, groupId, groupVenueId);
+      }
       if (!options?.silent && data.message) showToast(data.message, "success");
     },
   });
@@ -85,7 +123,7 @@ export const useUpdateRating = (
 export const useDeleteRating = (
   controller: RatingController,
   groupId: string,
-  options?: { silent?: boolean },
+  options?: RatingMutationOptions,
 ) => {
   const service = ratingServices[controller];
   const queryClient = useQueryClient();
@@ -98,7 +136,9 @@ export const useDeleteRating = (
   >({
     mutationFn: ({ ratingId }) => service.delete<CommonResponse>(ratingId),
     onSuccess: (data, { groupVenueId }) => {
-      invalidateRatingQueries(queryClient, controller, groupId, groupVenueId);
+      if (!options?.deferInvalidation) {
+        invalidateRatingQueries(queryClient, controller, groupId, groupVenueId);
+      }
       if (!options?.silent && data.message) showToast(data.message, "success");
     },
   });

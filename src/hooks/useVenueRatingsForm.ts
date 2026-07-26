@@ -4,6 +4,7 @@ import {
   useUpdateRating,
   useDeleteRating,
   useGetRatingsForGroupVenue,
+  useInvalidateRatingQueries,
 } from "../api/controllerHooks/useRatingController";
 import { useGetOptionsForGroup } from "../api/controllerHooks/useOptionController";
 import { useGetCurrentUser } from "../api/controllerHooks/useUserController";
@@ -117,50 +118,52 @@ const useVenueRatingsForm = (
   const { mutateAsync: createQualityRating } = useCreateRating(
     "QualityRating",
     groupId,
-    { silent: true },
+    { silent: true, deferInvalidation: true },
   );
   const { mutateAsync: updateQualityRating } = useUpdateRating(
     "QualityRating",
     groupId,
-    { silent: true },
+    { silent: true, deferInvalidation: true },
   );
   const { mutateAsync: deleteQualityRating } = useDeleteRating(
     "QualityRating",
     groupId,
-    { silent: true },
+    { silent: true, deferInvalidation: true },
   );
 
   const { mutateAsync: createCostRating } = useCreateRating(
     "CostRating",
     groupId,
-    { silent: true },
+    { silent: true, deferInvalidation: true },
   );
   const { mutateAsync: updateCostRating } = useUpdateRating(
     "CostRating",
     groupId,
-    { silent: true },
+    { silent: true, deferInvalidation: true },
   );
   const { mutateAsync: deleteCostRating } = useDeleteRating(
     "CostRating",
     groupId,
-    { silent: true },
+    { silent: true, deferInvalidation: true },
   );
 
   const { mutateAsync: createVibeRating } = useCreateRating(
     "VibeRating",
     groupId,
-    { silent: true },
+    { silent: true, deferInvalidation: true },
   );
   const { mutateAsync: updateVibeRating } = useUpdateRating(
     "VibeRating",
     groupId,
-    { silent: true },
+    { silent: true, deferInvalidation: true },
   );
   const { mutateAsync: deleteVibeRating } = useDeleteRating(
     "VibeRating",
     groupId,
-    { silent: true },
+    { silent: true, deferInvalidation: true },
   );
+
+  const invalidateRatingQueries = useInvalidateRatingQueries();
 
   const hasSavedRatings =
     currentQualityRating != null ||
@@ -197,11 +200,15 @@ const useVenueRatingsForm = (
             groupVenueId,
           })
         : Promise.resolve(),
-    ]);
+    ]).then((results) => {
+      invalidateRatingQueries(groupId, groupVenueId);
+      return results;
+    });
   };
 
   const save = (isVisited: boolean = venue?.visited ?? false) => {
     if (!venue) return Promise.resolve();
+    const groupVenueId = venue.groupVenueId;
     const canCreate = isVisited && !wasRemoved;
     return Promise.all([
       persistRating(
@@ -228,7 +235,10 @@ const useVenueRatingsForm = (
         createVibeRating,
         updateVibeRating,
       ),
-    ]);
+    ]).then((results) => {
+      invalidateRatingQueries(groupId, groupVenueId);
+      return results;
+    });
   };
 
   return {
