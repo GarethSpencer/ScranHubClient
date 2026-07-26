@@ -17,6 +17,15 @@ import type UserGroupsResponse from "../../models/responses/groups/UserGroupsRes
 import type GetUsersResponse from "../../models/responses/users/GetUsersResponse";
 import type PaginationBaseRequest from "../../models/requests/generic/PaginationBaseRequest";
 
+const removeCachedGroupData = (
+  queryClient: ReturnType<typeof useQueryClient>,
+  groupId: string,
+) => {
+  queryClient.removeQueries({
+    predicate: (query) => query.queryKey[1] === groupId,
+  });
+};
+
 export const useGetGroup = (groupId: string) => {
   const queryClient = useQueryClient();
 
@@ -139,7 +148,8 @@ export const useJoinGroup = () => {
       groupControllerService.post<CommonResponse, null>(
         `${groupId}/members/me`,
       ),
-    onSuccess: (data) => {
+    onSuccess: (data, groupId) => {
+      removeCachedGroupData(queryClient, groupId);
       queryClient.invalidateQueries({ queryKey: ["userGroups"] });
       if (data.message) showToast(data.message, "success");
     },
@@ -153,7 +163,8 @@ export const useLeaveGroup = () => {
   return useMutation<CommonResponse, Error, string>({
     mutationFn: (groupId: string) =>
       groupControllerService.delete<CommonResponse>(`${groupId}/members/me`),
-    onSuccess: (data) => {
+    onSuccess: (data, groupId) => {
+      removeCachedGroupData(queryClient, groupId);
       queryClient.invalidateQueries({ queryKey: ["userGroups"] });
       if (data.message) showToast(data.message, "success");
     },
