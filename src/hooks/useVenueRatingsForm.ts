@@ -105,6 +105,15 @@ const useVenueRatingsForm = (
   const costSelection = costOptionId ?? currentCostRating?.optionId ?? "";
   const vibeSelection = vibeOptionId ?? currentVibeRating?.optionId ?? "";
 
+  const isQualitySet =
+    qualityOptionId !== null || (!wasRemoved && currentQualityRating != null);
+  const isCostSet =
+    costOptionId !== null || (!wasRemoved && currentCostRating != null);
+  const isVibeSet =
+    vibeOptionId !== null || (!wasRemoved && currentVibeRating != null);
+
+  const areAllRatingsSet = isQualitySet && isCostSet && isVibeSet;
+
   const { mutateAsync: createQualityRating } = useCreateRating(
     "QualityRating",
     groupId,
@@ -229,6 +238,10 @@ const useVenueRatingsForm = (
     setQualityOptionId: selectOption(setQualityOptionId),
     setCostOptionId: selectOption(setCostOptionId),
     setVibeOptionId: selectOption(setVibeOptionId),
+    isQualitySet,
+    isCostSet,
+    isVibeSet,
+    areAllRatingsSet,
     qualityOptions,
     costOptions,
     vibeOptions,

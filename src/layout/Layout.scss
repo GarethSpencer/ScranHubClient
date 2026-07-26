@@ -705,13 +705,6 @@ $switch-knob-tick-bg: switch-knob-bg("M-1.5 0.1 -0.5 1.2 1.5 -1.1", $success);
   height: 40px;
 }
 
-@include media-breakpoint-down(md) {
-  .home-group-list {
-    padding-left: 1rem;
-    padding-right: 1rem;
-  }
-}
-
 .home-group-heading {
   color: #d9d9d9;
 }
@@ -1200,16 +1193,15 @@ $switch-knob-tick-bg: switch-knob-bg("M-1.5 0.1 -0.5 1.2 1.5 -1.1", $success);
     border-color 0.25s ease-in-out;
 }
 
-.save-button-check {
+.check-mark {
   display: inline-block;
   vertical-align: -0.2em;
 }
 
-.save-button-check path {
+.check-mark path {
   stroke-dasharray: 24;
   stroke-dashoffset: 24;
-  animation: save-button-check-draw 0.4s cubic-bezier(0.65, 0, 0.35, 1) 0.05s
-    forwards;
+  animation: check-mark-draw 0.4s cubic-bezier(0.65, 0, 0.35, 1) 0.05s forwards;
 }
 
 .btn.save-button-saved,
@@ -1225,7 +1217,7 @@ $switch-knob-tick-bg: switch-knob-bg("M-1.5 0.1 -0.5 1.2 1.5 -1.1", $success);
   animation: save-button-glow 0.7s ease-out 0.1s;
 }
 
-@keyframes save-button-check-draw {
+@keyframes check-mark-draw {
   to {
     stroke-dashoffset: 0;
   }
@@ -1262,6 +1254,7 @@ $switch-knob-tick-bg: switch-knob-bg("M-1.5 0.1 -0.5 1.2 1.5 -1.1", $success);
 
 .group-venue-table > tbody > tr.group-venue-row-just-rated > td {
   --bs-table-bg-type: transparent;
+  --just-rated-tint: 0.28;
 
   box-shadow: none;
   animation: venue-just-rated-row 1.6s ease-out;
@@ -1272,7 +1265,7 @@ $switch-knob-tick-bg: switch-knob-bg("M-1.5 0.1 -0.5 1.2 1.5 -1.1", $success);
   > tbody
   > tr.group-venue-row-just-rated
   > td {
-  animation-name: venue-just-rated-row-dark;
+  --just-rated-tint: 0.42;
 }
 
 @keyframes venue-just-rated-flash {
@@ -1307,17 +1300,7 @@ $switch-knob-tick-bg: switch-knob-bg("M-1.5 0.1 -0.5 1.2 1.5 -1.1", $success);
 @keyframes venue-just-rated-row {
   0%,
   35% {
-    background-color: rgba(var(--bs-success-rgb), 0.28);
-  }
-  100% {
-    background-color: rgba(var(--bs-success-rgb), 0);
-  }
-}
-
-@keyframes venue-just-rated-row-dark {
-  0%,
-  35% {
-    background-color: rgba(var(--bs-success-rgb), 0.42);
+    background-color: rgba(var(--bs-success-rgb), var(--just-rated-tint));
   }
   100% {
     background-color: rgba(var(--bs-success-rgb), 0);
@@ -1325,7 +1308,7 @@ $switch-knob-tick-bg: switch-knob-bg("M-1.5 0.1 -0.5 1.2 1.5 -1.1", $success);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .save-button-check path {
+  .check-mark path {
     stroke-dashoffset: 0;
     animation: none;
   }
@@ -1344,7 +1327,7 @@ $switch-knob-tick-bg: switch-knob-bg("M-1.5 0.1 -0.5 1.2 1.5 -1.1", $success);
   }
 
   .group-venue-table > tbody > tr.group-venue-row-just-rated > td {
-    background-color: rgba(var(--bs-success-rgb), 0.28);
+    background-color: rgba(var(--bs-success-rgb), var(--just-rated-tint));
   }
 }
 
@@ -1362,49 +1345,37 @@ $switch-knob-tick-bg: switch-knob-bg("M-1.5 0.1 -0.5 1.2 1.5 -1.1", $success);
   text-align: center;
 }
 
-.count-roll-down .count-roll-out {
-  animation: count-roll-exit-down 0.4s ease-in forwards;
+.count-roll-down {
+  --count-roll-shift: 0.75em;
 }
 
-.count-roll-down .count-roll-in {
-  display: inline-block;
-  animation: count-roll-enter-down 0.4s ease-out;
+.count-roll-up {
+  --count-roll-shift: -0.75em;
 }
 
-.count-roll-up .count-roll-out {
-  animation: count-roll-exit-up 0.4s ease-in forwards;
+.count-roll-down,
+.count-roll-up {
+  .count-roll-out {
+    animation: count-roll-exit 0.4s ease-in forwards;
+  }
+
+  .count-roll-in {
+    display: inline-block;
+    animation: count-roll-enter 0.4s ease-out;
+  }
 }
 
-.count-roll-up .count-roll-in {
-  display: inline-block;
-  animation: count-roll-enter-up 0.4s ease-out;
-}
-
-@keyframes count-roll-exit-down {
+@keyframes count-roll-exit {
   to {
     opacity: 0;
-    transform: translateY(0.75em);
+    transform: translateY(var(--count-roll-shift));
   }
 }
 
-@keyframes count-roll-enter-down {
+@keyframes count-roll-enter {
   from {
     opacity: 0;
-    transform: translateY(-0.75em);
-  }
-}
-
-@keyframes count-roll-exit-up {
-  to {
-    opacity: 0;
-    transform: translateY(-0.75em);
-  }
-}
-
-@keyframes count-roll-enter-up {
-  from {
-    opacity: 0;
-    transform: translateY(0.75em);
+    transform: translateY(calc(var(--count-roll-shift) * -1));
   }
 }
 
@@ -1463,9 +1434,7 @@ $switch-knob-tick-bg: switch-knob-bg("M-1.5 0.1 -0.5 1.2 1.5 -1.1", $success);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .count-roll-down .count-roll-out,
   .count-roll-down .count-roll-in,
-  .count-roll-up .count-roll-out,
   .count-roll-up .count-roll-in {
     animation: none;
   }
@@ -1477,5 +1446,173 @@ $switch-knob-tick-bg: switch-knob-bg("M-1.5 0.1 -0.5 1.2 1.5 -1.1", $success);
   .section-tab-badge-cleared {
     animation: none;
     opacity: 0;
+  }
+}
+
+.rating-choice {
+  min-width: 0;
+}
+
+.rating-choice-legend {
+  float: none;
+  width: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+  line-height: inherit;
+}
+
+.rating-choice-tick {
+  color: var(--bs-success);
+  animation: rating-choice-tick-in 0.3s ease-out;
+}
+
+.rating-chip-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.rating-chip {
+  position: relative;
+  display: inline-flex;
+  margin: 0;
+}
+
+.rating-chip input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.rating-chip-label {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.4rem 0.8rem;
+  border: 1px solid var(--bs-border-color);
+  border-radius: 2rem;
+  background-color: var(--bs-body-bg);
+  font-size: 0.9rem;
+  line-height: 1.35;
+  transition:
+    background-color 0.15s ease-in-out,
+    border-color 0.15s ease-in-out,
+    color 0.15s ease-in-out;
+}
+
+.rating-chip input:checked + .rating-chip-label {
+  border-color: var(--bs-primary);
+  background-color: var(--bs-primary);
+  color: #fff;
+  font-weight: 600;
+  animation: rating-chip-pop 0.28s ease-out;
+}
+
+.rating-chip input:focus-visible + .rating-chip-label {
+  outline: 2px solid var(--bs-primary);
+  outline-offset: 2px;
+}
+
+@media (hover: hover) {
+  .rating-chip input:not(:checked):not(:disabled):hover + .rating-chip-label {
+    border-color: var(--bs-primary);
+    background-color: rgba(var(--bs-primary-rgb), 0.12);
+  }
+}
+
+.rating-chip-none .rating-chip-label {
+  border-style: dashed;
+  color: var(--bs-secondary-color);
+}
+
+.rating-chip-none input:checked + .rating-chip-label {
+  border-style: solid;
+  border-color: var(--bs-secondary-color);
+  background-color: var(--bs-secondary-bg);
+  color: var(--bs-body-color);
+}
+
+@media (hover: hover) {
+  .rating-chip-none
+    input:not(:checked):not(:disabled):hover
+    + .rating-chip-label {
+    border-color: var(--bs-secondary-color);
+    background-color: var(--bs-secondary-bg);
+  }
+}
+
+.rating-choice:disabled .rating-chip input {
+  cursor: default;
+}
+
+.rating-choice:disabled .rating-chip-label {
+  opacity: 0.55;
+}
+
+@keyframes rating-chip-pop {
+  0% {
+    transform: scale(1);
+  }
+  45% {
+    transform: scale(1.09);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes rating-choice-tick-in {
+  from {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rating-chip input:checked + .rating-chip-label,
+  .rating-choice-tick {
+    animation: none;
+  }
+}
+
+.rating-chip.rating-chip-scored .rating-chip-label {
+  border-color: color-mix(in oklab, var(--chip-accent), transparent 55%);
+  background-color: color-mix(
+    in oklab,
+    var(--chip-accent),
+    var(--bs-body-bg) 88%
+  );
+}
+
+.rating-chip.rating-chip-scored input:checked + .rating-chip-label {
+  border-color: color-mix(in oklab, var(--chip-accent), #000 15%);
+  background-color: color-mix(in oklab, var(--chip-accent), #000 15%);
+  color: #fff;
+}
+
+.rating-chip.rating-chip-scored input:focus-visible + .rating-chip-label {
+  outline-color: color-mix(in oklab, var(--chip-accent), #000 15%);
+}
+
+@media (hover: hover) {
+  .rating-chip.rating-chip-scored
+    input:not(:checked):not(:disabled):hover
+    + .rating-chip-label {
+    border-color: var(--chip-accent);
+    background-color: color-mix(
+      in oklab,
+      var(--chip-accent),
+      var(--bs-body-bg) 72%
+    );
   }
 }

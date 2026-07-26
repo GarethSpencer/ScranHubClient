@@ -1,5 +1,6 @@
 import Button, { type ButtonProps } from "react-bootstrap/Button";
 import Spinner from "react-bootstrap/Spinner";
+import CheckMark from "./CheckMark";
 import type { SaveStatus } from "../../hooks/useSaveFeedback";
 
 interface Props extends Omit<ButtonProps, "children"> {
@@ -43,22 +44,7 @@ const SaveButton = ({
     )}
     {status === "saved" && (
       <>
-        <svg
-          className="save-button-check me-2"
-          viewBox="0 0 24 24"
-          width="18"
-          height="18"
-          aria-hidden="true"
-        >
-          <path
-            d="M4 12.5 L9.5 18 L20 6.5"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="3"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
+        <CheckMark className="me-2" />
         {savedLabel}
       </>
     )}

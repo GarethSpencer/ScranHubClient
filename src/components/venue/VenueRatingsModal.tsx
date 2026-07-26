@@ -37,7 +37,7 @@ const VenueRatingsModal = ({
   };
 
   const handleSave = () => {
-    if (!venue || isPending) return;
+    if (!venue || isPending || !ratings.areAllRatingsSet) return;
 
     const groupVenueId = venue.groupVenueId;
     saveFeedback.save(
@@ -119,7 +119,8 @@ const VenueRatingsModal = ({
           disabled={
             removeFlow.isRemoving ||
             ratings.areOptionsLoading ||
-            ratings.areRatingsLoading
+            ratings.areRatingsLoading ||
+            !ratings.areAllRatingsSet
           }
         />
       </Modal.Footer>

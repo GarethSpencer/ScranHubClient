@@ -71,7 +71,7 @@ const GroupVenueModal = ({
   };
 
   const handleSaveRatings = () => {
-    if (!venue || isPending) return;
+    if (!venue || isPending || !ratings.areAllRatingsSet) return;
 
     const groupVenueId = venue.groupVenueId;
     ratingsSave.save(
@@ -173,7 +173,8 @@ const GroupVenueModal = ({
                       isBusy ||
                       !details.values.visited ||
                       ratings.areOptionsLoading ||
-                      ratings.areRatingsLoading
+                      ratings.areRatingsLoading ||
+                      !ratings.areAllRatingsSet
                     }
                   />
                   <VenueRatingsRemoveControls

@@ -1,6 +1,7 @@
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
+import RatingChoice from "./RatingChoice";
 import type useVenueRatingsForm from "../../hooks/useVenueRatingsForm";
 
 interface Props {
@@ -10,8 +11,8 @@ interface Props {
 }
 
 const VenueRatingsFields = ({ form, isPending, notVisited = false }: Props) => {
-  const disabled =
-    isPending || notVisited || form.areOptionsLoading || form.areRatingsLoading;
+  const isLoading = form.areOptionsLoading || form.areRatingsLoading;
+  const disabled = isPending || notVisited || isLoading;
 
   return (
     <Row className="g-3 mb-3">
@@ -23,74 +24,48 @@ const VenueRatingsFields = ({ form, isPending, notVisited = false }: Props) => {
         </Col>
       )}
       <Col xs={12}>
-        <Form.Group controlId="updateQualityRating">
-          <Form.Label>Quality Rating</Form.Label>
-          <Form.Select
-            value={form.areRatingsLoading ? "" : form.qualitySelection}
-            onChange={(e) => form.setQualityOptionId(e.target.value)}
-            disabled={disabled}
-          >
-            {form.areRatingsLoading ? (
-              <option value="">Loading...</option>
-            ) : (
-              <>
-                <option value="">None</option>
-                {form.qualityOptions.map((option) => (
-                  <option key={option.optionId} value={option.optionId}>
-                    {option.label}
-                  </option>
-                ))}
-              </>
-            )}
-          </Form.Select>
-        </Form.Group>
+        <RatingChoice
+          name="qualityRating"
+          label="Quality Rating"
+          options={form.qualityOptions}
+          value={form.qualitySelection}
+          isSet={form.isQualitySet}
+          isLoading={isLoading}
+          disabled={disabled}
+          onChange={form.setQualityOptionId}
+        />
       </Col>
       <Col xs={12}>
-        <Form.Group controlId="updateCostRating">
-          <Form.Label>Cost Rating</Form.Label>
-          <Form.Select
-            value={form.areRatingsLoading ? "" : form.costSelection}
-            onChange={(e) => form.setCostOptionId(e.target.value)}
-            disabled={disabled}
-          >
-            {form.areRatingsLoading ? (
-              <option value="">Loading...</option>
-            ) : (
-              <>
-                <option value="">None</option>
-                {form.costOptions.map((option) => (
-                  <option key={option.optionId} value={option.optionId}>
-                    {option.label}
-                  </option>
-                ))}
-              </>
-            )}
-          </Form.Select>
-        </Form.Group>
+        <RatingChoice
+          name="costRating"
+          label="Cost Rating"
+          options={form.costOptions}
+          value={form.costSelection}
+          isSet={form.isCostSet}
+          isLoading={isLoading}
+          disabled={disabled}
+          onChange={form.setCostOptionId}
+        />
       </Col>
       <Col xs={12}>
-        <Form.Group controlId="updateVibeRating">
-          <Form.Label>Vibe Rating</Form.Label>
-          <Form.Select
-            value={form.areRatingsLoading ? "" : form.vibeSelection}
-            onChange={(e) => form.setVibeOptionId(e.target.value)}
-            disabled={disabled}
-          >
-            {form.areRatingsLoading ? (
-              <option value="">Loading...</option>
-            ) : (
-              <>
-                <option value="">None</option>
-                {form.vibeOptions.map((option) => (
-                  <option key={option.optionId} value={option.optionId}>
-                    {option.label}
-                  </option>
-                ))}
-              </>
-            )}
-          </Form.Select>
-        </Form.Group>
+        <RatingChoice
+          name="vibeRating"
+          label="Vibe Rating"
+          options={form.vibeOptions}
+          value={form.vibeSelection}
+          isSet={form.isVibeSet}
+          isLoading={isLoading}
+          disabled={disabled}
+          onChange={form.setVibeOptionId}
+        />
       </Col>
+      {!notVisited && !isLoading && !form.areAllRatingsSet && (
+        <Col xs={12}>
+          <Form.Text className="d-block">
+            Choose an option for all three sets in order to save your ratings.
+          </Form.Text>
+        </Col>
+      )}
     </Row>
   );
 };
