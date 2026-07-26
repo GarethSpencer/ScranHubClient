@@ -2,7 +2,6 @@ import { useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
-import Spinner from "react-bootstrap/Spinner";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import type GroupVenueResult from "../models/results/GroupVenueResult";
@@ -11,6 +10,8 @@ import useVenueDetailsForm from "../hooks/useVenueDetailsForm";
 import useVenueRatingsForm from "../hooks/useVenueRatingsForm";
 import useVenueRatingsRemove from "../hooks/useVenueRatingsRemove";
 import useVenueDelete from "../hooks/useVenueDelete";
+import useSaveFeedback from "../hooks/useSaveFeedback";
+import SaveButton from "./common/SaveButton";
 import VenueDetailsFields from "./venue/VenueDetailsFields";
 import VenueRatingsFields from "./venue/VenueRatingsFields";
 import VenueRatingsRemoveControls from "./venue/VenueRatingsRemoveControls";
@@ -23,62 +24,74 @@ interface Props {
   groupId: string;
   venue: GroupVenueResult | null;
   onClose: () => void;
+  onRatingsSaved?: (groupVenueId: string) => void;
 }
 
-const GroupVenueModal = ({ groupId, venue, onClose }: Props) => {
-  const [isSavingDetails, setIsSavingDetails] = useState(false);
-  const [isSavingRatings, setIsSavingRatings] = useState(false);
+const GroupVenueModal = ({
+  groupId,
+  venue,
+  onClose,
+  onRatingsSaved,
+}: Props) => {
+  const [savedVenueId, setSavedVenueId] = useState<string | null>(null);
 
   const { showToast } = useToast();
 
   const details = useVenueDetailsForm(groupId, venue);
   const ratings = useVenueRatingsForm(groupId, venue);
+  const detailsSave = useSaveFeedback();
+  const ratingsSave = useSaveFeedback();
   const ratingsRemoveFlow = useVenueRatingsRemove(ratings.remove, () => {
     ratings.reset();
     showToast("Ratings removed", "success");
   });
   const deleteFlow = useVenueDelete(details.remove, onClose);
 
-  const isPending =
+  const isBusy =
     details.isUpdating ||
     details.isDeleting ||
     deleteFlow.isDeleting ||
     ratingsRemoveFlow.isRemoving ||
-    isSavingDetails ||
-    isSavingRatings;
+    detailsSave.isSaving ||
+    ratingsSave.isSaving;
+
+  const isPending = isBusy || detailsSave.isBusy || ratingsSave.isBusy;
 
   const canSave = details.canSave;
 
   const handleClose = () => {
-    if (isPending) return;
+    if (isBusy) return;
     onClose();
   };
 
-  const handleSaveDetails = async () => {
+  const handleSaveDetails = () => {
     if (!venue || !canSave || isPending) return;
 
-    setIsSavingDetails(true);
-    try {
-      await details.save();
-    } catch {
-      // A failed mutation already surfaces its own error toast; keep the modal
-      // open so the user can see what failed and retry.
-    } finally {
-      setIsSavingDetails(false);
-    }
+    detailsSave.save(() => details.save(), detailsSave.reset);
   };
 
-  const handleSaveRatings = async () => {
+  const handleSaveRatings = () => {
     if (!venue || isPending) return;
 
-    setIsSavingRatings(true);
-    try {
-      showToast("Ratings updated", "success");
-    } catch {
-      // A failed mutation already surfaces its own error toast; keep the modal
-      // open so the user can see what failed and retry.
-    } finally {
-      setIsSavingRatings(false);
+    const groupVenueId = venue.groupVenueId;
+    ratingsSave.save(
+      () => ratings.save(details.values.visited),
+      () => {
+        setSavedVenueId(groupVenueId);
+        ratingsSave.reset();
+      },
+    );
+  };
+
+  const handleExited = () => {
+    deleteFlow.reset();
+    ratings.reset();
+    detailsSave.reset();
+    ratingsSave.reset();
+
+    if (savedVenueId) {
+      onRatingsSaved?.(savedVenueId);
+      setSavedVenueId(null);
     }
   };
 
@@ -90,17 +103,14 @@ const GroupVenueModal = ({ groupId, venue, onClose }: Props) => {
         details.initialise();
         ratings.reset();
       }}
-      onExited={() => {
-        deleteFlow.reset();
-        ratings.reset();
-      }}
-      backdrop={isPending ? "static" : true}
-      keyboard={!isPending}
+      onExited={handleExited}
+      backdrop={isBusy ? "static" : true}
+      keyboard={!isBusy}
       scrollable
       centered
       dialogClassName="group-venue-modal"
     >
-      <Modal.Header closeButton={!isPending}>
+      <Modal.Header closeButton={!isBusy}>
         <Modal.Title as="h2">{venue?.venueName}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
@@ -121,29 +131,16 @@ const GroupVenueModal = ({ groupId, venue, onClose }: Props) => {
                 </p>
                 <VenueDetailsFields form={details} isPending={isPending} />
                 <div className="d-grid mt-3">
-                  <Button
-                    variant="primary"
+                  <SaveButton
+                    status={detailsSave.status}
                     onClick={handleSaveDetails}
                     disabled={
-                      isPending || !canSave || details.areOptionsLoading
+                      ratingsSave.isBusy ||
+                      isBusy ||
+                      !canSave ||
+                      details.areOptionsLoading
                     }
-                  >
-                    {isSavingDetails ? (
-                      <>
-                        <Spinner
-                          as="span"
-                          animation="border"
-                          size="sm"
-                          role="status"
-                          aria-hidden="true"
-                          className="me-2"
-                        />
-                        Saving...
-                      </>
-                    ) : (
-                      "Save Changes"
-                    )}
-                  </Button>
+                  />
                 </div>
               </Col>
 
@@ -168,32 +165,17 @@ const GroupVenueModal = ({ groupId, venue, onClose }: Props) => {
                   notVisited={!details.values.visited}
                 />
                 <div className="d-grid gap-2">
-                  <Button
-                    variant="primary"
+                  <SaveButton
+                    status={ratingsSave.status}
                     onClick={handleSaveRatings}
                     disabled={
-                      isPending ||
+                      detailsSave.isBusy ||
+                      isBusy ||
                       !details.values.visited ||
                       ratings.areOptionsLoading ||
                       ratings.areRatingsLoading
                     }
-                  >
-                    {isSavingRatings ? (
-                      <>
-                        <Spinner
-                          as="span"
-                          animation="border"
-                          size="sm"
-                          role="status"
-                          aria-hidden="true"
-                          className="me-2"
-                        />
-                        Saving...
-                      </>
-                    ) : (
-                      "Save Changes"
-                    )}
-                  </Button>
+                  />
                   <VenueRatingsRemoveControls
                     removeFlow={ratingsRemoveFlow}
                     hasSavedRatings={ratings.hasSavedRatings}
@@ -211,7 +193,7 @@ const GroupVenueModal = ({ groupId, venue, onClose }: Props) => {
             key="close"
             variant="secondary"
             onClick={handleClose}
-            disabled={isPending}
+            disabled={isBusy}
           >
             Close
           </Button>

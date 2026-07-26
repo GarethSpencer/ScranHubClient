@@ -6,39 +6,56 @@ import Spinner from "react-bootstrap/Spinner";
 import type GroupVenueResult from "../../models/results/GroupVenueResult";
 import useVenueRatingsForm from "../../hooks/useVenueRatingsForm";
 import useVenueRatingsRemove from "../../hooks/useVenueRatingsRemove";
+import useSaveFeedback from "../../hooks/useSaveFeedback";
+import SaveButton from "../common/SaveButton";
 import VenueRatingsFields from "./VenueRatingsFields";
 
 interface Props {
   groupId: string;
   venue: GroupVenueResult | null;
   onClose: () => void;
+  onRatingsSaved?: (groupVenueId: string) => void;
 }
 
-const VenueRatingsModal = ({ groupId, venue, onClose }: Props) => {
-  const [isSaving, setIsSaving] = useState(false);
+const VenueRatingsModal = ({
+  groupId,
+  venue,
+  onClose,
+  onRatingsSaved,
+}: Props) => {
+  const [savedVenueId, setSavedVenueId] = useState<string | null>(null);
 
   const ratings = useVenueRatingsForm(groupId, venue);
+  const saveFeedback = useSaveFeedback();
   const removeFlow = useVenueRatingsRemove(ratings.remove, onClose);
 
-  const isPending = isSaving || removeFlow.isRemoving;
+  const isPending = saveFeedback.isBusy || removeFlow.isRemoving;
 
   const handleClose = () => {
     if (isPending) return;
     onClose();
   };
 
-  const handleSave = async () => {
+  const handleSave = () => {
     if (!venue || isPending) return;
 
-    setIsSaving(true);
-    try {
-      await ratings.save();
-      onClose();
-    } catch {
-      // A failed mutation already surfaces its own error toast; keep the modal
-      // open so the user can retry.
-    } finally {
-      setIsSaving(false);
+    const groupVenueId = venue.groupVenueId;
+    saveFeedback.save(
+      () => ratings.save(),
+      () => {
+        setSavedVenueId(groupVenueId);
+        onClose();
+      },
+    );
+  };
+
+  const handleExited = () => {
+    ratings.reset();
+    saveFeedback.reset();
+
+    if (savedVenueId) {
+      onRatingsSaved?.(savedVenueId);
+      setSavedVenueId(null);
     }
   };
 
@@ -47,7 +64,7 @@ const VenueRatingsModal = ({ groupId, venue, onClose }: Props) => {
       show={venue !== null}
       onHide={handleClose}
       onEntered={ratings.reset}
-      onExited={ratings.reset}
+      onExited={handleExited}
       backdrop={isPending ? "static" : true}
       keyboard={!isPending}
       scrollable
@@ -96,29 +113,15 @@ const VenueRatingsModal = ({ groupId, venue, onClose }: Props) => {
             )}
           </Button>
         )}
-        <Button
-          variant="primary"
+        <SaveButton
+          status={saveFeedback.status}
           onClick={handleSave}
           disabled={
-            isPending || ratings.areOptionsLoading || ratings.areRatingsLoading
+            removeFlow.isRemoving ||
+            ratings.areOptionsLoading ||
+            ratings.areRatingsLoading
           }
-        >
-          {isSaving ? (
-            <>
-              <Spinner
-                as="span"
-                animation="border"
-                size="sm"
-                role="status"
-                aria-hidden="true"
-                className="me-2"
-              />
-              Saving...
-            </>
-          ) : (
-            "Save Changes"
-          )}
-        </Button>
+        />
       </Modal.Footer>
     </Modal>
   );

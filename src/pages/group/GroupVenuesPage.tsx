@@ -22,6 +22,7 @@ import useGroupVenueListing, {
   type VenueListingColumn,
 } from "../../hooks/useGroupVenueListing";
 import useIsMobile from "../../hooks/useIsMobile";
+import useJustRated from "../../hooks/useJustRated";
 import type GroupVenueResult from "../../models/results/GroupVenueResult";
 import { GroupVenueSortParameters } from "../../enums/GroupVenueSortParameters";
 import { SEARCH_PAGE_SIZE } from "../../constants/pagination";
@@ -51,6 +52,8 @@ const GroupVenuesPage = () => {
   const [ratingsVenue, setRatingsVenue] = useState<GroupVenueResult | null>(
     null,
   );
+
+  const { justRatedId, markJustRated } = useJustRated();
 
   const [prevIsMobile, setPrevIsMobile] = useState(isMobile);
   if (prevIsMobile !== isMobile) {
@@ -124,6 +127,7 @@ const GroupVenuesPage = () => {
           groupId={id}
           venue={detailsVenue}
           onClose={() => setDetailsVenue(null)}
+          onRatingsSaved={markJustRated}
         />
       )}
       {isMobile && (
@@ -137,6 +141,7 @@ const GroupVenuesPage = () => {
             groupId={id}
             venue={ratingsVenue}
             onClose={() => setRatingsVenue(null)}
+            onRatingsSaved={markJustRated}
           />
         </>
       )}
@@ -187,6 +192,7 @@ const GroupVenuesPage = () => {
                     vibeOptions={vibeOptions}
                     showDistance={hasUserLocation}
                     onSelect={setDetailsVenue}
+                    justRated={x.groupVenueId === justRatedId}
                   />
                 ))}
               </tbody>
@@ -203,6 +209,7 @@ const GroupVenuesPage = () => {
                 vibeOptions={vibeOptions}
                 onEditDetails={setDetailsVenue}
                 onEditRatings={setRatingsVenue}
+                justRated={x.groupVenueId === justRatedId}
               />
             ))}
           </div>
@@ -280,6 +287,7 @@ const GroupVenuesPage = () => {
                         vibeOptions={vibeOptions}
                         showDistance={hasUserLocation}
                         onSelect={setDetailsVenue}
+                        justRated={x.groupVenueId === justRatedId}
                       />
                     ))}
               </tbody>
@@ -321,6 +329,7 @@ const GroupVenuesPage = () => {
                     vibeOptions={vibeOptions}
                     onEditDetails={setDetailsVenue}
                     onEditRatings={setRatingsVenue}
+                    justRated={x.groupVenueId === justRatedId}
                   />
                 ))}
           </div>

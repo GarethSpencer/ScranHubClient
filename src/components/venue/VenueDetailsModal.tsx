@@ -1,11 +1,10 @@
-import { useState } from "react";
 import Modal from "react-bootstrap/Modal";
-import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
-import Spinner from "react-bootstrap/Spinner";
 import type GroupVenueResult from "../../models/results/GroupVenueResult";
 import useVenueDetailsForm from "../../hooks/useVenueDetailsForm";
 import useVenueDelete from "../../hooks/useVenueDelete";
+import useSaveFeedback from "../../hooks/useSaveFeedback";
+import SaveButton from "../common/SaveButton";
 import VenueDetailsFields from "./VenueDetailsFields";
 import {
   VenueDeleteConfirmMessage,
@@ -19,32 +18,30 @@ interface Props {
 }
 
 const VenueDetailsModal = ({ groupId, venue, onClose }: Props) => {
-  const [isSaving, setIsSaving] = useState(false);
-
   const details = useVenueDetailsForm(groupId, venue);
+  const detailsSave = useSaveFeedback();
   const deleteFlow = useVenueDelete(details.remove, onClose);
 
   const isPending =
-    details.isUpdating || details.isDeleting || deleteFlow.isDeleting || isSaving;
+    details.isUpdating ||
+    details.isDeleting ||
+    deleteFlow.isDeleting ||
+    detailsSave.isBusy;
 
   const handleClose = () => {
     if (isPending) return;
     onClose();
   };
 
-  const handleSave = async () => {
+  const handleSave = () => {
     if (!venue || !details.canSave || isPending) return;
 
-    setIsSaving(true);
-    try {
-      await details.save();
-      onClose();
-    } catch {
-      // A failed mutation already surfaces its own error toast; keep the modal
-      // open so the user can retry.
-    } finally {
-      setIsSaving(false);
-    }
+    detailsSave.save(() => details.save(), onClose);
+  };
+
+  const handleExited = () => {
+    deleteFlow.reset();
+    detailsSave.reset();
   };
 
   return (
@@ -52,7 +49,7 @@ const VenueDetailsModal = ({ groupId, venue, onClose }: Props) => {
       show={venue !== null}
       onHide={handleClose}
       onEntered={details.initialise}
-      onExited={deleteFlow.reset}
+      onExited={handleExited}
       backdrop={isPending ? "static" : true}
       keyboard={!isPending}
       scrollable
@@ -81,30 +78,18 @@ const VenueDetailsModal = ({ groupId, venue, onClose }: Props) => {
       </Modal.Body>
       <Modal.Footer className="modal-footer-stacked gap-2">
         <VenueDeleteFooter deleteFlow={deleteFlow} isPending={isPending}>
-          <Button
+          <SaveButton
             key="save"
-            variant="primary"
+            status={detailsSave.status}
             onClick={handleSave}
             disabled={
-              isPending || !details.canSave || details.areOptionsLoading
+              details.isUpdating ||
+              details.isDeleting ||
+              deleteFlow.isDeleting ||
+              !details.canSave ||
+              details.areOptionsLoading
             }
-          >
-            {isSaving ? (
-              <>
-                <Spinner
-                  as="span"
-                  animation="border"
-                  size="sm"
-                  role="status"
-                  aria-hidden="true"
-                  className="me-2"
-                />
-                Saving...
-              </>
-            ) : (
-              "Save Changes"
-            )}
-          </Button>
+          />
         </VenueDeleteFooter>
       </Modal.Footer>
     </Modal>

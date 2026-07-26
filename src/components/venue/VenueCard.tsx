@@ -12,6 +12,7 @@ interface Props {
   vibeOptions: RatingOptionResult[];
   onEditDetails: (venue: GroupVenueResult) => void;
   onEditRatings: (venue: GroupVenueResult) => void;
+  justRated?: boolean;
 }
 
 const VenueCard = ({
@@ -21,12 +22,13 @@ const VenueCard = ({
   vibeOptions,
   onEditDetails,
   onEditRatings,
+  justRated = false,
 }: Props) => {
   const summaryParts = [venue.venueType, venue.foodType].filter(Boolean);
   const hasRatings = venueHasMyRatings(venue);
 
   return (
-    <div className="venue-card">
+    <div className={`venue-card${justRated ? " venue-card-just-rated" : ""}`}>
       <button
         type="button"
         className="venue-card-zone venue-card-details"

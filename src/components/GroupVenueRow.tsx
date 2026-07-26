@@ -12,6 +12,7 @@ interface Props {
   vibeOptions: RatingOptionResult[];
   showDistance: boolean;
   onSelect: (venue: GroupVenueResult) => void;
+  justRated?: boolean;
 }
 
 const GroupVenueRow = ({
@@ -21,6 +22,7 @@ const GroupVenueRow = ({
   vibeOptions,
   showDistance,
   onSelect,
+  justRated = false,
 }: Props) => {
   const needsRatings = venueNeedsMyRatings(venue);
 
@@ -29,7 +31,7 @@ const GroupVenueRow = ({
       role="button"
       className={`user-select-none group-venue-row${
         needsRatings ? " group-venue-row-needs-ratings" : ""
-      }`}
+      }${justRated ? " group-venue-row-just-rated" : ""}`}
       onClick={() => onSelect(venue)}
     >
       <td>
