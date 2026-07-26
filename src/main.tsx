@@ -15,6 +15,7 @@ import router from "./routes";
 import { RouterProvider } from "react-router-dom";
 import DarkModeProvider from "./contexts/darkMode/DarkModeProvider";
 import ToastProvider from "./contexts/toast/ToastProvider";
+import RealtimeProvider from "./realtime/RealtimeProvider";
 import { queryErrorHandler } from "./contexts/toast/queryErrorHandler";
 
 registerSW({
@@ -46,12 +47,14 @@ createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <AuthProvider>
       <QueryClientProvider client={queryClient}>
-        <DarkModeProvider>
-          <ToastProvider>
-            <RouterProvider router={router} />
-            <ReactQueryDevtools />
-          </ToastProvider>
-        </DarkModeProvider>
+        <RealtimeProvider>
+          <DarkModeProvider>
+            <ToastProvider>
+              <RouterProvider router={router} />
+              <ReactQueryDevtools />
+            </ToastProvider>
+          </DarkModeProvider>
+        </RealtimeProvider>
       </QueryClientProvider>
     </AuthProvider>
   </StrictMode>,

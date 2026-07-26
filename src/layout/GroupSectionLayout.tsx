@@ -4,9 +4,13 @@ import {
   useGetGroup,
   useGetUserGroups,
 } from "../api/controllerHooks/useGroupController";
+import useGroupRealtime from "../realtime/useGroupRealtime";
 
 const GroupSectionLayout = () => {
   const { id = "" } = useParams();
+
+  useGroupRealtime(id);
+
   const { data } = useGetGroup(id);
 
   const { data: userGroups } = useGetUserGroups();

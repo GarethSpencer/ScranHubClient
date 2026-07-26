@@ -85,7 +85,6 @@ const useGroupVenueListing = (
     data: venuesData,
     isLoading: isVenuesLoading,
     isPlaceholderData: isVenuesPlaceholder,
-    isFetching: isVenuesFetching,
     isError: isVenuesError,
   } = useGetVenuesForGroup(groupId, {
     pageNumber: page,
@@ -94,8 +93,7 @@ const useGroupVenueListing = (
     sortDescending,
   });
 
-  const isVenuesPending =
-    isVenuesLoading || isVenuesPlaceholder || isVenuesFetching;
+  const isVenuesPending = isVenuesLoading || isVenuesPlaceholder;
 
   const {
     data: searchData,
