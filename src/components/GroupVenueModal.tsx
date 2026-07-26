@@ -6,11 +6,14 @@ import Spinner from "react-bootstrap/Spinner";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import type GroupVenueResult from "../models/results/GroupVenueResult";
+import useToast from "../contexts/toast/useToast";
 import useVenueDetailsForm from "../hooks/useVenueDetailsForm";
 import useVenueRatingsForm from "../hooks/useVenueRatingsForm";
+import useVenueRatingsRemove from "../hooks/useVenueRatingsRemove";
 import useVenueDelete from "../hooks/useVenueDelete";
 import VenueDetailsFields from "./venue/VenueDetailsFields";
 import VenueRatingsFields from "./venue/VenueRatingsFields";
+import VenueRatingsRemoveControls from "./venue/VenueRatingsRemoveControls";
 import {
   VenueDeleteConfirmMessage,
   VenueDeleteFooter,
@@ -23,17 +26,26 @@ interface Props {
 }
 
 const GroupVenueModal = ({ groupId, venue, onClose }: Props) => {
-  const [isSaving, setIsSaving] = useState(false);
+  const [isSavingDetails, setIsSavingDetails] = useState(false);
+  const [isSavingRatings, setIsSavingRatings] = useState(false);
+
+  const { showToast } = useToast();
 
   const details = useVenueDetailsForm(groupId, venue);
   const ratings = useVenueRatingsForm(groupId, venue);
+  const ratingsRemoveFlow = useVenueRatingsRemove(ratings.remove, () => {
+    ratings.reset();
+    showToast("Ratings removed", "success");
+  });
   const deleteFlow = useVenueDelete(details.remove, onClose);
 
   const isPending =
     details.isUpdating ||
     details.isDeleting ||
     deleteFlow.isDeleting ||
-    isSaving;
+    ratingsRemoveFlow.isRemoving ||
+    isSavingDetails ||
+    isSavingRatings;
 
   const canSave = details.canSave;
 
@@ -42,21 +54,31 @@ const GroupVenueModal = ({ groupId, venue, onClose }: Props) => {
     onClose();
   };
 
-  const handleSave = async () => {
+  const handleSaveDetails = async () => {
     if (!venue || !canSave || isPending) return;
 
-    setIsSaving(true);
+    setIsSavingDetails(true);
     try {
-      await Promise.all([
-        details.save(),
-        details.values.visited ? ratings.save() : Promise.resolve(),
-      ]);
-      onClose();
+      await details.save();
     } catch {
       // A failed mutation already surfaces its own error toast; keep the modal
       // open so the user can see what failed and retry.
     } finally {
-      setIsSaving(false);
+      setIsSavingDetails(false);
+    }
+  };
+
+  const handleSaveRatings = async () => {
+    if (!venue || isPending) return;
+
+    setIsSavingRatings(true);
+    try {
+      showToast("Ratings updated", "success");
+    } catch {
+      // A failed mutation already surfaces its own error toast; keep the modal
+      // open so the user can see what failed and retry.
+    } finally {
+      setIsSavingRatings(false);
     }
   };
 
@@ -88,7 +110,7 @@ const GroupVenueModal = ({ groupId, venue, onClose }: Props) => {
           <Form
             onSubmit={(e) => {
               e.preventDefault();
-              handleSave();
+              handleSaveDetails();
             }}
           >
             <Row className="g-3 align-items-stretch">
@@ -98,6 +120,31 @@ const GroupVenueModal = ({ groupId, venue, onClose }: Props) => {
                   These can be amended by anybody in your group.
                 </p>
                 <VenueDetailsFields form={details} isPending={isPending} />
+                <div className="d-grid mt-3">
+                  <Button
+                    variant="primary"
+                    onClick={handleSaveDetails}
+                    disabled={
+                      isPending || !canSave || details.areOptionsLoading
+                    }
+                  >
+                    {isSavingDetails ? (
+                      <>
+                        <Spinner
+                          as="span"
+                          animation="border"
+                          size="sm"
+                          role="status"
+                          aria-hidden="true"
+                          className="me-2"
+                        />
+                        Saving...
+                      </>
+                    ) : (
+                      "Save Changes"
+                    )}
+                  </Button>
+                </div>
               </Col>
 
               <Col xs={12} md="auto" className="d-md-none">
@@ -120,6 +167,39 @@ const GroupVenueModal = ({ groupId, venue, onClose }: Props) => {
                   isPending={isPending}
                   notVisited={!details.values.visited}
                 />
+                <div className="d-grid gap-2">
+                  <Button
+                    variant="primary"
+                    onClick={handleSaveRatings}
+                    disabled={
+                      isPending ||
+                      !details.values.visited ||
+                      ratings.areOptionsLoading ||
+                      ratings.areRatingsLoading
+                    }
+                  >
+                    {isSavingRatings ? (
+                      <>
+                        <Spinner
+                          as="span"
+                          animation="border"
+                          size="sm"
+                          role="status"
+                          aria-hidden="true"
+                          className="me-2"
+                        />
+                        Saving...
+                      </>
+                    ) : (
+                      "Save Changes"
+                    )}
+                  </Button>
+                  <VenueRatingsRemoveControls
+                    removeFlow={ratingsRemoveFlow}
+                    hasSavedRatings={ratings.hasSavedRatings}
+                    isPending={isPending}
+                  />
+                </div>
               </Col>
             </Row>
           </Form>
@@ -128,26 +208,12 @@ const GroupVenueModal = ({ groupId, venue, onClose }: Props) => {
       <Modal.Footer className="modal-footer-stacked gap-2">
         <VenueDeleteFooter deleteFlow={deleteFlow} isPending={isPending}>
           <Button
-            key="save"
-            variant="primary"
-            onClick={handleSave}
-            disabled={isPending || !canSave || details.areOptionsLoading}
+            key="close"
+            variant="secondary"
+            onClick={handleClose}
+            disabled={isPending}
           >
-            {isSaving ? (
-              <>
-                <Spinner
-                  as="span"
-                  animation="border"
-                  size="sm"
-                  role="status"
-                  aria-hidden="true"
-                  className="me-2"
-                />
-                Saving...
-              </>
-            ) : (
-              "Save Changes"
-            )}
+            Close
           </Button>
         </VenueDeleteFooter>
       </Modal.Footer>

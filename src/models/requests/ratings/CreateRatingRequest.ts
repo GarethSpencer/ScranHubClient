@@ -1,4 +1,4 @@
 export default interface CreateRatingRequest {
   groupVenueId: string;
-  optionId: string;
+  optionId: string | null;
 }

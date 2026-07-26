@@ -11,33 +11,29 @@ import type GroupVenueResult from "../models/results/GroupVenueResult";
 
 const persistRating = (
   groupVenueId: string,
-  previous: { ratingId: string; optionId: string } | undefined,
+  previous: { ratingId: string; optionId: string | null } | undefined,
   selectedOptionId: string,
+  canCreate: boolean,
   create: (request: {
     groupVenueId: string;
-    optionId: string;
+    optionId: string | null;
   }) => Promise<unknown>,
   update: (request: {
     groupVenueId: string;
     ratingId: string;
-    request: { optionId: string };
-  }) => Promise<unknown>,
-  remove: (request: {
-    ratingId: string;
-    groupVenueId: string;
+    request: { optionId: string | null };
   }) => Promise<unknown>,
 ) => {
-  if (!previous && selectedOptionId) {
-    return create({ groupVenueId, optionId: selectedOptionId });
+  const optionId = selectedOptionId || null;
+
+  if (!previous) {
+    return canCreate ? create({ groupVenueId, optionId }) : Promise.resolve();
   }
-  if (previous && !selectedOptionId) {
-    return remove({ ratingId: previous.ratingId, groupVenueId });
-  }
-  if (previous && selectedOptionId && previous.optionId !== selectedOptionId) {
+  if ((previous.optionId ?? null) !== optionId) {
     return update({
       groupVenueId,
       ratingId: previous.ratingId,
-      request: { optionId: selectedOptionId },
+      request: { optionId },
     });
   }
   return Promise.resolve();
@@ -52,6 +48,14 @@ const useVenueRatingsForm = (
   const [qualityOptionId, setQualityOptionId] = useState<string | null>(null);
   const [costOptionId, setCostOptionId] = useState<string | null>(null);
   const [vibeOptionId, setVibeOptionId] = useState<string | null>(null);
+
+  const [wasRemoved, setWasRemoved] = useState(false);
+
+  const selectOption =
+    (setOptionId: (optionId: string) => void) => (optionId: string) => {
+      setWasRemoved(false);
+      setOptionId(optionId);
+    };
 
   const { data: qualityOptionData, isLoading: isQualityOptionsLoading } =
     useGetOptionsForGroup("QualityOption", groupId);
@@ -149,38 +153,71 @@ const useVenueRatingsForm = (
     { silent: true },
   );
 
+  const hasSavedRatings =
+    currentQualityRating != null ||
+    currentCostRating != null ||
+    currentVibeRating != null;
+
   const reset = () => {
     setQualityOptionId(null);
     setCostOptionId(null);
     setVibeOptionId(null);
+    setWasRemoved(false);
   };
 
-  const save = () => {
+  const remove = () => {
     if (!venue) return Promise.resolve();
+    const groupVenueId = venue.groupVenueId;
+    setWasRemoved(true);
+    return Promise.all([
+      currentQualityRating
+        ? deleteQualityRating({
+            ratingId: currentQualityRating.ratingId,
+            groupVenueId,
+          })
+        : Promise.resolve(),
+      currentCostRating
+        ? deleteCostRating({
+            ratingId: currentCostRating.ratingId,
+            groupVenueId,
+          })
+        : Promise.resolve(),
+      currentVibeRating
+        ? deleteVibeRating({
+            ratingId: currentVibeRating.ratingId,
+            groupVenueId,
+          })
+        : Promise.resolve(),
+    ]);
+  };
+
+  const save = (isVisited: boolean = venue?.visited ?? false) => {
+    if (!venue) return Promise.resolve();
+    const canCreate = isVisited && !wasRemoved;
     return Promise.all([
       persistRating(
         venue.groupVenueId,
         currentQualityRating,
         qualitySelection,
+        canCreate,
         createQualityRating,
         updateQualityRating,
-        deleteQualityRating,
       ),
       persistRating(
         venue.groupVenueId,
         currentCostRating,
         costSelection,
+        canCreate,
         createCostRating,
         updateCostRating,
-        deleteCostRating,
       ),
       persistRating(
         venue.groupVenueId,
         currentVibeRating,
         vibeSelection,
+        canCreate,
         createVibeRating,
         updateVibeRating,
-        deleteVibeRating,
       ),
     ]);
   };
@@ -189,16 +226,18 @@ const useVenueRatingsForm = (
     qualitySelection,
     costSelection,
     vibeSelection,
-    setQualityOptionId,
-    setCostOptionId,
-    setVibeOptionId,
+    setQualityOptionId: selectOption(setQualityOptionId),
+    setCostOptionId: selectOption(setCostOptionId),
+    setVibeOptionId: selectOption(setVibeOptionId),
     qualityOptions,
     costOptions,
     vibeOptions,
     areOptionsLoading,
     areRatingsLoading,
+    hasSavedRatings,
     reset,
     save,
+    remove,
   };
 };
 

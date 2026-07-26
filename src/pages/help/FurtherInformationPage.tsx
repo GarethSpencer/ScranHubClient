@@ -67,7 +67,7 @@ const FurtherInformationPage = () => {
         </Accordion.Item>
         <Accordion.Item eventKey="manage-venues">
           <Accordion.Header as="h3">
-            <span className="fw-semibold">Manage Venues</span>
+            <span className="fw-semibold">Create & Rate</span>
           </Accordion.Header>
           <Accordion.Body>
             <p className="text-muted small mb-3">

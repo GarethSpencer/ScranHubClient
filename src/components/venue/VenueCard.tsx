@@ -3,7 +3,7 @@ import type GroupVenueResult from "../../models/results/GroupVenueResult";
 import type RatingOptionResult from "../../models/results/generic/RatingOptionResult";
 import RatingBar from "../common/RatingBar";
 import VisitedIndicator from "./VisitedIndicator";
-import { formatDistanceMiles } from "../../lib/venueInfo";
+import { formatDistanceMiles, venueHasMyRatings } from "../../lib/venueInfo";
 
 interface Props {
   venue: GroupVenueResult;
@@ -23,10 +23,7 @@ const VenueCard = ({
   onEditRatings,
 }: Props) => {
   const summaryParts = [venue.venueType, venue.foodType].filter(Boolean);
-  const hasRatings =
-    venue.myQualityRating != null ||
-    venue.myCostRating != null ||
-    venue.myVibeRating != null;
+  const hasRatings = venueHasMyRatings(venue);
 
   return (
     <div className="venue-card">
@@ -62,7 +59,9 @@ const VenueCard = ({
       {venue.visited && (
         <button
           type="button"
-          className="venue-card-zone venue-card-ratings"
+          className={`venue-card-zone venue-card-ratings${
+            hasRatings ? "" : " venue-card-ratings-empty"
+          }`}
           onClick={() => onEditRatings(venue)}
           aria-label={`${hasRatings ? "Edit" : "Add"} your ratings for ${venue.venueName}`}
         >

@@ -1,8 +1,9 @@
+import Badge from "react-bootstrap/Badge";
 import type GroupVenueResult from "../models/results/GroupVenueResult";
 import type RatingOptionResult from "../models/results/generic/RatingOptionResult";
 import RatingBar from "./common/RatingBar";
 import VisitedIndicator from "./venue/VisitedIndicator";
-import { formatDistanceMiles } from "../lib/venueInfo";
+import { formatDistanceMiles, venueNeedsMyRatings } from "../lib/venueInfo";
 
 interface Props {
   venue: GroupVenueResult;
@@ -20,39 +21,54 @@ const GroupVenueRow = ({
   vibeOptions,
   showDistance,
   onSelect,
-}: Props) => (
-  <tr
-    role="button"
-    className="user-select-none group-venue-row"
-    onClick={() => onSelect(venue)}
-  >
-    <td>{venue.venueName}</td>
-    {showDistance && (
+}: Props) => {
+  const needsRatings = venueNeedsMyRatings(venue);
+
+  return (
+    <tr
+      role="button"
+      className={`user-select-none group-venue-row${
+        needsRatings ? " group-venue-row-needs-ratings" : ""
+      }`}
+      onClick={() => onSelect(venue)}
+    >
       <td>
-        {venue.distanceMiles != null
-          ? formatDistanceMiles(venue.distanceMiles)
-          : "—"}
+        <span className="venue-name-cell">
+          <span className="text-break">{venue.venueName}</span>
+          {needsRatings && (
+            <Badge bg="success" pill className="venue-needs-ratings">
+              Add Ratings
+            </Badge>
+          )}
+        </span>
       </td>
-    )}
-    <td>
-      <VisitedIndicator
-        visited={venue.visited}
-        visitedOn={venue.visitedOn}
-        size={18}
-      />
-    </td>
-    <td>{venue.venueType}</td>
-    <td>{venue.foodType}</td>
-    <td>
-      <RatingBar average={venue.myQualityRating} options={qualityOptions} />
-    </td>
-    <td>
-      <RatingBar average={venue.myCostRating} options={costOptions} />
-    </td>
-    <td>
-      <RatingBar average={venue.myVibeRating} options={vibeOptions} />
-    </td>
-  </tr>
-);
+      {showDistance && (
+        <td>
+          {venue.distanceMiles != null
+            ? formatDistanceMiles(venue.distanceMiles)
+            : "—"}
+        </td>
+      )}
+      <td>
+        <VisitedIndicator
+          visited={venue.visited}
+          visitedOn={venue.visitedOn}
+          size={18}
+        />
+      </td>
+      <td>{venue.venueType}</td>
+      <td>{venue.foodType}</td>
+      <td>
+        <RatingBar average={venue.myQualityRating} options={qualityOptions} />
+      </td>
+      <td>
+        <RatingBar average={venue.myCostRating} options={costOptions} />
+      </td>
+      <td>
+        <RatingBar average={venue.myVibeRating} options={vibeOptions} />
+      </td>
+    </tr>
+  );
+};
 
 export default GroupVenueRow;

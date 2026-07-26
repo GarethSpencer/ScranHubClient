@@ -231,6 +231,32 @@
 .group-venue-table > thead > tr > th:first-child,
 .group-venue-table > tbody > tr > td:first-child {
   min-width: 9rem;
+  border-left: 0.1875rem solid transparent;
+}
+
+.group-venue-table > tbody > tr.group-venue-row-needs-ratings > td:first-child {
+  border-left-color: var(--bs-success);
+}
+
+.venue-name-cell {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.15rem 0.4rem;
+  min-width: 0;
+}
+
+.venue-name-cell .venue-needs-ratings {
+  --bs-badge-padding-x: 0.6em;
+  --bs-badge-padding-y: 0.35em;
+  --bs-badge-font-size: 0.75rem;
+
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  gap: 0.3rem;
+  white-space: nowrap;
 }
 
 @include media-breakpoint-down(md) {
@@ -446,6 +472,39 @@
 
 .venue-card-ratings {
   border-top: 1px solid var(--bs-border-color);
+}
+
+.venue-card-zone.venue-card-ratings-empty {
+  background-color: var(--bs-success);
+  border-top-color: var(--bs-success);
+
+  .venue-card-subheading,
+  .venue-card-zone-icon {
+    color: #fff;
+    opacity: 1;
+  }
+
+  &:active {
+    background-color: color-mix(in srgb, var(--bs-success) 85%, #000);
+
+    .venue-card-zone-icon {
+      color: #fff;
+    }
+  }
+
+  &:focus-visible {
+    outline-color: #fff;
+  }
+}
+
+@media (hover: hover) {
+  .venue-card-zone.venue-card-ratings-empty:hover {
+    background-color: color-mix(in srgb, var(--bs-success) 85%, #000);
+  }
+
+  .venue-card-zone.venue-card-ratings-empty:hover .venue-card-zone-icon {
+    color: #fff;
+  }
 }
 
 .venue-card-title {

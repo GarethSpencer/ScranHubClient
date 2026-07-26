@@ -12,6 +12,9 @@ export default interface GroupVenueResult {
   myCostRating?: number;
   myQualityRating?: number;
   myVibeRating?: number;
+  myCostRated: boolean;
+  myQualityRated: boolean;
+  myVibeRated: boolean;
   costRatingVotes?: number;
   qualityRatingVotes?: number;
   vibeRatingVotes?: number;

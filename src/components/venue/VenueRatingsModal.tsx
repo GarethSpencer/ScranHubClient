@@ -5,6 +5,7 @@ import Form from "react-bootstrap/Form";
 import Spinner from "react-bootstrap/Spinner";
 import type GroupVenueResult from "../../models/results/GroupVenueResult";
 import useVenueRatingsForm from "../../hooks/useVenueRatingsForm";
+import useVenueRatingsRemove from "../../hooks/useVenueRatingsRemove";
 import VenueRatingsFields from "./VenueRatingsFields";
 
 interface Props {
@@ -17,8 +18,9 @@ const VenueRatingsModal = ({ groupId, venue, onClose }: Props) => {
   const [isSaving, setIsSaving] = useState(false);
 
   const ratings = useVenueRatingsForm(groupId, venue);
+  const removeFlow = useVenueRatingsRemove(ratings.remove, onClose);
 
-  const isPending = isSaving;
+  const isPending = isSaving || removeFlow.isRemoving;
 
   const handleClose = () => {
     if (isPending) return;
@@ -71,6 +73,29 @@ const VenueRatingsModal = ({ groupId, venue, onClose }: Props) => {
         </Form>
       </Modal.Body>
       <Modal.Footer className="modal-footer-stacked gap-2">
+        {ratings.hasSavedRatings && (
+          <Button
+            variant="outline-danger"
+            onClick={removeFlow.remove}
+            disabled={isPending || ratings.areRatingsLoading}
+          >
+            {removeFlow.isRemoving ? (
+              <>
+                <Spinner
+                  as="span"
+                  animation="border"
+                  size="sm"
+                  role="status"
+                  aria-hidden="true"
+                  className="me-2"
+                />
+                Removing...
+              </>
+            ) : (
+              "Remove Ratings"
+            )}
+          </Button>
+        )}
         <Button
           variant="primary"
           onClick={handleSave}

@@ -16,16 +16,16 @@ interface Props {
 interface UserRatingRow {
   userId: string;
   displayName: string;
-  qualityOptionId?: string;
-  costOptionId?: string;
-  vibeOptionId?: string;
+  qualityOptionId?: string | null;
+  costOptionId?: string | null;
+  vibeOptionId?: string | null;
 }
 
 const displayOrderForOption = (
   options: RatingOptionResult[],
-  optionId: string | undefined,
+  optionId: string | null | undefined,
 ) =>
-  optionId === undefined
+  optionId == null
     ? undefined
     : options.find((option) => option.optionId === optionId)?.displayOrder;
 

@@ -1,3 +1,3 @@
 export default interface UpdateRatingRequest {
-  optionId: string;
+  optionId: string | null;
 }

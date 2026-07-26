@@ -25,7 +25,11 @@ const GroupSectionLayout = () => {
       }
       tabs={[
         { label: "Summary", to: `/group/${id}`, end: true },
-        { label: "Manage Venues", to: `/group/${id}/manage`, end: true },
+        {
+          label: "Create & Rate",
+          to: `/group/${id}/manage`,
+          end: true,
+        },
         { label: "Manage Options", to: `/group/${id}/options` },
         { label: "Group Members", to: `/group/${id}/users`, end: true },
       ]}
