@@ -104,6 +104,7 @@ export const useCreateGroupVenue = (groupId: string) => {
       queryClient.invalidateQueries({
         queryKey: ["groups", groupId, "venues"],
       });
+      queryClient.invalidateQueries({ queryKey: ["userGroups"] });
       if (data.message) showToast(data.message, "success");
     },
   });
@@ -127,6 +128,7 @@ export const useUpdateGroupVenue = (groupId: string) => {
       queryClient.invalidateQueries({
         queryKey: ["groups", groupId, "venues"],
       });
+      queryClient.invalidateQueries({ queryKey: ["userGroups"] });
       if (data.message) showToast(data.message, "success");
     },
   });
@@ -143,6 +145,7 @@ export const useDeleteGroupVenue = (groupId: string) => {
       await queryClient.invalidateQueries({
         queryKey: ["groups", groupId, "venues"],
       });
+      queryClient.invalidateQueries({ queryKey: ["userGroups"] });
       if (data.message) showToast(data.message, "success");
     },
   });

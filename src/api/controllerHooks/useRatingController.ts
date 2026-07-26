@@ -32,6 +32,7 @@ const invalidateRatingQueries = (
   queryClient.invalidateQueries({ queryKey: [controller, groupId, "me"] });
   queryClient.invalidateQueries({ queryKey: [controller, groupId, "group"] });
   queryClient.invalidateQueries({ queryKey: ["groups", groupId, "venues"] });
+  queryClient.invalidateQueries({ queryKey: ["userGroups"] });
 };
 
 export const useCreateRating = (

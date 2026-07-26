@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Badge from "react-bootstrap/Badge";
 import Card from "react-bootstrap/Card";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
@@ -50,9 +51,7 @@ const HomePageGroupList = () => {
     const isOwner = x.createdBy === currentUserId;
 
     if (!isOwner) {
-      return (
-        <span className="group-card-avatar flex-shrink-0">{content}</span>
-      );
+      return <span className="group-card-avatar flex-shrink-0">{content}</span>;
     }
 
     return (
@@ -99,9 +98,18 @@ const HomePageGroupList = () => {
                 >
                   <Card.Body className="d-flex align-items-center gap-3">
                     {renderAvatar(x)}
-                    <Card.Text className="lead mb-0 text-break flex-grow-1 group-card-name">
-                      {x.groupName}
-                    </Card.Text>
+                    <div className="flex-grow-1 min-width-0">
+                      <Card.Text className="lead mb-0 text-break group-card-name">
+                        {x.groupName}
+                      </Card.Text>
+                      {(x.venuesToRate ?? 0) > 0 && (
+                        <Badge bg="danger" pill className="group-card-to-rate">
+                          {x.venuesToRate === 1
+                            ? "1 Venue to Rate"
+                            : `${x.venuesToRate} Venues to Rate`}
+                        </Badge>
+                      )}
+                    </div>
                     <div className="d-flex flex-column gap-1 flex-shrink-0 text-end small">
                       <span className="group-card-stat">
                         Members: <strong>{x.userCount}</strong>

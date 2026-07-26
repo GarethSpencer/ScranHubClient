@@ -1,10 +1,18 @@
 import { Link, useParams } from "react-router-dom";
 import SectionLayout from "./SectionLayout";
-import { useGetGroup } from "../api/controllerHooks/useGroupController";
+import {
+  useGetGroup,
+  useGetUserGroups,
+} from "../api/controllerHooks/useGroupController";
 
 const GroupSectionLayout = () => {
   const { id = "" } = useParams();
   const { data } = useGetGroup(id);
+
+  const { data: userGroups } = useGetUserGroups();
+  const venuesToRate =
+    userGroups?.userGroups?.find((group) => group.groupId === id)
+      ?.venuesToRate ?? 0;
 
   const groupName = data?.group?.groupName ?? "Group";
   const icon = data?.group?.icon;
@@ -26,9 +34,11 @@ const GroupSectionLayout = () => {
       tabs={[
         { label: "Summary", to: `/group/${id}`, end: true },
         {
-          label: "Create & Rate",
+          label: "Create & Rate",
           to: `/group/${id}/manage`,
           end: true,
+          badgeCount: venuesToRate,
+          badgeLabel: "venues to rate",
         },
         { label: "Manage Options", to: `/group/${id}/options` },
         { label: "Group Members", to: `/group/${id}/users`, end: true },

@@ -731,6 +731,16 @@ $switch-knob-tick-bg: switch-knob-bg("M-1.5 0.1 -0.5 1.2 1.5 -1.1", $success);
   font-weight: 700;
 }
 
+.min-width-0 {
+  min-width: 0;
+}
+
+.group-card-to-rate {
+  --bs-badge-font-size: 0.75rem;
+
+  margin-top: 0.35rem;
+}
+
 .group-card-avatar {
   display: flex;
   align-items: center;
@@ -916,6 +926,15 @@ $switch-knob-tick-bg: switch-knob-bg("M-1.5 0.1 -0.5 1.2 1.5 -1.1", $success);
     padding-right: 0.5rem;
     line-height: 1.2;
     min-height: 3.5rem;
+    position: relative;
+  }
+
+  .section-tab-badge {
+    --bs-badge-font-size: 0.65rem;
+
+    position: absolute;
+    top: 0.2rem;
+    right: 0.2rem;
   }
 }
 
@@ -923,8 +942,16 @@ $switch-knob-tick-bg: switch-knob-bg("M-1.5 0.1 -0.5 1.2 1.5 -1.1", $success);
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 0.4rem;
   text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
   background-color: rgba(0, 0, 0, 0.45);
+}
+
+.section-tab-badge {
+  --bs-badge-font-size: 0.7rem;
+
+  flex-shrink: 0;
+  text-shadow: none;
 }
 
 .section-tabs .nav-link:hover {

@@ -7,5 +7,6 @@ export default interface GroupResult {
   displayName: string;
   userCount: number;
   venueCount: number;
+  venuesToRate?: number;
   icon?: string;
 }
