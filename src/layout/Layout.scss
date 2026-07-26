@@ -260,17 +260,20 @@
 }
 
 @include media-breakpoint-down(md) {
-  .group-venue-modal.modal-dialog-scrollable,
-  .create-group-modal.modal-dialog-scrollable {
+  .modal .modal-dialog {
     height: auto;
-    max-height: 80vh;
-    max-height: 80dvh;
+    max-height: 70vh;
+    max-height: 70dvh;
   }
 
-  .group-venue-modal.modal-dialog-scrollable .modal-content,
-  .create-group-modal.modal-dialog-scrollable .modal-content {
-    max-height: 80vh;
-    max-height: 80dvh;
+  .modal .modal-dialog > .modal-content {
+    max-height: 70vh;
+    max-height: 70dvh;
+    overflow: hidden;
+  }
+
+  .modal .modal-dialog > .modal-content > .modal-body {
+    overflow-y: auto;
   }
 }
 
