@@ -15,8 +15,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import useAuth from "../auth/useAuth";
 import RealtimeContext from "./realtimeContext";
 import {
-  applyGroupChange,
-  applyUserChange,
+  createRealtimeInvalidator,
   invalidateAfterReconnect,
   type GroupChangedEvent,
   type UserChangedEvent,
@@ -74,12 +73,14 @@ const RealtimeProvider = ({ children }: Props) => {
       )
       .build();
 
+    const invalidator = createRealtimeInvalidator(queryClient);
+
     connection.on("GroupChanged", (event: GroupChangedEvent) =>
-      applyGroupChange(queryClient, event),
+      invalidator.groupChanged(event),
     );
 
     connection.on("UserChanged", (event: UserChangedEvent) =>
-      applyUserChange(queryClient, event),
+      invalidator.userChanged(event),
     );
 
     connection.onreconnecting(() => setIsConnected(false));
@@ -113,6 +114,7 @@ const RealtimeProvider = ({ children }: Props) => {
       cancelled = true;
       connectionRef.current = null;
       setIsConnected(false);
+      invalidator.dispose();
       connection.stop().catch(() => {});
     };
   }, [isAuthenticated, queryClient, joinWatchedGroups]);

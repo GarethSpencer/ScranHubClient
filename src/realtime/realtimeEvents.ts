@@ -72,14 +72,7 @@ const keysForEntity = (
   }
 };
 
-export const applyGroupChange = (
-  queryClient: QueryClient,
-  { groupId, entity }: GroupChangedEvent,
-) => {
-  for (const queryKey of keysForEntity(groupId, entity)) {
-    queryClient.invalidateQueries({ queryKey });
-  }
-};
+const BURST_WINDOW_MS = 200;
 
 const keysForUserEntity = (entity: UserChangeEntity): QueryKey[] => {
   switch (entity) {
@@ -88,13 +81,41 @@ const keysForUserEntity = (entity: UserChangeEntity): QueryKey[] => {
   }
 };
 
-export const applyUserChange = (
-  queryClient: QueryClient,
-  { entity }: UserChangedEvent,
-) => {
-  for (const queryKey of keysForUserEntity(entity)) {
-    queryClient.invalidateQueries({ queryKey });
-  }
+export const createRealtimeInvalidator = (queryClient: QueryClient) => {
+  const pendingKeys = new Map<string, QueryKey>();
+  let timer: number | null = null;
+
+  const flush = () => {
+    timer = null;
+    const queryKeys = [...pendingKeys.values()];
+    pendingKeys.clear();
+
+    for (const queryKey of queryKeys) {
+      queryClient.invalidateQueries({ queryKey });
+    }
+  };
+
+  const enqueue = (queryKeys: QueryKey[]) => {
+    for (const queryKey of queryKeys) {
+      pendingKeys.set(JSON.stringify(queryKey), queryKey);
+    }
+
+    timer ??= window.setTimeout(flush, BURST_WINDOW_MS);
+  };
+
+  return {
+    groupChanged: ({ groupId, entity }: GroupChangedEvent) =>
+      enqueue(keysForEntity(groupId, entity)),
+
+    userChanged: ({ entity }: UserChangedEvent) =>
+      enqueue(keysForUserEntity(entity)),
+
+    dispose: () => {
+      if (timer !== null) window.clearTimeout(timer);
+      timer = null;
+      pendingKeys.clear();
+    },
+  };
 };
 
 const externallyBilledKeys = ["googlePlaceDetails"];
