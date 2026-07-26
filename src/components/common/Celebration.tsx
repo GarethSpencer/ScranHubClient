@@ -42,7 +42,7 @@ const createPieces = () =>
 const prefersReducedMotion = () =>
   window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-const CELEBRATION_VIBRATION = [12, 45, 12];
+const CELEBRATION_VIBRATION = [50, 90, 50];
 
 const vibrate = () => {
   if ("vibrate" in navigator) navigator.vibrate(CELEBRATION_VIBRATION);
