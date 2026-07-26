@@ -11,6 +11,7 @@ ScranHub is a web app for groups of friends to track and rate the places they ea
 - **Venues & ratings** — add places to a group that you'd like to dine together, and then rate them on configurable **quality**, **cost** and **vibe** scales.
 - **Google Maps integration** — _(optional)_ search real places via Google Places autocomplete when adding or editing a venue, or when setting your personal start location in **My Details**. View the selected venue on a map on the summary screen, with a link through to Google Maps — showing directions from your start location when one is set. The map follows the app's light/dark theme. Degrades gracefully to plain text entry when no key is configured.
 - **Summaries** — two summary views of every venue in a group showing average ratings and how each member voted, with sorting and filtering.
+- **Live updates** — changes made by other users appear automatically without needing a refresh. Ratings, venues, options and group membership update in place while you're on a group's pages, and friend requests arrive as they're sent and responded to. Backed by a SignalR connection to the API, which pushes only what changed so the client can refetch it through its own authenticated requests.
 - **Distance to venues** — once you've set a start location, each venue shows how far it is from you in miles across the venue and summary pages, as a sortable column so you can surface what's nearest. _(Requires Google Maps.)_
 - **Custom rating options** — each group can configure its own food types, venue types, and quality/cost/vibe rating scales, with drag-and-drop reordering. So you can personalise each group to the people using it.
 - **Admin** — an API-protected area for managing users and groups across the platform.
@@ -26,6 +27,7 @@ ScranHub is a web app for groups of friends to track and rate the places they ea
 | Build tool    | [Vite](https://vite.dev/)                                                                                 |
 | Routing       | [React Router](https://reactrouter.com/)                                                                  |
 | Data fetching | [TanStack Query](https://tanstack.com/query) + [Axios](https://axios-http.com/)                           |
+| Realtime      | [SignalR](https://learn.microsoft.com/aspnet/core/signalr/introduction) (`@microsoft/signalr`)            |
 | UI            | [React-Bootstrap](https://react-bootstrap.netlify.app/) + [Bootstrap 5](https://getbootstrap.com/) (SCSS) |
 | Drag & drop   | [dnd kit](https://dndkit.com/)                                                                            |
 | Auth          | [Auth0](https://auth0.com/) (`@auth0/auth0-react`)                                                        |
@@ -116,6 +118,7 @@ src/
   models/       Request/response/result types
   navigation/   Section and tab definitions
   pages/        Route-level pages, grouped by feature
+  realtime/     SignalR connection and the mapping from pushed events to cache invalidations
 ```
 
 ## Deployment
