@@ -88,16 +88,14 @@ const FurtherInformationPage = () => {
               When viewing venues on a mobile device, the venues are shown as
               individual cards and are split into two sections (venue info and
               rating details) which are individually interactive. When viewing
-              on a desktop device the venues are shown in a table, and all
-              details are displayed at once by selecting the relevant row. To
-              edit the details of a venue, or to delete a venue, select any
-              existing venue from this view.
+              on a desktop device the venues are shown in a table, and both
+              sections are displayed at once by selecting the relevant row.
             </p>
             <p className="text-muted small mb-0">
-              This page is also used to provide ratings for each venue. In
-              mobile view, ratings can only be provided once a venue has been
-              marked as visited, to optimise the user experience. In desktop
-              view, venues can be rated at any time.
+              You can edit the details of a venue, or delete a venue, from the
+              venue info section. You can provide ratings for each venue in the
+              rating details section. Ratings can only be provided once a venue
+              has been marked as visited.
             </p>
           </Accordion.Body>
         </Accordion.Item>
