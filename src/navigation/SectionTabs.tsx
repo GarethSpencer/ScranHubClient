@@ -10,7 +10,7 @@ export interface SectionTab {
   end?: boolean;
   badgeCount?: number;
   badgeLabel?: string;
-  celebrateAtZero?: boolean;
+  shouldCelebrateAtZero?: () => boolean;
 }
 
 interface Props {
@@ -32,18 +32,28 @@ const SectionTabs = ({ tabs, className }: Props) => {
         variant="tabs"
         className={["section-tabs", className].filter(Boolean).join(" ")}
       >
-        {tabs.map((tab) => (
-          <Nav.Item key={tab.to}>
-            <Nav.Link as={NavLink} to={tab.to} end={tab.end}>
-              {tab.label}
-              <SectionTabBadge
-                count={tab.badgeCount ?? 0}
-                label={tab.badgeLabel}
-                onCleared={tab.celebrateAtZero ? startCelebrating : undefined}
-              />
-            </Nav.Link>
-          </Nav.Item>
-        ))}
+        {tabs.map((tab) => {
+          const shouldCelebrate = tab.shouldCelebrateAtZero;
+
+          return (
+            <Nav.Item key={tab.to}>
+              <Nav.Link as={NavLink} to={tab.to} end={tab.end}>
+                {tab.label}
+                <SectionTabBadge
+                  count={tab.badgeCount ?? 0}
+                  label={tab.badgeLabel}
+                  onCleared={
+                    shouldCelebrate
+                      ? () => {
+                          if (shouldCelebrate()) startCelebrating();
+                        }
+                      : undefined
+                  }
+                />
+              </Nav.Link>
+            </Nav.Item>
+          );
+        })}
       </Nav>
       {isCelebrating && <Celebration onDone={stopCelebrating} />}
     </>

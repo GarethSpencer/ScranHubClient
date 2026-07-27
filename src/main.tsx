@@ -15,6 +15,7 @@ import router from "./routes";
 import { RouterProvider } from "react-router-dom";
 import DarkModeProvider from "./contexts/darkMode/DarkModeProvider";
 import ToastProvider from "./contexts/toast/ToastProvider";
+import RatingCelebrationProvider from "./contexts/ratingCelebration/RatingCelebrationProvider";
 import RealtimeProvider from "./realtime/RealtimeProvider";
 import { queryErrorHandler } from "./contexts/toast/queryErrorHandler";
 
@@ -50,7 +51,9 @@ createRoot(document.getElementById("root")!).render(
         <RealtimeProvider>
           <DarkModeProvider>
             <ToastProvider>
-              <RouterProvider router={router} />
+              <RatingCelebrationProvider>
+                <RouterProvider router={router} />
+              </RatingCelebrationProvider>
               <ReactQueryDevtools />
             </ToastProvider>
           </DarkModeProvider>

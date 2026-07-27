@@ -7,6 +7,7 @@ import type GroupVenueResult from "../../models/results/GroupVenueResult";
 import useVenueRatingsForm from "../../hooks/useVenueRatingsForm";
 import useVenueRatingsRemove from "../../hooks/useVenueRatingsRemove";
 import useSaveFeedback from "../../hooks/useSaveFeedback";
+import useRatingCelebration from "../../contexts/ratingCelebration/useRatingCelebration";
 import SaveButton from "../common/SaveButton";
 import VenueRatingsFields from "./VenueRatingsFields";
 
@@ -27,6 +28,7 @@ const VenueRatingsModal = ({
 
   const ratings = useVenueRatingsForm(groupId, venue);
   const saveFeedback = useSaveFeedback();
+  const { notifyRatingsSaved } = useRatingCelebration();
   const removeFlow = useVenueRatingsRemove(ratings.remove, onClose);
 
   const isPending = saveFeedback.isBusy || removeFlow.isRemoving;
@@ -41,7 +43,10 @@ const VenueRatingsModal = ({
 
     const groupVenueId = venue.groupVenueId;
     saveFeedback.save(
-      () => ratings.save(),
+      async () => {
+        await ratings.save();
+        notifyRatingsSaved();
+      },
       () => {
         setSavedVenueId(groupVenueId);
         onClose();

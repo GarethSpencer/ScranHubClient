@@ -11,6 +11,7 @@ import useVenueRatingsForm from "../hooks/useVenueRatingsForm";
 import useVenueRatingsRemove from "../hooks/useVenueRatingsRemove";
 import useVenueDelete from "../hooks/useVenueDelete";
 import useSaveFeedback from "../hooks/useSaveFeedback";
+import useRatingCelebration from "../contexts/ratingCelebration/useRatingCelebration";
 import SaveButton from "./common/SaveButton";
 import VenueDetailsFields from "./venue/VenueDetailsFields";
 import VenueRatingsFields from "./venue/VenueRatingsFields";
@@ -36,6 +37,7 @@ const GroupVenueModal = ({
   const [savedVenueId, setSavedVenueId] = useState<string | null>(null);
 
   const { showToast } = useToast();
+  const { notifyRatingsSaved } = useRatingCelebration();
 
   const details = useVenueDetailsForm(groupId, venue);
   const ratings = useVenueRatingsForm(groupId, venue);
@@ -75,7 +77,10 @@ const GroupVenueModal = ({
 
     const groupVenueId = venue.groupVenueId;
     ratingsSave.save(
-      () => ratings.save(details.values.visited),
+      async () => {
+        await ratings.save(details.values.visited);
+        notifyRatingsSaved();
+      },
       () => {
         setSavedVenueId(groupVenueId);
         ratingsSave.reset();

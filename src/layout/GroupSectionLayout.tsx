@@ -4,9 +4,12 @@ import {
   useGetGroup,
   useGetUserGroups,
 } from "../api/controllerHooks/useGroupController";
+import useRatingCelebration from "../contexts/ratingCelebration/useRatingCelebration";
 
 const GroupSectionLayout = () => {
   const { id = "" } = useParams();
+
+  const { consumeRecentSave } = useRatingCelebration();
 
   const { data } = useGetGroup(id);
 
@@ -40,7 +43,7 @@ const GroupSectionLayout = () => {
           end: true,
           badgeCount: venuesToRate,
           badgeLabel: "venues to rate",
-          celebrateAtZero: true,
+          shouldCelebrateAtZero: consumeRecentSave,
         },
         { label: "Manage Options", to: `/group/${id}/options` },
         { label: "Group Members", to: `/group/${id}/users`, end: true },
