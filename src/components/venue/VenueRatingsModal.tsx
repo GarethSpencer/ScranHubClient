@@ -4,7 +4,9 @@ import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import Spinner from "react-bootstrap/Spinner";
 import type GroupVenueResult from "../../models/results/GroupVenueResult";
-import useVenueRatingsForm from "../../hooks/useVenueRatingsForm";
+import useVenueRatingsForm, {
+  ratingsSaveLabel,
+} from "../../hooks/useVenueRatingsForm";
 import useVenueRatingsRemove from "../../hooks/useVenueRatingsRemove";
 import useSaveFeedback from "../../hooks/useSaveFeedback";
 import useRatingCelebration from "../../contexts/ratingCelebration/useRatingCelebration";
@@ -88,9 +90,6 @@ const VenueRatingsModal = ({
             handleSave();
           }}
         >
-          <p className="text-muted small mb-3">
-            These cannot be amended by anybody else in your group.
-          </p>
           <VenueRatingsFields form={ratings} isPending={isPending} />
         </Form>
       </Modal.Body>
@@ -120,6 +119,7 @@ const VenueRatingsModal = ({
         )}
         <SaveButton
           status={saveFeedback.status}
+          label={ratingsSaveLabel(ratings)}
           onClick={handleSave}
           disabled={
             removeFlow.isRemoving ||

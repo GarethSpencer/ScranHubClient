@@ -7,7 +7,9 @@ import Col from "react-bootstrap/Col";
 import type GroupVenueResult from "../models/results/GroupVenueResult";
 import useToast from "../contexts/toast/useToast";
 import useVenueDetailsForm from "../hooks/useVenueDetailsForm";
-import useVenueRatingsForm from "../hooks/useVenueRatingsForm";
+import useVenueRatingsForm, {
+  ratingsSaveLabel,
+} from "../hooks/useVenueRatingsForm";
 import useVenueRatingsRemove from "../hooks/useVenueRatingsRemove";
 import useVenueDelete from "../hooks/useVenueDelete";
 import useSaveFeedback from "../hooks/useSaveFeedback";
@@ -131,9 +133,6 @@ const GroupVenueModal = ({
             <Row className="g-3 align-items-stretch">
               <Col xs={12} md>
                 <h3 className="h6 fw-bold mb-1">Venue Details</h3>
-                <p className="text-muted small mb-3">
-                  These can be amended by anybody in your group.
-                </p>
                 <VenueDetailsFields form={details} isPending={isPending} />
                 <div className="d-grid mt-3">
                   <SaveButton
@@ -161,9 +160,6 @@ const GroupVenueModal = ({
 
               <Col xs={12} md>
                 <h3 className="h6 fw-bold mb-1">My Ratings</h3>
-                <p className="text-muted small mb-3">
-                  These cannot be amended by anybody else in your group.
-                </p>
                 <VenueRatingsFields
                   form={ratings}
                   isPending={isPending}
@@ -172,6 +168,7 @@ const GroupVenueModal = ({
                 <div className="d-grid gap-2">
                   <SaveButton
                     status={ratingsSave.status}
+                    label={ratingsSaveLabel(ratings, !details.values.visited)}
                     onClick={handleSaveRatings}
                     disabled={
                       detailsSave.isBusy ||

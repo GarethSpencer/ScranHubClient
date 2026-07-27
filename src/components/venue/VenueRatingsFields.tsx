@@ -59,13 +59,6 @@ const VenueRatingsFields = ({ form, isPending, notVisited = false }: Props) => {
           onChange={form.setVibeOptionId}
         />
       </Col>
-      {!notVisited && !isLoading && !form.areAllRatingsSet && (
-        <Col xs={12}>
-          <Form.Text className="d-block">
-            Choose an option for all three sets in order to save your ratings.
-          </Form.Text>
-        </Col>
-      )}
     </Row>
   );
 };

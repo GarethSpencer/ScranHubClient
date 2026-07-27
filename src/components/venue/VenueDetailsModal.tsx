@@ -69,9 +69,6 @@ const VenueDetailsModal = ({ groupId, venue, onClose }: Props) => {
               handleSave();
             }}
           >
-            <p className="text-muted small mb-3">
-              These can be amended by anybody in your group.
-            </p>
             <VenueDetailsFields form={details} isPending={isPending} />
           </Form>
         )}

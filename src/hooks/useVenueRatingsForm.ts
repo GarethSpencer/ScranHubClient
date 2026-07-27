@@ -264,4 +264,15 @@ const useVenueRatingsForm = (
   };
 };
 
+export const ratingsSaveLabel = (
+  form: ReturnType<typeof useVenueRatingsForm>,
+  notVisited = false,
+) =>
+  !notVisited &&
+  !form.areOptionsLoading &&
+  !form.areRatingsLoading &&
+  !form.areAllRatingsSet
+    ? "Select your ratings"
+    : undefined;
+
 export default useVenueRatingsForm;
