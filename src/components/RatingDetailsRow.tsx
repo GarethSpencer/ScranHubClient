@@ -47,28 +47,52 @@ const RatingDetailsRow = ({
     <td>{venue.venueType}</td>
     <td>{venue.foodType}</td>
     <td>
-      <VoteProgressBar
-        count={venue.qualityRatingVotes ?? 0}
-        total={memberCount}
-      />
+      {venue.visited ? (
+        <VoteProgressBar
+          count={venue.qualityRatingVotes ?? 0}
+          total={memberCount}
+        />
+      ) : (
+        "—"
+      )}
     </td>
     <td>
-      <VoteProgressBar count={venue.costRatingVotes ?? 0} total={memberCount} />
+      {venue.visited ? (
+        <VoteProgressBar
+          count={venue.costRatingVotes ?? 0}
+          total={memberCount}
+        />
+      ) : (
+        "—"
+      )}
     </td>
     <td>
-      <VoteProgressBar count={venue.vibeRatingVotes ?? 0} total={memberCount} />
+      {venue.visited ? (
+        <VoteProgressBar
+          count={venue.vibeRatingVotes ?? 0}
+          total={memberCount}
+        />
+      ) : (
+        "—"
+      )}
     </td>
     <td>
       <RatingBar
-        average={venue.averageQualityRating}
+        average={venue.visited ? venue.averageQualityRating : undefined}
         options={qualityOptions}
       />
     </td>
     <td>
-      <RatingBar average={venue.averageCostRating} options={costOptions} />
+      <RatingBar
+        average={venue.visited ? venue.averageCostRating : undefined}
+        options={costOptions}
+      />
     </td>
     <td>
-      <RatingBar average={venue.averageVibeRating} options={vibeOptions} />
+      <RatingBar
+        average={venue.visited ? venue.averageVibeRating : undefined}
+        options={vibeOptions}
+      />
     </td>
   </tr>
 );

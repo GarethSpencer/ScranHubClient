@@ -52,7 +52,11 @@ const RatingDetailsModal = ({
                 <hr className="my-3" />
               </div>
             )}
-            {isLoading ? (
+            {!venue.visited ? (
+              <p className="text-center mb-0">
+                Ratings are shown once this venue has been marked as visited.
+              </p>
+            ) : isLoading ? (
               <div className="text-center py-4">
                 <Spinner animation="border" role="status">
                   <span className="visually-hidden">Loading…</span>

@@ -61,13 +61,22 @@ const GroupVenueRow = ({
       <td>{venue.venueType}</td>
       <td>{venue.foodType}</td>
       <td>
-        <RatingBar average={venue.myQualityRating} options={qualityOptions} />
+        <RatingBar
+          average={venue.visited ? venue.myQualityRating : undefined}
+          options={qualityOptions}
+        />
       </td>
       <td>
-        <RatingBar average={venue.myCostRating} options={costOptions} />
+        <RatingBar
+          average={venue.visited ? venue.myCostRating : undefined}
+          options={costOptions}
+        />
       </td>
       <td>
-        <RatingBar average={venue.myVibeRating} options={vibeOptions} />
+        <RatingBar
+          average={venue.visited ? venue.myVibeRating : undefined}
+          options={vibeOptions}
+        />
       </td>
     </tr>
   );
