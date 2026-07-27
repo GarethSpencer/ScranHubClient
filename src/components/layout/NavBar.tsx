@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
@@ -31,25 +31,20 @@ function NavBar() {
     logout({ logoutParams: { returnTo: window.location.origin } });
 
   const [expanded, setExpanded] = useState(false);
-  const navRef = useRef<HTMLElement>(null);
   const [showUserDetailsModal, setShowUserDetailsModal] = useState(false);
   const [showDeactivateAccountModal, setShowDeactivateAccountModal] =
     useState(false);
   const [showNotificationsModal, setShowNotificationsModal] = useState(false);
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (navRef.current && !navRef.current.contains(event.target as Node)) {
-        setExpanded(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
   return (
     <>
+      {expanded && (
+        <div
+          className="navbar-backdrop d-lg-none"
+          aria-hidden="true"
+          onClick={() => setExpanded(false)}
+        />
+      )}
       <Navbar
         expand="lg"
         bg="primary"
@@ -57,7 +52,6 @@ function NavBar() {
         fixed="top"
         expanded={expanded}
         onToggle={setExpanded}
-        ref={navRef}
         className="shadow navbar-fixed"
       >
         <Container fluid>
