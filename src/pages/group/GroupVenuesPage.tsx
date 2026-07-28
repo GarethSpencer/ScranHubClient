@@ -90,7 +90,11 @@ const GroupVenuesPage = () => {
     onToggleDirection,
     showSearch,
     skeletonRowCount,
-  } = useGroupVenueListing(id, BASE_COLUMNS);
+  } = useGroupVenueListing(
+    id,
+    BASE_COLUMNS,
+    GroupVenueSortParameters.VisitedOn,
+  );
 
   const { data: qualityOptionData } = useGetOptionsForGroup(
     "QualityOption",
