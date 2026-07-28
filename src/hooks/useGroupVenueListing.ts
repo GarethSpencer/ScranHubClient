@@ -32,7 +32,7 @@ const useGroupVenueListing = (
   const [sortBy, setSortBy] = useState<GroupVenueSortParameters>(
     GroupVenueSortParameters.VisitedOn,
   );
-  const [sortDescending, setSortDescending] = useState(false);
+  const [sortDescending, setSortDescending] = useState(true);
   const [searchPage, setSearchPage] = useState(1);
   const searchPageSize = SEARCH_PAGE_SIZE;
 
