@@ -28,6 +28,12 @@ const OptionRow = <T extends OptionResult>({
   disabled = false,
 }: Props<T>) => {
   const [draftLabel, setDraftLabel] = useState(option.label);
+  const [syncedLabel, setSyncedLabel] = useState(option.label);
+
+  if (syncedLabel !== option.label) {
+    setSyncedLabel(option.label);
+    setDraftLabel(option.label);
+  }
 
   const trimmed = draftLabel.trim();
   const hasChanged = trimmed !== "" && trimmed !== option.label;

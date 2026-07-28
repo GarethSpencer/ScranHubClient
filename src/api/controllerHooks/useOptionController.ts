@@ -66,15 +66,21 @@ const invalidateOptionQueries = (
   controller: OptionController,
   groupId: string,
 ) => {
-  queryClient.invalidateQueries({ queryKey: [controller, groupId] });
-  queryClient.invalidateQueries({ queryKey: ["groups", groupId, "venues"] });
+  const invalidations = [
+    queryClient.invalidateQueries({ queryKey: [controller, groupId] }),
+    queryClient.invalidateQueries({ queryKey: ["groups", groupId, "venues"] }),
+    queryClient.invalidateQueries({ queryKey: ["userGroups"] }),
+  ];
 
   if (isRatingController(controller)) {
-    queryClient.invalidateQueries({
-      queryKey: [ratingControllerFor[controller], groupId],
-    });
+    invalidations.push(
+      queryClient.invalidateQueries({
+        queryKey: [ratingControllerFor[controller], groupId],
+      }),
+    );
   }
-  queryClient.invalidateQueries({ queryKey: ["userGroups"] });
+
+  return Promise.all(invalidations);
 };
 
 export const useSetCustomOptions = (
@@ -239,9 +245,9 @@ export const useReorderRatingOptions = (
         ...request,
         groupId,
       }),
-    onSuccess: (data) => {
-      invalidateOptionQueries(queryClient, controller, groupId);
+    onSuccess: async (data) => {
       if (data.message) showToast(data.message, "success");
+      await invalidateOptionQueries(queryClient, controller, groupId);
     },
   });
 };
