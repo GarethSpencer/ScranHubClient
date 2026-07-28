@@ -21,6 +21,7 @@ import type SetOptionResponse from "../../models/responses/options/SetOptionResp
 import type SetOptionRequest from "../../models/requests/options/SetOptionRequest";
 import type UpdateOptionRequest from "../../models/requests/options/UpdateOptionRequest";
 import type GetTypeOptionResponse from "../../models/responses/options/GetTypeOptionResponse";
+import type { RatingController } from "./useRatingController";
 
 export type OptionController =
   | "CostOption"
@@ -46,6 +47,12 @@ export const isRatingController = (
 ): controller is RatingOptionController =>
   (ratingControllers as OptionController[]).includes(controller);
 
+const ratingControllerFor: Record<RatingOptionController, RatingController> = {
+  CostOption: "CostRating",
+  QualityOption: "QualityRating",
+  VibeOption: "VibeRating",
+};
+
 const optionServices: Record<OptionController, ApiClient> = {
   CostOption: costOptionControllerService,
   FoodTypeOption: foodTypeOptionControllerService,
@@ -61,6 +68,13 @@ const invalidateOptionQueries = (
 ) => {
   queryClient.invalidateQueries({ queryKey: [controller, groupId] });
   queryClient.invalidateQueries({ queryKey: ["groups", groupId, "venues"] });
+
+  if (isRatingController(controller)) {
+    queryClient.invalidateQueries({
+      queryKey: [ratingControllerFor[controller], groupId],
+    });
+  }
+  queryClient.invalidateQueries({ queryKey: ["userGroups"] });
 };
 
 export const useSetCustomOptions = (
@@ -226,9 +240,7 @@ export const useReorderRatingOptions = (
         groupId,
       }),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({
-        queryKey: [controller, groupId],
-      });
+      invalidateOptionQueries(queryClient, controller, groupId);
       if (data.message) showToast(data.message, "success");
     },
   });
