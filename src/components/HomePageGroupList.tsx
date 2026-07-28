@@ -9,7 +9,6 @@ import Tooltip from "react-bootstrap/Tooltip";
 import { FaPencilAlt } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import AnimatedCount from "./common/AnimatedCount";
-import TableStatus from "./common/TableStatus";
 import GroupIconModal from "./GroupIconModal";
 import type GroupResult from "../models/results/GroupResult";
 import { useGetUserGroups } from "../api/controllerHooks/useGroupController";
@@ -28,21 +27,39 @@ const HomePageGroupList = () => {
     .filter((x) => x.active)
     .sort((a, b) => a.groupName.localeCompare(b.groupName));
 
-  const showStatus = isLoading || isError || groupResults.length === 0;
+  let statusMessage: string | null = null;
+  if (isError) {
+    statusMessage = "Couldn't load your groups. Please try again.";
+  } else if (groupResults.length === 0) {
+    statusMessage = "You're not in any groups yet.";
+  }
 
-  if (showStatus) {
+  if (isLoading || statusMessage) {
     return (
-      <div className="mt-4 section-panel">
-        <TableStatus
-          isLoading={isLoading}
-          isError={isError}
-          isEmpty={groupResults.length === 0}
-          loadingText="Loading groups..."
-          errorText="Couldn't load your groups. Please try again."
-          emptyText="You're not in any groups yet."
-        >
-          {null}
-        </TableStatus>
+      <div className="mt-4">
+        <h2 className="home-group-heading lead mb-3">My Groups</h2>
+        <Container fluid className="px-0">
+          <Row className="g-3">
+            <Col xs={12} md={6}>
+              {isLoading ? (
+                <Card
+                  bg="group"
+                  aria-hidden="true"
+                  className="shadow group-card group-card-skeleton"
+                />
+              ) : (
+                <Card
+                  bg="group"
+                  className="text-white shadow group-card group-card-status"
+                >
+                  <Card.Body className="d-flex align-items-center justify-content-center text-center">
+                    <Card.Text className="mb-0">{statusMessage}</Card.Text>
+                  </Card.Body>
+                </Card>
+              )}
+            </Col>
+          </Row>
+        </Container>
       </div>
     );
   }
@@ -79,54 +96,45 @@ const HomePageGroupList = () => {
   return (
     <div className="mt-4">
       <h2 className="home-group-heading lead mb-3">My Groups</h2>
-      <TableStatus
-        isLoading={isLoading}
-        isError={isError}
-        isEmpty={groupResults.length === 0}
-        loadingText="Loading groups..."
-        errorText="Couldn't load your groups. Please try again."
-        emptyText="You're not in any groups yet."
-      >
-        <Container fluid className="px-0">
-          <Row className="g-3">
-            {groupResults.map((x: GroupResult) => (
-              <Col xs={12} md={6} key={x.groupId}>
-                <Card
-                  as={Link}
-                  to={`/group/${x.groupId}`}
-                  bg="group"
-                  className="text-decoration-none text-white shadow menu-card group-card h-100"
-                >
-                  <Card.Body className="d-flex align-items-center gap-3">
-                    {renderAvatar(x)}
-                    <div className="flex-grow-1 min-width-0">
-                      <Card.Text className="lead mb-0 text-break group-card-name">
-                        {x.groupName}
-                      </Card.Text>
-                      {(x.venuesToRate ?? 0) > 0 && (
-                        <Badge bg="danger" pill className="group-card-to-rate">
-                          <AnimatedCount value={x.venuesToRate ?? 0} />
-                          {x.venuesToRate === 1
-                            ? " Venue to Rate"
-                            : " Venues to Rate"}
-                        </Badge>
-                      )}
-                    </div>
-                    <div className="d-flex flex-column gap-1 flex-shrink-0 text-end small">
-                      <span className="group-card-stat">
-                        Members: <strong>{x.userCount}</strong>
-                      </span>
-                      <span className="group-card-stat">
-                        Venues: <strong>{x.venueCount}</strong>
-                      </span>
-                    </div>
-                  </Card.Body>
-                </Card>
-              </Col>
-            ))}
-          </Row>
-        </Container>
-      </TableStatus>
+      <Container fluid className="px-0">
+        <Row className="g-3">
+          {groupResults.map((x: GroupResult) => (
+            <Col xs={12} md={6} key={x.groupId}>
+              <Card
+                as={Link}
+                to={`/group/${x.groupId}`}
+                bg="group"
+                className="text-decoration-none text-white shadow menu-card group-card h-100"
+              >
+                <Card.Body className="d-flex align-items-center gap-3">
+                  {renderAvatar(x)}
+                  <div className="flex-grow-1 min-width-0">
+                    <Card.Text className="lead mb-0 text-break group-card-name">
+                      {x.groupName}
+                    </Card.Text>
+                    {(x.venuesToRate ?? 0) > 0 && (
+                      <Badge bg="danger" pill className="group-card-to-rate">
+                        <AnimatedCount value={x.venuesToRate ?? 0} />
+                        {x.venuesToRate === 1
+                          ? " Venue to Rate"
+                          : " Venues to Rate"}
+                      </Badge>
+                    )}
+                  </div>
+                  <div className="d-flex flex-column gap-1 flex-shrink-0 text-end small">
+                    <span className="group-card-stat">
+                      Members: <strong>{x.userCount}</strong>
+                    </span>
+                    <span className="group-card-stat">
+                      Venues: <strong>{x.venueCount}</strong>
+                    </span>
+                  </div>
+                </Card.Body>
+              </Card>
+            </Col>
+          ))}
+        </Row>
+      </Container>
 
       <GroupIconModal
         group={groupToEditIcon}
