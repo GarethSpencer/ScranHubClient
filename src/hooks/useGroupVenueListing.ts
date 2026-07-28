@@ -25,12 +25,13 @@ const DISTANCE_COLUMN: VenueListingColumn = {
 const useGroupVenueListing = (
   groupId: string,
   baseColumns: VenueListingColumn[],
-  defaultSortBy: GroupVenueSortParameters = GroupVenueSortParameters.VenueName,
 ) => {
   const [searchText, setSearchText] = useState("");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
-  const [sortBy, setSortBy] = useState<GroupVenueSortParameters>(defaultSortBy);
+  const [sortBy, setSortBy] = useState<GroupVenueSortParameters>(
+    GroupVenueSortParameters.VisitedOn,
+  );
   const [sortDescending, setSortDescending] = useState(false);
   const [searchPage, setSearchPage] = useState(1);
   const searchPageSize = SEARCH_PAGE_SIZE;
