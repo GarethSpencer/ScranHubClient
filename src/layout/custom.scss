@@ -45,6 +45,17 @@ $theme-colors: map-merge($theme-colors, $custom-colors);
   overflow: hidden;
 }
 
+@include media-breakpoint-up(md) {
+  .venue-info-map-col {
+    display: flex;
+  }
+
+  .venue-info-map-col .venue-map {
+    height: auto;
+    min-height: 220px;
+  }
+}
+
 .venue-primary {
   color: var(--bs-primary);
 }

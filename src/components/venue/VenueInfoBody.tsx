@@ -1,4 +1,6 @@
 import type { ReactNode } from "react";
+import Col from "react-bootstrap/Col";
+import Row from "react-bootstrap/Row";
 import Spinner from "react-bootstrap/Spinner";
 import type GroupVenueResult from "../../models/results/GroupVenueResult";
 import VenueMap from "../common/VenueMap";
@@ -87,55 +89,59 @@ const VenueInfoBody = ({ venue }: Props) => {
   }
 
   return (
-    <div>
-      <VenueMap
-        latitude={venue.latitude!}
-        longitude={venue.longitude!}
-        name={venue.venueName}
-      />
-      {venue.formattedAddress && (
-        <p className="small mt-2 mb-0">
-          <ExternalLink href={mapsUrl}>
-            {venue.formattedAddress}
-            {hasUserLocation && " · Directions"}
-          </ExternalLink>
-        </p>
-      )}
-      {placeDetails?.openingHours &&
-        (() => {
-          const summary = summariseOpeningHours(placeDetails.openingHours);
-          return (
-            <div className="small mt-2">
-              <span className="fw-bold">Opening hours</span>
-              {summary.collapsed ? (
-                <p className="mb-0">
-                  {/^open\b/i.test(summary.collapsed)
-                    ? summary.collapsed
-                    : `Open every day: ${summary.collapsed}`}
-                </p>
-              ) : (
-                <ul className="list-unstyled mb-0">
-                  {summary.days.map((day) => (
-                    <li
-                      key={day.description}
-                      className={day.isToday ? "venue-primary" : undefined}
-                    >
-                      {day.description}
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-          );
-        })()}
-      {placeDetails?.websiteUri && (
-        <p className="small mt-2 mb-0">
-          <ExternalLink href={placeDetails.websiteUri}>
-            Visit the Website
-          </ExternalLink>
-        </p>
-      )}
-    </div>
+    <Row className="g-2 gx-md-3">
+      <Col md={6} className="venue-info-map-col">
+        <VenueMap
+          latitude={venue.latitude!}
+          longitude={venue.longitude!}
+          name={venue.venueName}
+        />
+      </Col>
+      <Col md={6} className="d-flex flex-column gap-2 text-center">
+        {venue.formattedAddress && (
+          <p className="small mb-0">
+            <ExternalLink href={mapsUrl}>
+              {venue.formattedAddress}
+              {hasUserLocation && " · Directions"}
+            </ExternalLink>
+          </p>
+        )}
+        {placeDetails?.openingHours &&
+          (() => {
+            const summary = summariseOpeningHours(placeDetails.openingHours);
+            return (
+              <div className="small">
+                <span className="fw-bold">Opening hours</span>
+                {summary.collapsed ? (
+                  <p className="mb-0">
+                    {/^open\b/i.test(summary.collapsed)
+                      ? summary.collapsed
+                      : `Open every day: ${summary.collapsed}`}
+                  </p>
+                ) : (
+                  <ul className="list-unstyled mb-0">
+                    {summary.days.map((day) => (
+                      <li
+                        key={day.description}
+                        className={day.isToday ? "venue-primary" : undefined}
+                      >
+                        {day.description}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            );
+          })()}
+        {placeDetails?.websiteUri && (
+          <p className="small mb-0">
+            <ExternalLink href={placeDetails.websiteUri}>
+              Visit the Website
+            </ExternalLink>
+          </p>
+        )}
+      </Col>
+    </Row>
   );
 };
 
