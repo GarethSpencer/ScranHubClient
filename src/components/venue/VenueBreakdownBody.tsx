@@ -83,9 +83,6 @@ const VenueBreakdownBody = ({
   return (
     <>
       <h3 className="h6 fw-bold mb-1">Rating Breakdown</h3>
-      <p className="text-muted small mb-3">
-        Every group member's ratings for this venue.
-      </p>
       {rows.length === 0 ? (
         <p className="text-center mb-0">No ratings yet</p>
       ) : (

@@ -144,7 +144,7 @@ const RatingDetailsPage = () => {
       <h2 className="mb-1 lead">Venue Summary</h2>
       <p className="text-muted small mb-3">
         View the details of each venue, plus Google Maps info if available. You
-        can view ratings once a venue has been visited.
+        can view ratings after visiting a venue.
       </p>
 
       {!isMobile && (
