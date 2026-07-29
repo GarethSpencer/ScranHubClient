@@ -82,7 +82,7 @@ const VenueBreakdownBody = ({
 
   return (
     <>
-      <h3 className="h6 fw-bold mb-1">Rating Breakdown</h3>
+      <h3 className="h6 fw-bold mb-3">Rating Breakdown</h3>
       {rows.length === 0 ? (
         <p className="text-center mb-0">No ratings yet</p>
       ) : (

@@ -94,14 +94,7 @@ const CreateUserModal = ({ show, onClose }: Props) => {
             />
           </Form.Group>
         </Modal.Body>
-        <Modal.Footer>
-          <Button
-            variant="outline-secondary"
-            onClick={handleClose}
-            disabled={isPending}
-          >
-            Cancel
-          </Button>
+        <Modal.Footer className="modal-footer-stacked gap-2">
           <Button variant="primary" type="submit" disabled={!canSubmit}>
             {isPending ? (
               <>
@@ -118,6 +111,13 @@ const CreateUserModal = ({ show, onClose }: Props) => {
             ) : (
               "Create User"
             )}
+          </Button>
+          <Button
+            variant="outline-secondary"
+            onClick={handleClose}
+            disabled={isPending}
+          >
+            Cancel
           </Button>
         </Modal.Footer>
       </Form>
