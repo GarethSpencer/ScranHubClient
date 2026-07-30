@@ -1,4 +1,4 @@
-import { FaChartSimple, FaPencil, FaCirclePlus } from "react-icons/fa6";
+import { FaPencil, FaCirclePlus } from "react-icons/fa6";
 import type GroupVenueResult from "../../models/results/GroupVenueResult";
 import type RatingOptionResult from "../../models/results/generic/RatingOptionResult";
 import RatingBar from "../common/RatingBar";
@@ -94,7 +94,7 @@ const VenueCard = ({
                 </div>
               </div>
               <span className="venue-card-zone-icon" aria-hidden="true">
-                <FaChartSimple size={18} />
+                <FaPencil size={18} />
               </span>
             </>
           ) : (
