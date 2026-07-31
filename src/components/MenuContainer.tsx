@@ -17,6 +17,7 @@ const MenuContainer = () => {
   return (
     <>
       <Container fluid>
+        <h2 className="visually-hidden">Menu</h2>
         <Row className="g-3">
           {visibleSections.map((section) => (
             <Col xs={12} md key={section.path}>
