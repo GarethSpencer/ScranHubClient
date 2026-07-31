@@ -44,16 +44,24 @@ const HomePageGroupList = () => {
               {isLoading ? (
                 <Card
                   bg="group"
-                  aria-hidden="true"
-                  className="shadow group-card group-card-skeleton"
-                />
+                  role="status"
+                  className="text-white shadow group-card group-card-skeleton"
+                >
+                  <Card.Body className="d-flex align-items-center justify-content-center text-center">
+                    <Card.Text className="mb-0 fw-medium">
+                      Loading groups...
+                    </Card.Text>
+                  </Card.Body>
+                </Card>
               ) : (
                 <Card
                   bg="group"
                   className="text-white shadow group-card group-card-status"
                 >
                   <Card.Body className="d-flex align-items-center justify-content-center text-center">
-                    <Card.Text className="mb-0">{statusMessage}</Card.Text>
+                    <Card.Text className="mb-0 fw-medium">
+                      {statusMessage}
+                    </Card.Text>
                   </Card.Body>
                 </Card>
               )}
