@@ -1,7 +1,8 @@
 const GettingStartedPage = () => {
   return (
     <>
-      <h2 className="mb-3 lead">Welcome to ScranHub!</h2>
+      <h2 className="lead text-center">Welcome to ScranHub!</h2>
+      <p className="content-logo text-center">🍜</p>
       <p className="text-muted small mb-3">
         This is a web platform designed to help you plan your food outings with
         your friends. You can add other ScranHub users as friends, create groups
@@ -27,7 +28,7 @@ const GettingStartedPage = () => {
         You can read more details about each section of the ScranHub app in the
         Further Information tab.
       </p>
-      <h3 className="h6 fw-bold mb-1">Let's get Scranning!</h3>
+      <h2 className="lead text-center">Let's get Scranning!</h2>
     </>
   );
 };
