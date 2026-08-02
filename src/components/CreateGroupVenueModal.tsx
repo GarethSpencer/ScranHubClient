@@ -3,6 +3,8 @@ import { MAX_VENUE_NAME_LENGTH } from "../constants/validation";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
 import { useCreateGroupVenue } from "../api/controllerHooks/useGroupVenueController";
 import { useGetOptionsForGroup } from "../api/controllerHooks/useOptionController";
 import PlaceAutocomplete, {
@@ -110,7 +112,7 @@ const CreateGroupVenueModal = ({ show, groupId, onClose }: Props) => {
                 onSelect={handlePlaceSelect}
                 onUnavailable={onAutocompleteUnavailable}
                 disabled={isPending}
-                placeholder="Pick a real place or just type below"
+                placeholder="Search with Google or just type below"
               />
             </Form.Group>
           )}
@@ -134,36 +136,42 @@ const CreateGroupVenueModal = ({ show, groupId, onClose }: Props) => {
               </Form.Text>
             )}
           </Form.Group>
-          <Form.Group className="mb-3" controlId="createVenueType">
-            <Form.Label>Venue Type</Form.Label>
-            <Form.Select
-              value={venueTypeOptionId}
-              onChange={(e) => setVenueTypeOptionId(e.target.value)}
-              disabled={isPending}
-            >
-              <option value="">None</option>
-              {venueTypeOptions.map((option) => (
-                <option key={option.optionId} value={option.optionId}>
-                  {option.label}
-                </option>
-              ))}
-            </Form.Select>
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="createFoodType">
-            <Form.Label>Food Type</Form.Label>
-            <Form.Select
-              value={foodTypeOptionId}
-              onChange={(e) => setFoodTypeOptionId(e.target.value)}
-              disabled={isPending}
-            >
-              <option value="">None</option>
-              {foodTypeOptions.map((option) => (
-                <option key={option.optionId} value={option.optionId}>
-                  {option.label}
-                </option>
-              ))}
-            </Form.Select>
-          </Form.Group>
+          <Row className="g-3 mb-3">
+            <Col xs={6}>
+              <Form.Group controlId="createVenueType">
+                <Form.Label>Venue Type</Form.Label>
+                <Form.Select
+                  value={venueTypeOptionId}
+                  onChange={(e) => setVenueTypeOptionId(e.target.value)}
+                  disabled={isPending}
+                >
+                  <option value="">None</option>
+                  {venueTypeOptions.map((option) => (
+                    <option key={option.optionId} value={option.optionId}>
+                      {option.label}
+                    </option>
+                  ))}
+                </Form.Select>
+              </Form.Group>
+            </Col>
+            <Col xs={6}>
+              <Form.Group controlId="createFoodType">
+                <Form.Label>Food Type</Form.Label>
+                <Form.Select
+                  value={foodTypeOptionId}
+                  onChange={(e) => setFoodTypeOptionId(e.target.value)}
+                  disabled={isPending}
+                >
+                  <option value="">None</option>
+                  {foodTypeOptions.map((option) => (
+                    <option key={option.optionId} value={option.optionId}>
+                      {option.label}
+                    </option>
+                  ))}
+                </Form.Select>
+              </Form.Group>
+            </Col>
+          </Row>
         </Form>
       </Modal.Body>
       <Modal.Footer className="modal-footer-stacked gap-2">

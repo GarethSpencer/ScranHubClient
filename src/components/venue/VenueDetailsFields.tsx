@@ -22,7 +22,7 @@ const VenueDetailsFields = ({ form, isPending }: Props) => {
             onSelect={form.onSelectPlace}
             onUnavailable={placeSearch.onAutocompleteUnavailable}
             disabled={isPending}
-            placeholder="Pick a real place or just type below"
+            placeholder="Search with Google or just type below"
           />
         </Form.Group>
       )}
