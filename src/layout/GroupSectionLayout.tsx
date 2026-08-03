@@ -35,6 +35,7 @@ const GroupSectionLayout = () => {
           </Link>
         </h1>
       }
+      tabsClassName="section-tabs-fill"
       tabs={[
         { label: "Venue Summary", to: `/group/${id}`, end: true },
         {

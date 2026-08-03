@@ -969,6 +969,23 @@ $switch-knob-tick-bg: switch-knob-bg("M-1.5 0.1 -0.5 1.2 1.5 -1.1", $success);
   }
 }
 
+@include media-breakpoint-up(md) {
+  .section-tabs-fill {
+    align-items: stretch;
+  }
+
+  .section-tabs-fill .nav-item {
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+  }
+
+  .section-tabs-fill .nav-link {
+    width: 100%;
+    text-align: center;
+  }
+}
+
 .section-tabs .nav-link {
   display: flex;
   align-items: center;
@@ -1137,6 +1154,13 @@ $switch-knob-tick-bg: switch-knob-bg("M-1.5 0.1 -0.5 1.2 1.5 -1.1", $success);
 @include media-breakpoint-down(md) {
   .content-wrapper:has(.section-tabs) .section-panel {
     border-top-left-radius: 0;
+    border-top-right-radius: 0;
+  }
+}
+
+@include media-breakpoint-up(md) {
+  .content-wrapper:has(.section-tabs-fill .nav-item:last-child .nav-link.active)
+    .section-panel {
     border-top-right-radius: 0;
   }
 }
