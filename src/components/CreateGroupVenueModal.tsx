@@ -13,6 +13,7 @@ import PlaceAutocomplete, {
 import SaveButton from "./common/SaveButton";
 import useSaveFeedback from "../hooks/useSaveFeedback";
 import useVenuePlaceSearch from "../hooks/useVenuePlaceSearch";
+import { todayDateInputValue } from "../lib/date";
 
 interface Props {
   show: boolean;
@@ -22,6 +23,8 @@ interface Props {
 
 const CreateGroupVenueModal = ({ show, groupId, onClose }: Props) => {
   const [venueName, setVenueName] = useState("");
+  const [visited, setVisited] = useState(false);
+  const [visitedOn, setVisitedOn] = useState("");
   const [venueTypeOptionId, setVenueTypeOptionId] = useState("");
   const [foodTypeOptionId, setFoodTypeOptionId] = useState("");
   const {
@@ -53,9 +56,17 @@ const CreateGroupVenueModal = ({ show, groupId, onClose }: Props) => {
 
   const resetForm = () => {
     setVenueName("");
+    setVisited(false);
+    setVisitedOn("");
     setVenueTypeOptionId("");
     setFoodTypeOptionId("");
     resetPlaceSearch();
+  };
+
+  const handleVisitedChange = (value: boolean) => {
+    setVisited(value);
+    if (value) setVisitedOn((current) => current || todayDateInputValue());
+    else setVisitedOn("");
   };
 
   const handlePlaceSelect = (place: SelectedPlace) => {
@@ -77,6 +88,8 @@ const CreateGroupVenueModal = ({ show, groupId, onClose }: Props) => {
       () =>
         mutateAsync({
           venueName: venueName.trim(),
+          visited,
+          visitedOn: visited && visitedOn ? visitedOn : undefined,
           venueTypeOptionId: venueTypeOptionId || undefined,
           foodTypeOptionId: foodTypeOptionId || undefined,
           ...placeFields,
@@ -169,6 +182,32 @@ const CreateGroupVenueModal = ({ show, groupId, onClose }: Props) => {
                     </option>
                   ))}
                 </Form.Select>
+              </Form.Group>
+            </Col>
+          </Row>
+          <Row className="g-3 mb-3">
+            <Col xs={6}>
+              <Form.Group controlId="createVenueVisited">
+                <Form.Label>Visited</Form.Label>
+                <Form.Check
+                  type="switch"
+                  checked={visited}
+                  onChange={(e) => handleVisitedChange(e.target.checked)}
+                  disabled={isPending}
+                  className="form-switch-lg"
+                />
+              </Form.Group>
+            </Col>
+            <Col xs={6} className={visited ? undefined : "invisible"}>
+              <Form.Group controlId="createVenueVisitedOn">
+                <Form.Label>Visited On</Form.Label>
+                <Form.Control
+                  type="date"
+                  value={visitedOn}
+                  onChange={(e) => setVisitedOn(e.target.value)}
+                  disabled={isPending}
+                  max={todayDateInputValue()}
+                />
               </Form.Group>
             </Col>
           </Row>

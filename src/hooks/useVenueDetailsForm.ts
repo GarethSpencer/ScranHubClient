@@ -9,22 +9,12 @@ import useVenuePlaceSearch from "./useVenuePlaceSearch";
 import type { SelectedPlace } from "../components/common/PlaceAutocomplete";
 import type GroupVenueResult from "../models/results/GroupVenueResult";
 import type RatingOptionResult from "../models/results/generic/RatingOptionResult";
+import { toDatePickerValue, todayDateInputValue } from "../lib/date";
 
 const optionIdForLabel = (
   options: RatingOptionResult[],
   label: string | undefined,
 ) => options.find((option) => option.label === label)?.optionId ?? "";
-
-const toDateInputValue = (visitedOn: string | undefined) =>
-  visitedOn ? visitedOn.slice(0, 10) : "";
-
-const todayDateInputValue = () => {
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, "0");
-  const day = String(now.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-};
 
 const useVenueDetailsForm = (
   groupId: string,
@@ -65,7 +55,7 @@ const useVenueDetailsForm = (
   const initialise = () => {
     setVenueName(venue?.venueName ?? "");
     setVisited(venue?.visited ?? false);
-    setVisitedOn(toDateInputValue(venue?.visitedOn));
+    setVisitedOn(toDatePickerValue(venue?.visitedOn));
     setVenueTypeOptionId(optionIdForLabel(venueTypeOptions, venue?.venueType));
     setFoodTypeOptionId(optionIdForLabel(foodTypeOptions, venue?.foodType));
     placeSearch.reset();
