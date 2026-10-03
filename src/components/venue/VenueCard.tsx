@@ -152,8 +152,8 @@ const VenueCard = ({
             }
             savingLabel="Saving..."
             savedLabel="Saved"
-            variant="danger"
-            className="venue-card-rating-action venue-card-rating-action-danger"
+            variant="primary"
+            className="venue-card-rating-action venue-card-rating-action-no-rating"
             onClick={() => onMarkDidNotGo(venue)}
             disabled={noRatingDisabled}
           />
