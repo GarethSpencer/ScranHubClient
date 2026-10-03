@@ -166,9 +166,16 @@ const GroupVenuesPage = () => {
   );
   const { data: costOptionData } = useGetOptionsForGroup("CostOption", id);
   const { data: vibeOptionData } = useGetOptionsForGroup("VibeOption", id);
+  const { data: venueTypeOptionData, isSuccess: hasLoadedVenueTypeOptions } =
+    useGetOptionsForGroup("VenueTypeOption", id);
   const qualityOptions = qualityOptionData?.options ?? [];
   const costOptions = costOptionData?.options ?? [];
   const vibeOptions = vibeOptionData?.options ?? [];
+  const useDefaultVenueTypeIcons =
+    hasLoadedVenueTypeOptions &&
+    !(venueTypeOptionData?.options ?? []).some(
+      (option) => option.groupId === id,
+    );
 
   return (
     <div className="manage-venues-page">
@@ -284,6 +291,7 @@ const GroupVenuesPage = () => {
                     : "idle"
                 }
                 noRatingDisabled={noRatingSave.isBusy}
+                useDefaultVenueTypeIcons={useDefaultVenueTypeIcons}
                 justRated={x.groupVenueId === justRatedId}
               />
             ))}
@@ -411,6 +419,7 @@ const GroupVenuesPage = () => {
                         : "idle"
                     }
                     noRatingDisabled={noRatingSave.isBusy}
+                    useDefaultVenueTypeIcons={useDefaultVenueTypeIcons}
                     justRated={x.groupVenueId === justRatedId}
                   />
                 ))}

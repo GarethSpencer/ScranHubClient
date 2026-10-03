@@ -104,9 +104,16 @@ const RatingDetailsPage = () => {
   );
   const { data: costOptionData } = useGetOptionsForGroup("CostOption", id);
   const { data: vibeOptionData } = useGetOptionsForGroup("VibeOption", id);
+  const { data: venueTypeOptionData, isSuccess: hasLoadedVenueTypeOptions } =
+    useGetOptionsForGroup("VenueTypeOption", id);
   const qualityOptions = qualityOptionData?.options ?? [];
   const costOptions = costOptionData?.options ?? [];
   const vibeOptions = vibeOptionData?.options ?? [];
+  const useDefaultVenueTypeIcons =
+    hasLoadedVenueTypeOptions &&
+    !(venueTypeOptionData?.options ?? []).some(
+      (option) => option.groupId === id,
+    );
 
   const { data: qualityRatingsData, isLoading: isQualityRatingsLoading } =
     useGetRatingsForGroup("QualityRating", id);
@@ -242,6 +249,7 @@ const RatingDetailsPage = () => {
                 costOptions={costOptions}
                 vibeOptions={vibeOptions}
                 memberCount={memberCount}
+                useDefaultVenueTypeIcons={useDefaultVenueTypeIcons}
                 onViewInfo={setInfoVenue}
                 onViewBreakdown={setBreakdownVenue}
               />
@@ -362,6 +370,7 @@ const RatingDetailsPage = () => {
                     costOptions={costOptions}
                     vibeOptions={vibeOptions}
                     memberCount={memberCount}
+                    useDefaultVenueTypeIcons={useDefaultVenueTypeIcons}
                     onViewInfo={setInfoVenue}
                     onViewBreakdown={setBreakdownVenue}
                   />

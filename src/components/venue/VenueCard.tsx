@@ -5,6 +5,7 @@ import RatingBar from "../common/RatingBar";
 import SaveButton from "../common/SaveButton";
 import type { SaveStatus } from "../../hooks/useSaveFeedback";
 import VisitedIndicator from "./VisitedIndicator";
+import VenueTypeSummary from "./VenueTypeSummary";
 import { formatDistanceMiles, venueHasMyRatings } from "../../lib/venueInfo";
 
 interface Props {
@@ -17,6 +18,7 @@ interface Props {
   onMarkDidNotGo: (venue: GroupVenueResult) => void;
   noRatingStatus: SaveStatus;
   noRatingDisabled: boolean;
+  useDefaultVenueTypeIcons: boolean;
   justRated?: boolean;
 }
 
@@ -30,9 +32,9 @@ const VenueCard = ({
   onMarkDidNotGo,
   noRatingStatus,
   noRatingDisabled,
+  useDefaultVenueTypeIcons,
   justRated = false,
 }: Props) => {
-  const summaryParts = [venue.venueType, venue.foodType].filter(Boolean);
   const hasRatings = venueHasMyRatings(venue);
   const markedNotAttended =
     venue.myQualityRated &&
@@ -64,11 +66,11 @@ const VenueCard = ({
               )}
             </span>
           </div>
-          {summaryParts.length > 0 && (
-            <div className="venue-card-subheading text-break">
-              {summaryParts.join(" · ")}
-            </div>
-          )}
+          <VenueTypeSummary
+            venueType={venue.venueType}
+            foodType={venue.foodType}
+            useDefaultVenueTypeIcons={useDefaultVenueTypeIcons}
+          />
         </div>
         <VisitedIndicator visited={venue.visited} visitedOn={venue.visitedOn} />
         <span className="venue-card-zone-icon" aria-hidden="true">

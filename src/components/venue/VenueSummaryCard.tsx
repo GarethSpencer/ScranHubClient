@@ -4,6 +4,7 @@ import type GroupVenueResult from "../../models/results/GroupVenueResult";
 import type RatingOptionResult from "../../models/results/generic/RatingOptionResult";
 import RatingBar from "../common/RatingBar";
 import VisitedIndicator from "./VisitedIndicator";
+import VenueTypeSummary from "./VenueTypeSummary";
 import { formatDistanceMiles, venueHasInfo } from "../../lib/venueInfo";
 
 interface Props {
@@ -12,6 +13,7 @@ interface Props {
   costOptions: RatingOptionResult[];
   vibeOptions: RatingOptionResult[];
   memberCount: number;
+  useDefaultVenueTypeIcons: boolean;
   onViewInfo: (venue: GroupVenueResult) => void;
   onViewBreakdown: (venue: GroupVenueResult) => void;
 }
@@ -46,10 +48,10 @@ const VenueSummaryCard = ({
   costOptions,
   vibeOptions,
   memberCount,
+  useDefaultVenueTypeIcons,
   onViewInfo,
   onViewBreakdown,
 }: Props) => {
-  const summaryParts = [venue.venueType, venue.foodType].filter(Boolean);
   const hasInfo = venueHasInfo(venue);
 
   const titleContent = (
@@ -67,11 +69,11 @@ const VenueSummaryCard = ({
           )}
         </span>
       </div>
-      {summaryParts.length > 0 && (
-        <div className="venue-card-subheading text-break">
-          {summaryParts.join(" · ")}
-        </div>
-      )}
+      <VenueTypeSummary
+        venueType={venue.venueType}
+        foodType={venue.foodType}
+        useDefaultVenueTypeIcons={useDefaultVenueTypeIcons}
+      />
     </>
   );
 
