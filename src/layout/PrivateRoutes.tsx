@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import useAuth from "../auth/useAuth";
-import { Navigate, Outlet } from "react-router-dom";
+import { Navigate, Outlet, useLocation } from "react-router-dom";
 import useConfigureApiAuth from "../api/useConfigureApiAuth";
 import RealtimeProvider from "../realtime/RealtimeProvider";
 
 const PrivateRoutes = () => {
   useConfigureApiAuth();
+  const location = useLocation();
   const { isAuthenticated, isLoading, getAccessTokenSilently } = useAuth();
+  const returnTo = `${location.pathname}${location.search}${location.hash}`;
   const [tokenCheck, setTokenCheck] = useState<{
     getter: typeof getAccessTokenSilently;
     status: "valid" | "invalid";
@@ -37,7 +39,7 @@ const PrivateRoutes = () => {
   if (isLoading) return null;
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/login" state={{ returnTo }} replace />;
   }
 
   const tokenStatus =
@@ -46,7 +48,7 @@ const PrivateRoutes = () => {
       : "checking";
 
   if (tokenStatus === "invalid") {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/login" state={{ returnTo }} replace />;
   }
   if (tokenStatus !== "valid") return null;
 

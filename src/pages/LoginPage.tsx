@@ -1,12 +1,16 @@
 import Button from "react-bootstrap/Button";
+import { useLocation } from "react-router-dom";
 import useAuth from "../auth/useAuth";
+import getSafeReturnTo from "../auth/getSafeReturnTo";
 
 interface LoginType {
   type: "login" | "signup";
 }
 
 const LoginPage = () => {
+  const location = useLocation();
   const { loginWithRedirect } = useAuth();
+  const returnTo = getSafeReturnTo(location.state);
 
   const auth0Signup = (
     e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>,
@@ -14,6 +18,7 @@ const LoginPage = () => {
   ) => {
     e.preventDefault();
     loginWithRedirect({
+      appState: returnTo ? { returnTo } : undefined,
       authorizationParams: {
         screen_hint: type.type === "signup" ? "signup" : "login",
       },
