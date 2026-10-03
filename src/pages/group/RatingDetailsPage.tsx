@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { MAX_VENUE_NAME_LENGTH } from "../../constants/validation";
 import { useState } from "react";
 import Table from "react-bootstrap/Table";
@@ -22,6 +22,7 @@ import useGroupVenueListing, {
   type VenueListingColumn,
 } from "../../hooks/useGroupVenueListing";
 import useIsMobile from "../../hooks/useIsMobile";
+import { useGetGroupVenue } from "../../api/controllerHooks/useGroupVenueController";
 import type GroupVenueResult from "../../models/results/GroupVenueResult";
 import type RatingVenueResult from "../../models/results/generic/RatingVenueResult";
 import type GroupVenueRatingResult from "../../models/results/generic/GroupVenueRatingResult";
@@ -53,13 +54,32 @@ const ratingsForVenue = (
 
 const RatingDetailsPage = () => {
   const { id = "" } = useParams();
-
-  const isMobile = useIsMobile();
-
+  const [searchParams, setSearchParams] = useSearchParams();
+  const sharedVenueId = searchParams.get("venueId") ?? "";
+  const venueView = searchParams.get("venueView");
+  const { data: sharedVenueData } = useGetGroupVenue(id, sharedVenueId);
+  const sharedVenue =
+    sharedVenueData?.groupVenue?.groupVenueId === sharedVenueId &&
+    sharedVenueData.groupVenue.groupId === id
+      ? sharedVenueData.groupVenue
+      : null;
   const [infoVenue, setInfoVenue] = useState<GroupVenueResult | null>(null);
   const [breakdownVenue, setBreakdownVenue] = useState<GroupVenueResult | null>(
     null,
   );
+
+  const isMobile = useIsMobile();
+  const isSharedInfoVenue = isMobile && venueView !== "breakdown";
+  const displayedInfoVenue = sharedVenueId
+    ? isSharedInfoVenue
+      ? sharedVenue
+      : null
+    : infoVenue;
+  const displayedBreakdownVenue = sharedVenueId
+    ? isSharedInfoVenue
+      ? null
+      : sharedVenue
+    : breakdownVenue;
 
   const [prevIsMobile, setPrevIsMobile] = useState(isMobile);
   if (prevIsMobile !== isMobile) {
@@ -67,6 +87,44 @@ const RatingDetailsPage = () => {
     setInfoVenue(null);
     setBreakdownVenue(null);
   }
+
+  const selectVenue = (venue: GroupVenueResult, view: "info" | "breakdown") => {
+    setSearchParams(
+      (previousParams) => {
+        const nextParams = new URLSearchParams(previousParams);
+        nextParams.set("venueId", venue.groupVenueId);
+        nextParams.set("venueView", view);
+        return nextParams;
+      },
+      { replace: true },
+    );
+    if (view === "info") {
+      setInfoVenue(venue);
+      setBreakdownVenue(null);
+    } else {
+      setBreakdownVenue(venue);
+      setInfoVenue(null);
+    }
+  };
+
+  const closeVenueModal = () => {
+    setInfoVenue(null);
+    setBreakdownVenue(null);
+    setSearchParams(
+      (previousParams) => {
+        const nextParams = new URLSearchParams(previousParams);
+        nextParams.delete("venueId");
+        nextParams.delete("venueView");
+        return nextParams;
+      },
+      { replace: true },
+    );
+  };
+
+  const selectInfoVenue = (venue: GroupVenueResult) =>
+    selectVenue(venue, "info");
+  const selectBreakdownVenue = (venue: GroupVenueResult) =>
+    selectVenue(venue, "breakdown");
 
   const {
     columns,
@@ -131,7 +189,7 @@ const RatingDetailsPage = () => {
   });
   const memberCount = membersData?.totalCount ?? 0;
 
-  const breakdownVenueId = breakdownVenue?.groupVenueId ?? "";
+  const breakdownVenueId = displayedBreakdownVenue?.groupVenueId ?? "";
 
   const breakdownQualityRatings = ratingsForVenue(
     qualityRatingsData?.groupVenueRatingsResults,
@@ -156,7 +214,7 @@ const RatingDetailsPage = () => {
 
       {!isMobile && (
         <RatingDetailsModal
-          venue={breakdownVenue}
+          venue={displayedBreakdownVenue}
           qualityRatings={breakdownQualityRatings}
           costRatings={breakdownCostRatings}
           vibeRatings={breakdownVibeRatings}
@@ -164,17 +222,17 @@ const RatingDetailsPage = () => {
           costOptions={costOptions}
           vibeOptions={vibeOptions}
           isLoading={areRatingsLoading}
-          onClose={() => setBreakdownVenue(null)}
+          onClose={closeVenueModal}
         />
       )}
       {isMobile && (
         <>
           <VenueInfoModal
-            venue={infoVenue}
-            onClose={() => setInfoVenue(null)}
+            venue={displayedInfoVenue}
+            onClose={closeVenueModal}
           />
           <VenueBreakdownModal
-            venue={breakdownVenue}
+            venue={displayedBreakdownVenue}
             qualityRatings={breakdownQualityRatings}
             costRatings={breakdownCostRatings}
             vibeRatings={breakdownVibeRatings}
@@ -182,7 +240,7 @@ const RatingDetailsPage = () => {
             costOptions={costOptions}
             vibeOptions={vibeOptions}
             isLoading={areRatingsLoading}
-            onClose={() => setBreakdownVenue(null)}
+            onClose={closeVenueModal}
           />
         </>
       )}
@@ -233,7 +291,7 @@ const RatingDetailsPage = () => {
                     vibeOptions={vibeOptions}
                     memberCount={memberCount}
                     showDistance={hasUserLocation}
-                    onSelect={setBreakdownVenue}
+                    onSelect={selectBreakdownVenue}
                   />
                 ))}
               </tbody>
@@ -250,8 +308,8 @@ const RatingDetailsPage = () => {
                 vibeOptions={vibeOptions}
                 memberCount={memberCount}
                 useDefaultVenueTypeIcons={useDefaultVenueTypeIcons}
-                onViewInfo={setInfoVenue}
-                onViewBreakdown={setBreakdownVenue}
+                onViewInfo={selectInfoVenue}
+                onViewBreakdown={selectBreakdownVenue}
               />
             ))}
           </div>
@@ -329,7 +387,7 @@ const RatingDetailsPage = () => {
                         vibeOptions={vibeOptions}
                         memberCount={memberCount}
                         showDistance={hasUserLocation}
-                        onSelect={setBreakdownVenue}
+                        onSelect={selectBreakdownVenue}
                       />
                     ))}
               </tbody>
@@ -371,8 +429,8 @@ const RatingDetailsPage = () => {
                     vibeOptions={vibeOptions}
                     memberCount={memberCount}
                     useDefaultVenueTypeIcons={useDefaultVenueTypeIcons}
-                    onViewInfo={setInfoVenue}
-                    onViewBreakdown={setBreakdownVenue}
+                    onViewInfo={selectInfoVenue}
+                    onViewBreakdown={selectBreakdownVenue}
                   />
                 ))}
           </div>

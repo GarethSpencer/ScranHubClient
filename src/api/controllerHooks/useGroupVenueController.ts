@@ -25,6 +25,7 @@ export const useGetGroupVenue = (groupId: string, groupVenueId: string) => {
     queryKey: ["groups", groupId, "venues", groupVenueId],
     queryFn: () =>
       groupVenueControllerService.get<GetGroupVenueResponse>(groupVenueId),
+    enabled: groupVenueId.length > 0,
     staleTime: VENUE_STALE_TIME,
     placeholderData: () => {
       const cachedVenue = queryClient
