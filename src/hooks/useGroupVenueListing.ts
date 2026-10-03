@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   useGetVenuesForGroup,
   useSearchGroupVenues,
@@ -27,14 +27,13 @@ const useGroupVenueListing = (
   baseColumns: VenueListingColumn[],
 ) => {
   const [searchText, setSearchText] = useState("");
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
   const [sortBy, setSortBy] = useState<GroupVenueSortParameters>(
     GroupVenueSortParameters.VisitedOn,
   );
   const [sortDescending, setSortDescending] = useState(true);
-  const [searchPage, setSearchPage] = useState(1);
   const searchPageSize = SEARCH_PAGE_SIZE;
+  const venueSentinelRef = useRef<HTMLDivElement>(null);
+  const searchSentinelRef = useRef<HTMLDivElement>(null);
 
   const { data: currentUserData } = useGetCurrentUser();
   const currentUser = currentUserData?.user;
@@ -52,12 +51,6 @@ const useGroupVenueListing = (
 
   const onSearchTextChange = (newSearchText: string) => {
     setSearchText(newSearchText);
-    setSearchPage(1);
-  };
-
-  const onPageSizeChange = (newPageSize: number) => {
-    setPageSize(newPageSize);
-    setPage(1);
   };
 
   const onSort = (column: GroupVenueSortParameters) => {
@@ -67,56 +60,99 @@ const useGroupVenueListing = (
       setSortBy(column);
       setSortDescending(false);
     }
-    setPage(1);
   };
 
   const onSortByChange = (value: GroupVenueSortParameters) => {
     setSortBy(value);
     setSortDescending(false);
-    setPage(1);
   };
 
   const onToggleDirection = () => {
     setSortDescending((prev) => !prev);
-    setPage(1);
   };
 
   const {
     data: venuesData,
     isLoading: isVenuesLoading,
-    isPlaceholderData: isVenuesPlaceholder,
     isError: isVenuesError,
+    fetchNextPage: fetchNextVenuesPage,
+    hasNextPage: hasNextVenuesPage,
+    isFetchingNextPage: isFetchingNextVenuesPage,
+    isFetchNextPageError: isFetchNextVenuesPageError,
   } = useGetVenuesForGroup(groupId, {
-    pageNumber: page,
-    pageSize,
+    pageSize: DEFAULT_PAGE_SIZE,
     sortBy,
     sortDescending,
   });
 
-  const isVenuesPending = isVenuesLoading || isVenuesPlaceholder;
+  const isVenuesPending = isVenuesLoading;
 
   const {
     data: searchData,
     isLoading: isSearchLoading,
     isError: isSearchError,
+    fetchNextPage: fetchNextSearchPage,
+    hasNextPage: hasNextSearchPage,
+    isFetchingNextPage: isFetchingNextSearchPage,
+    isFetchNextPageError: isFetchNextSearchPageError,
   } = useSearchGroupVenues(groupId, {
     searchText: debouncedSearchText,
-    pageNumber: searchPage,
     pageSize: searchPageSize,
   });
 
-  const venues = venuesData?.groupVenues ?? [];
-  const totalCount = venuesData?.totalCount ?? 0;
+  useEffect(() => {
+    const sentinel = venueSentinelRef.current;
+    if (!sentinel || !hasNextVenuesPage || isFetchNextVenuesPageError) return;
 
-  const searchResults = searchData?.groupVenues ?? [];
-  const searchTotalCount = searchData?.totalCount ?? 0;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && !isFetchingNextVenuesPage) {
+          fetchNextVenuesPage();
+        }
+      },
+      { rootMargin: "150px" },
+    );
 
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [
+    fetchNextVenuesPage,
+    hasNextVenuesPage,
+    isFetchNextVenuesPageError,
+    isFetchingNextVenuesPage,
+  ]);
+
+  useEffect(() => {
+    const sentinel = searchSentinelRef.current;
+    if (!sentinel || !hasNextSearchPage || isFetchNextSearchPageError) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && !isFetchingNextSearchPage) {
+          fetchNextSearchPage();
+        }
+      },
+      { rootMargin: "150px" },
+    );
+
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [
+    fetchNextSearchPage,
+    hasNextSearchPage,
+    isFetchNextSearchPageError,
+    isFetchingNextSearchPage,
+  ]);
+
+  const venues = venuesData?.pages.flatMap((page) => page.groupVenues ?? []) ?? [];
+
+  const searchResults =
+    searchData?.pages.flatMap((page) => page.groupVenues ?? []) ?? [];
+
+  const totalCount = venuesData?.pages.at(-1)?.totalCount ?? 0;
   const showSearch = totalCount > 0 || isVenuesPending || isSearching;
 
-  const skeletonRowCount =
-    totalCount > 0
-      ? Math.min(pageSize, Math.max(1, totalCount - (page - 1) * pageSize))
-      : pageSize;
+  const skeletonRowCount = DEFAULT_PAGE_SIZE;
 
   return {
     columns,
@@ -126,22 +162,23 @@ const useGroupVenueListing = (
     onSearchTextChange,
     isSearching,
     searchResults,
-    searchTotalCount,
     isSearchLoading,
-    isSearchError,
-    searchPage,
-    setSearchPage,
-
+    isSearchError: isSearchError && !searchData,
+    isFetchingNextSearchPage,
+    isFetchNextSearchPageError,
+    fetchNextSearchPage,
+    hasNextSearchPage,
+    searchSentinelRef,
     venues,
     totalCount,
     isVenuesLoading,
     isVenuesPending,
-    isVenuesError,
-
-    page,
-    setPage,
-    pageSize,
-    onPageSizeChange,
+    isVenuesError: isVenuesError && !venuesData,
+    isFetchingNextVenuesPage,
+    isFetchNextVenuesPageError,
+    fetchNextVenuesPage,
+    hasNextVenuesPage,
+    venueSentinelRef,
 
     sortBy,
     sortDescending,

@@ -12,7 +12,7 @@ import {
 } from "../../api/controllerHooks/useRatingController";
 import TableStatus from "../../components/common/TableStatus";
 import TableScrollContainer from "../../components/common/TableScrollContainer";
-import TablePagination from "../../components/common/TablePagination";
+import InfiniteScrollLoader from "../../components/common/InfiniteScrollLoader";
 import GroupVenueRow from "../../components/GroupVenueRow";
 import GroupVenueSkeletonRow from "../../components/GroupVenueSkeletonRow";
 import CreateGroupVenueModal from "../../components/CreateGroupVenueModal";
@@ -21,7 +21,6 @@ import VenueCard from "../../components/venue/VenueCard";
 import VenueDetailsModal from "../../components/venue/VenueDetailsModal";
 import VenueRatingsModal from "../../components/venue/VenueRatingsModal";
 import MobileSortControl from "../../components/venue/MobileSortControl";
-import TablePageSizeSelect from "../../components/common/TablePageSizeSelect";
 import useGroupVenueListing, {
   type VenueListingColumn,
 } from "../../hooks/useGroupVenueListing";
@@ -31,7 +30,6 @@ import useSaveFeedback from "../../hooks/useSaveFeedback";
 import useRatingCelebration from "../../contexts/ratingCelebration/useRatingCelebration";
 import type GroupVenueResult from "../../models/results/GroupVenueResult";
 import { GroupVenueSortParameters } from "../../enums/GroupVenueSortParameters";
-import { SEARCH_PAGE_SIZE } from "../../constants/pagination";
 
 const BASE_COLUMNS: VenueListingColumn[] = [
   { label: "Name", sortBy: GroupVenueSortParameters.VenueName },
@@ -137,20 +135,22 @@ const GroupVenuesPage = () => {
     onSearchTextChange,
     isSearching,
     searchResults,
-    searchTotalCount,
     isSearchLoading,
     isSearchError,
-    searchPage,
-    setSearchPage,
+    isFetchingNextSearchPage,
+    isFetchNextSearchPageError,
+    fetchNextSearchPage,
+    hasNextSearchPage,
+    searchSentinelRef,
     venues,
-    totalCount,
     isVenuesLoading,
     isVenuesPending,
     isVenuesError,
-    page,
-    setPage,
-    pageSize,
-    onPageSizeChange,
+    isFetchingNextVenuesPage,
+    isFetchNextVenuesPageError,
+    fetchNextVenuesPage,
+    hasNextVenuesPage,
+    venueSentinelRef,
     sortBy,
     sortDescending,
     onSort,
@@ -297,14 +297,13 @@ const GroupVenuesPage = () => {
             ))}
           </div>
 
-          <div className="d-flex justify-content-center">
-            <TablePagination
-              page={searchPage}
-              totalCount={searchTotalCount}
-              pageSize={SEARCH_PAGE_SIZE}
-              onPageChange={setSearchPage}
-            />
-          </div>
+          <InfiniteScrollLoader
+            sentinelRef={searchSentinelRef}
+            hasNextPage={hasNextSearchPage}
+            isFetchingNextPage={isFetchingNextSearchPage}
+            isFetchNextPageError={isFetchNextSearchPageError}
+            onRetry={() => fetchNextSearchPage()}
+          />
         </TableStatus>
       ) : isVenuesError ? (
         <p className="text-muted text-center mb-0">
@@ -425,19 +424,13 @@ const GroupVenuesPage = () => {
                 ))}
           </div>
 
-          <div className="pagination-row">
-            <TablePagination
-              page={page}
-              totalCount={totalCount}
-              pageSize={pageSize}
-              onPageChange={setPage}
-            />
-            <TablePageSizeSelect
-              id="venuesPageSize"
-              pageSize={pageSize}
-              onPageSizeChange={onPageSizeChange}
-            />
-          </div>
+          <InfiniteScrollLoader
+            sentinelRef={venueSentinelRef}
+            hasNextPage={hasNextVenuesPage}
+            isFetchingNextPage={isFetchingNextVenuesPage}
+            isFetchNextPageError={isFetchNextVenuesPageError}
+            onRetry={() => fetchNextVenuesPage()}
+          />
         </>
       )}
     </div>

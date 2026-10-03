@@ -1,6 +1,6 @@
 import {
-  keepPreviousData,
   useMutation,
+  useInfiniteQuery,
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
@@ -44,44 +44,58 @@ export const useGetGroupVenue = (groupId: string, groupVenueId: string) => {
 
 export const useGetVenuesForGroup = (
   groupId: string,
-  request: SortablePaginationRequest,
+  request: Omit<SortablePaginationRequest, "pageNumber">,
 ) => {
   const { data: currentUserData } = useGetCurrentUser();
   const userId = currentUserData?.user?.userId;
 
-  return useQuery<GetGroupVenuesResponse, Error>({
+  return useInfiniteQuery<GetGroupVenuesResponse, Error>({
     queryKey: [
       "groups",
       groupId,
       "venues",
       userId,
-      request.pageNumber,
       request.pageSize,
       request.sortBy,
       request.sortDescending,
     ],
-    queryFn: () =>
+    initialPageParam: 1,
+    queryFn: ({ pageParam }) =>
       groupVenueControllerService.get<GetGroupVenuesResponse>(
-        `group/${groupId}?PageNumber=${request.pageNumber}&PageSize=${request.pageSize}&SortBy=${request.sortBy}&SortDescending=${request.sortDescending}`,
+        `group/${groupId}?PageNumber=${pageParam}&PageSize=${request.pageSize}&SortBy=${request.sortBy}&SortDescending=${request.sortDescending}`,
       ),
+    getNextPageParam: (lastPage, allPages) => {
+      const loaded = allPages.reduce(
+        (count, page) => count + (page.groupVenues?.length ?? 0),
+        0,
+      );
+      return loaded < lastPage.totalCount ? allPages.length + 1 : undefined;
+    },
     staleTime: VENUE_STALE_TIME,
-    placeholderData: keepPreviousData,
   });
 };
 
 export const useSearchGroupVenues = (
   groupId: string,
-  request: SearchGroupVenueRequest,
+  request: Omit<SearchGroupVenueRequest, "pageNumber">,
 ) => {
   const { data: currentUserData } = useGetCurrentUser();
   const userId = currentUserData?.user?.userId;
 
-  return useQuery<GetGroupVenuesResponse, Error>({
+  return useInfiniteQuery<GetGroupVenuesResponse, Error>({
     queryKey: ["groups", groupId, "venues", "search", userId, request],
-    queryFn: () =>
+    initialPageParam: 1,
+    queryFn: ({ pageParam }) =>
       groupVenueControllerService.get<GetGroupVenuesResponse>(
-        `search/${groupId}?SearchText=${encodeURIComponent(request.searchText)}&PageNumber=${request.pageNumber}&PageSize=${request.pageSize}`,
+        `search/${groupId}?SearchText=${encodeURIComponent(request.searchText)}&PageNumber=${pageParam}&PageSize=${request.pageSize}`,
       ),
+    getNextPageParam: (lastPage, allPages) => {
+      const loaded = allPages.reduce(
+        (count, page) => count + (page.groupVenues?.length ?? 0),
+        0,
+      );
+      return loaded < lastPage.totalCount ? allPages.length + 1 : undefined;
+    },
     staleTime: VENUE_STALE_TIME,
     enabled: request.searchText.length >= 3,
   });

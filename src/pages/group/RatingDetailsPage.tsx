@@ -9,7 +9,7 @@ import { useGetRatingsForGroup } from "../../api/controllerHooks/useRatingContro
 import { useGetGroupMembers } from "../../api/controllerHooks/useGroupController";
 import TableStatus from "../../components/common/TableStatus";
 import TableScrollContainer from "../../components/common/TableScrollContainer";
-import TablePagination from "../../components/common/TablePagination";
+import InfiniteScrollLoader from "../../components/common/InfiniteScrollLoader";
 import RatingDetailsRow from "../../components/RatingDetailsRow";
 import RatingDetailsSkeletonRow from "../../components/RatingDetailsSkeletonRow";
 import RatingDetailsModal from "../../components/RatingDetailsModal";
@@ -17,7 +17,6 @@ import VenueSummaryCard from "../../components/venue/VenueSummaryCard";
 import VenueInfoModal from "../../components/venue/VenueInfoModal";
 import VenueBreakdownModal from "../../components/venue/VenueBreakdownModal";
 import MobileSortControl from "../../components/venue/MobileSortControl";
-import TablePageSizeSelect from "../../components/common/TablePageSizeSelect";
 import useGroupVenueListing, {
   type VenueListingColumn,
 } from "../../hooks/useGroupVenueListing";
@@ -27,7 +26,6 @@ import type GroupVenueResult from "../../models/results/GroupVenueResult";
 import type RatingVenueResult from "../../models/results/generic/RatingVenueResult";
 import type GroupVenueRatingResult from "../../models/results/generic/GroupVenueRatingResult";
 import { GroupVenueSortParameters } from "../../enums/GroupVenueSortParameters";
-import { SEARCH_PAGE_SIZE } from "../../constants/pagination";
 
 const BASE_COLUMNS: VenueListingColumn[] = [
   { label: "Name", sortBy: GroupVenueSortParameters.VenueName },
@@ -133,20 +131,22 @@ const RatingDetailsPage = () => {
     onSearchTextChange,
     isSearching,
     searchResults,
-    searchTotalCount,
     isSearchLoading,
     isSearchError,
-    searchPage,
-    setSearchPage,
+    isFetchingNextSearchPage,
+    isFetchNextSearchPageError,
+    fetchNextSearchPage,
+    hasNextSearchPage,
+    searchSentinelRef,
     venues,
-    totalCount,
     isVenuesLoading,
     isVenuesPending,
     isVenuesError,
-    page,
-    setPage,
-    pageSize,
-    onPageSizeChange,
+    isFetchingNextVenuesPage,
+    isFetchNextVenuesPageError,
+    fetchNextVenuesPage,
+    hasNextVenuesPage,
+    venueSentinelRef,
     sortBy,
     sortDescending,
     onSort,
@@ -314,14 +314,13 @@ const RatingDetailsPage = () => {
             ))}
           </div>
 
-          <div className="d-flex justify-content-center">
-            <TablePagination
-              page={searchPage}
-              totalCount={searchTotalCount}
-              pageSize={SEARCH_PAGE_SIZE}
-              onPageChange={setSearchPage}
-            />
-          </div>
+          <InfiniteScrollLoader
+            sentinelRef={searchSentinelRef}
+            hasNextPage={hasNextSearchPage}
+            isFetchingNextPage={isFetchingNextSearchPage}
+            isFetchNextPageError={isFetchNextSearchPageError}
+            onRetry={() => fetchNextSearchPage()}
+          />
         </TableStatus>
       ) : isVenuesError ? (
         <p className="text-muted text-center mb-0">
@@ -435,19 +434,13 @@ const RatingDetailsPage = () => {
                 ))}
           </div>
 
-          <div className="pagination-row">
-            <TablePagination
-              page={page}
-              totalCount={totalCount}
-              pageSize={pageSize}
-              onPageChange={setPage}
-            />
-            <TablePageSizeSelect
-              id="ratingDetailsPageSize"
-              pageSize={pageSize}
-              onPageSizeChange={onPageSizeChange}
-            />
-          </div>
+          <InfiniteScrollLoader
+            sentinelRef={venueSentinelRef}
+            hasNextPage={hasNextVenuesPage}
+            isFetchingNextPage={isFetchingNextVenuesPage}
+            isFetchNextPageError={isFetchNextVenuesPageError}
+            onRetry={() => fetchNextVenuesPage()}
+          />
         </>
       )}
     </div>
