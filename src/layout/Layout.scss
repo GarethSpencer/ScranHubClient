@@ -514,7 +514,7 @@
     position: absolute;
     z-index: 2;
     inset: 0;
-    border: 1px solid var(--bs-menu2);
+    border: 1px solid #777;
     border-radius: 0 0 0.4375rem 0.4375rem;
     content: "";
     pointer-events: none;
@@ -539,13 +539,13 @@
 
 .venue-card-rating-action-add {
   grid-column: 1;
-  border-right: 1px solid var(--bs-menu2);
+  border-right: 1px solid #777;
 }
 
 .venue-card-rating-action-no-rating {
   grid-column: 2;
   justify-content: center;
-  border-left: 1px solid var(--bs-menu2);
+  border-left: 1px solid #777;
 }
 
 .venue-card-action-label {
@@ -1405,7 +1405,7 @@ $switch-knob-tick-bg: switch-knob-bg("M-1.5 0.1 -0.5 1.2 1.5 -1.1", $success);
 .venue-card-rating-actions
   .venue-card-rating-action-no-rating.save-button-saved:disabled {
   background-color: transparent;
-  border-left-color: var(--bs-menu2);
+  border-left-color: #777;
   animation: none;
   box-shadow: none;
 }
