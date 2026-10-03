@@ -55,12 +55,15 @@ const VenueSummaryCard = ({
   const titleContent = (
     <>
       <div className="venue-card-title">
-        <span className="text-break">
+        <span>
           {venue.venueName}
           {venue.distanceMiles != null && (
-            <span className="venue-card-subheading ms-2">
-              ({formatDistanceMiles(venue.distanceMiles)})
-            </span>
+            <>
+              {" "}
+              <span className="venue-card-subheading text-nowrap">
+                ({formatDistanceMiles(venue.distanceMiles)})
+              </span>
+            </>
           )}
         </span>
       </div>

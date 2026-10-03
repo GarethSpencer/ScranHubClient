@@ -608,6 +608,12 @@
   @extend %venue-card-meta-text;
 }
 
+@media (max-width: 360px) {
+  .venue-visited-date {
+    display: none;
+  }
+}
+
 .venue-card-subheading {
   font-size: 0.875rem;
   font-weight: 600;

@@ -10,4 +10,4 @@ export const venueNeedsMyRatings = (venue: GroupVenueResult) =>
   venue.visited && !venueHasMyRatings(venue);
 
 export const formatDistanceMiles = (miles: number) =>
-  miles < 0.01 ? "<0.01 mi" : `${miles.toFixed(2)} mi`;
+  miles < 0.01 ? "<0.01\u00a0mi" : `${miles.toFixed(2)}\u00a0mi`;
