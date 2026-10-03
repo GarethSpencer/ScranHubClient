@@ -6,6 +6,10 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { FaSortUp, FaSortDown, FaSort } from "react-icons/fa";
 import { useGetOptionsForGroup } from "../../api/controllerHooks/useOptionController";
+import {
+  useCreateRating,
+  useInvalidateRatingQueries,
+} from "../../api/controllerHooks/useRatingController";
 import TableStatus from "../../components/common/TableStatus";
 import TableScrollContainer from "../../components/common/TableScrollContainer";
 import TablePagination from "../../components/common/TablePagination";
@@ -23,6 +27,8 @@ import useGroupVenueListing, {
 } from "../../hooks/useGroupVenueListing";
 import useIsMobile from "../../hooks/useIsMobile";
 import useJustRated from "../../hooks/useJustRated";
+import useSaveFeedback from "../../hooks/useSaveFeedback";
+import useRatingCelebration from "../../contexts/ratingCelebration/useRatingCelebration";
 import type GroupVenueResult from "../../models/results/GroupVenueResult";
 import { GroupVenueSortParameters } from "../../enums/GroupVenueSortParameters";
 import { SEARCH_PAGE_SIZE } from "../../constants/pagination";
@@ -54,6 +60,68 @@ const GroupVenuesPage = () => {
   );
 
   const { justRatedId, markJustRated } = useJustRated();
+  const noRatingSave = useSaveFeedback();
+  const { notifyRatingsSaved } = useRatingCelebration();
+  const invalidateRatingQueries = useInvalidateRatingQueries();
+  const { mutateAsync: createQualityNoRating } = useCreateRating(
+    "QualityRating",
+    id,
+    { silent: true, deferInvalidation: true },
+  );
+  const { mutateAsync: createCostNoRating } = useCreateRating(
+    "CostRating",
+    id,
+    {
+      silent: true,
+      deferInvalidation: true,
+    },
+  );
+  const { mutateAsync: createVibeNoRating } = useCreateRating(
+    "VibeRating",
+    id,
+    {
+      silent: true,
+      deferInvalidation: true,
+    },
+  );
+  const [noRatingVenueId, setNoRatingVenueId] = useState<string | null>(null);
+
+  const markDidNotGo = (venue: GroupVenueResult) => {
+    if (
+      !venue.visited ||
+      venue.myQualityRated ||
+      venue.myCostRated ||
+      venue.myVibeRated
+    ) {
+      return;
+    }
+
+    setNoRatingVenueId(venue.groupVenueId);
+    noRatingSave.save(
+      async () => {
+        await Promise.all([
+          createQualityNoRating({
+            groupVenueId: venue.groupVenueId,
+            optionId: null,
+          }),
+          createCostNoRating({
+            groupVenueId: venue.groupVenueId,
+            optionId: null,
+          }),
+          createVibeNoRating({
+            groupVenueId: venue.groupVenueId,
+            optionId: null,
+          }),
+        ]);
+        invalidateRatingQueries(id, venue.groupVenueId);
+        notifyRatingsSaved();
+      },
+      () => {
+        setNoRatingVenueId(null);
+        noRatingSave.reset();
+      },
+    );
+  };
 
   const [prevIsMobile, setPrevIsMobile] = useState(isMobile);
   if (prevIsMobile !== isMobile) {
@@ -209,6 +277,13 @@ const GroupVenuesPage = () => {
                 vibeOptions={vibeOptions}
                 onEditDetails={setDetailsVenue}
                 onEditRatings={setRatingsVenue}
+                onMarkDidNotGo={markDidNotGo}
+                noRatingStatus={
+                  noRatingVenueId === x.groupVenueId
+                    ? noRatingSave.status
+                    : "idle"
+                }
+                noRatingDisabled={noRatingSave.isBusy}
                 justRated={x.groupVenueId === justRatedId}
               />
             ))}
@@ -329,6 +404,13 @@ const GroupVenuesPage = () => {
                     vibeOptions={vibeOptions}
                     onEditDetails={setDetailsVenue}
                     onEditRatings={setRatingsVenue}
+                    onMarkDidNotGo={markDidNotGo}
+                    noRatingStatus={
+                      noRatingVenueId === x.groupVenueId
+                        ? noRatingSave.status
+                        : "idle"
+                    }
+                    noRatingDisabled={noRatingSave.isBusy}
                     justRated={x.groupVenueId === justRatedId}
                   />
                 ))}

@@ -1,7 +1,7 @@
 import { useEffect, useState, type CSSProperties } from "react";
 import { createPortal } from "react-dom";
 
-const PIECE_COUNT = 30;
+const PIECE_COUNT = 100;
 
 const COLOURS = [
   "#ad4242",

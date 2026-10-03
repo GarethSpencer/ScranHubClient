@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import Button, { type ButtonProps } from "react-bootstrap/Button";
 import Spinner from "react-bootstrap/Spinner";
 import CheckMark from "./CheckMark";
@@ -5,9 +6,9 @@ import type { SaveStatus } from "../../hooks/useSaveFeedback";
 
 interface Props extends Omit<ButtonProps, "children"> {
   status: SaveStatus;
-  label?: string;
-  savingLabel?: string;
-  savedLabel?: string;
+  label?: ReactNode;
+  savingLabel?: ReactNode;
+  savedLabel?: ReactNode;
 }
 
 const SaveButton = ({

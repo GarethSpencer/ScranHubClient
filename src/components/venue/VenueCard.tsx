@@ -1,7 +1,9 @@
-import { FaPencil, FaCirclePlus } from "react-icons/fa6";
+import { FaPencil, FaCirclePlus, FaCircleXmark } from "react-icons/fa6";
 import type GroupVenueResult from "../../models/results/GroupVenueResult";
 import type RatingOptionResult from "../../models/results/generic/RatingOptionResult";
 import RatingBar from "../common/RatingBar";
+import SaveButton from "../common/SaveButton";
+import type { SaveStatus } from "../../hooks/useSaveFeedback";
 import VisitedIndicator from "./VisitedIndicator";
 import { formatDistanceMiles, venueHasMyRatings } from "../../lib/venueInfo";
 
@@ -12,6 +14,9 @@ interface Props {
   vibeOptions: RatingOptionResult[];
   onEditDetails: (venue: GroupVenueResult) => void;
   onEditRatings: (venue: GroupVenueResult) => void;
+  onMarkDidNotGo: (venue: GroupVenueResult) => void;
+  noRatingStatus: SaveStatus;
+  noRatingDisabled: boolean;
   justRated?: boolean;
 }
 
@@ -22,10 +27,20 @@ const VenueCard = ({
   vibeOptions,
   onEditDetails,
   onEditRatings,
+  onMarkDidNotGo,
+  noRatingStatus,
+  noRatingDisabled,
   justRated = false,
 }: Props) => {
   const summaryParts = [venue.venueType, venue.foodType].filter(Boolean);
   const hasRatings = venueHasMyRatings(venue);
+  const markedNotAttended =
+    venue.myQualityRated &&
+    venue.myCostRated &&
+    venue.myVibeRated &&
+    venue.myQualityRating == null &&
+    venue.myCostRating == null &&
+    venue.myVibeRating == null;
 
   return (
     <div className={`venue-card${justRated ? " venue-card-just-rated" : ""}`}>
@@ -58,19 +73,19 @@ const VenueCard = ({
         </span>
       </button>
 
-      {venue.visited && (
+      {venue.visited && hasRatings && (
         <button
           type="button"
-          className={`venue-card-zone venue-card-ratings${
-            hasRatings ? "" : " venue-card-ratings-empty"
-          }`}
+          className="venue-card-zone venue-card-ratings"
           onClick={() => onEditRatings(venue)}
-          aria-label={`${hasRatings ? "Edit" : "Add"} your ratings for ${venue.venueName}`}
+          aria-label={`Edit your ratings for ${venue.venueName}`}
         >
-          {hasRatings ? (
-            <>
-              <div className="venue-card-zone-content">
-                <div className="venue-card-subheading mb-1">My Ratings</div>
+          <div className="venue-card-zone-content">
+            <div className="venue-card-subheading mb-1">
+              {markedNotAttended ? "Add your ratings" : "My Ratings"}
+            </div>
+            {!markedNotAttended && (
+              <>
                 <div className="venue-card-rating-row">
                   <span className="venue-card-rating-label">Quality</span>
                   <RatingBar
@@ -92,22 +107,46 @@ const VenueCard = ({
                     options={vibeOptions}
                   />
                 </div>
-              </div>
-              <span className="venue-card-zone-icon" aria-hidden="true">
-                <FaPencil size={18} />
-              </span>
-            </>
-          ) : (
-            <>
-              <div className="venue-card-zone-content">
-                <div className="venue-card-subheading">Add your ratings</div>
-              </div>
-              <span className="venue-card-zone-icon" aria-hidden="true">
-                <FaCirclePlus size={18} />
-              </span>
-            </>
-          )}
+              </>
+            )}
+          </div>
+          <span className="venue-card-zone-icon" aria-hidden="true">
+            <FaPencil size={18} />
+          </span>
         </button>
+      )}
+
+      {venue.visited && !hasRatings && (
+        <div className="venue-card-rating-actions">
+          <button
+            type="button"
+            className="venue-card-zone venue-card-ratings venue-card-ratings-empty"
+            onClick={() => onEditRatings(venue)}
+            aria-label={`Add your ratings for ${venue.venueName}`}
+          >
+            <div className="venue-card-zone-content">
+              <div className="venue-card-subheading">Add your ratings</div>
+            </div>
+            <span className="venue-card-zone-icon" aria-hidden="true">
+              <FaCirclePlus size={18} />
+            </span>
+          </button>
+          <SaveButton
+            status={noRatingStatus}
+            label={
+              <span className="venue-card-subheading venue-card-action-label">
+                <span>Didn't make it?</span>
+                <FaCircleXmark size={18} aria-hidden="true" />
+              </span>
+            }
+            savingLabel="Saving..."
+            savedLabel="Saved"
+            variant="danger"
+            className="venue-card-zone venue-card-not-attended-button"
+            onClick={() => onMarkDidNotGo(venue)}
+            disabled={noRatingDisabled}
+          />
+        </div>
       )}
     </div>
   );
