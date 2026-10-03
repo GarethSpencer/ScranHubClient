@@ -125,29 +125,35 @@ const VenueCard = ({
         <div className="venue-card-rating-actions">
           <button
             type="button"
-            className="venue-card-zone venue-card-ratings venue-card-ratings-empty"
+            className="venue-card-rating-action venue-card-rating-action-add"
             onClick={() => onEditRatings(venue)}
             aria-label={`Add your ratings for ${venue.venueName}`}
           >
-            <div className="venue-card-zone-content">
-              <div className="venue-card-subheading">Add your ratings</div>
-            </div>
-            <span className="venue-card-zone-icon" aria-hidden="true">
-              <FaCirclePlus size={18} />
+            <span className="venue-card-action-label">
+              <span>Add your ratings</span>
+              <FaCirclePlus
+                className="venue-card-action-icon"
+                size={18}
+                aria-hidden="true"
+              />
             </span>
           </button>
           <SaveButton
             status={noRatingStatus}
             label={
-              <span className="venue-card-subheading venue-card-action-label">
+              <span className="venue-card-action-label">
                 <span>Didn't make it?</span>
-                <FaCircleXmark size={18} aria-hidden="true" />
+                <FaCircleXmark
+                  className="venue-card-action-icon"
+                  size={18}
+                  aria-hidden="true"
+                />
               </span>
             }
             savingLabel="Saving..."
             savedLabel="Saved"
             variant="danger"
-            className="venue-card-zone venue-card-not-attended-button"
+            className="venue-card-rating-action venue-card-rating-action-danger"
             onClick={() => onMarkDidNotGo(venue)}
             disabled={noRatingDisabled}
           />
