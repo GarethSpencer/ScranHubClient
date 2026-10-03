@@ -16,7 +16,9 @@ import RatingDetailsModal from "../../components/RatingDetailsModal";
 import VenueSummaryCard from "../../components/venue/VenueSummaryCard";
 import VenueInfoModal from "../../components/venue/VenueInfoModal";
 import VenueBreakdownModal from "../../components/venue/VenueBreakdownModal";
-import MobileSortControl from "../../components/venue/MobileSortControl";
+import MobileSortControl, {
+  MobileSortSkeleton,
+} from "../../components/venue/MobileSortControl";
 import useGroupVenueListing, {
   type VenueListingColumn,
 } from "../../hooks/useGroupVenueListing";
@@ -393,8 +395,10 @@ const RatingDetailsPage = () => {
             </Table>
           </TableScrollContainer>
 
-          {!isVenuesPending && (
-            <div className="d-md-none">
+          <div className="d-md-none">
+            {isVenuesPending ? (
+              <MobileSortSkeleton />
+            ) : (
               <MobileSortControl
                 id="ratingDetailsMobileSort"
                 options={columns
@@ -411,8 +415,8 @@ const RatingDetailsPage = () => {
                 onSortByChange={onSortByChange}
                 onToggleDirection={onToggleDirection}
               />
-            </div>
-          )}
+            )}
+          </div>
 
           <div className="d-md-none venue-card-list border-top">
             {isVenuesPending

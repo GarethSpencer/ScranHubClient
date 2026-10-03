@@ -695,6 +695,35 @@
   animation: venue-card-skeleton-pulse 1.2s ease-in-out infinite;
 }
 
+.mobile-sort-skeleton {
+  .mobile-sort-skeleton-label,
+  .mobile-sort-skeleton-select,
+  .mobile-sort-skeleton-button {
+    display: block;
+    background-color: var(--bs-secondary-bg);
+    animation: venue-card-skeleton-pulse 1.2s ease-in-out infinite;
+  }
+
+  .mobile-sort-skeleton-label {
+    width: 3.5rem;
+    height: 1rem;
+    margin-bottom: 0.25rem;
+    border-radius: var(--bs-border-radius-sm);
+  }
+
+  .mobile-sort-skeleton-select,
+  .mobile-sort-skeleton-button {
+    height: 38px;
+    border: 1px solid var(--bs-border-color);
+    border-radius: var(--bs-border-radius);
+  }
+
+  .mobile-sort-skeleton-button {
+    width: 38px;
+    flex-shrink: 0;
+  }
+}
+
 @keyframes venue-card-skeleton-pulse {
   0%,
   100% {
@@ -722,7 +751,8 @@
 
 @media (prefers-reduced-motion: reduce) {
   .venue-card-skeleton,
-  .group-card-skeleton {
+  .group-card-skeleton,
+  .mobile-sort-skeleton span {
     animation: none;
     opacity: 0.7;
   }

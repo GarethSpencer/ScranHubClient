@@ -16,6 +16,19 @@ interface Props<T extends string> {
   onToggleDirection: () => void;
 }
 
+export const MobileSortSkeleton = () => (
+  <div
+    className="d-flex align-items-end gap-2 mb-3 mobile-sort-skeleton"
+    aria-hidden="true"
+  >
+    <div className="flex-grow-1">
+      <span className="mobile-sort-skeleton-label" />
+      <span className="mobile-sort-skeleton-select" />
+    </div>
+    <span className="mobile-sort-skeleton-button" />
+  </div>
+);
+
 const MobileSortControl = <T extends string>({
   id,
   options,
