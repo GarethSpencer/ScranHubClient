@@ -4,6 +4,8 @@ import { useState } from "react";
 import Table from "react-bootstrap/Table";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
+import Modal from "react-bootstrap/Modal";
+import Spinner from "react-bootstrap/Spinner";
 import { FaSortUp, FaSortDown, FaSort } from "react-icons/fa";
 import { useGetOptionsForGroup } from "../../api/controllerHooks/useOptionController";
 import {
@@ -12,6 +14,7 @@ import {
 } from "../../api/controllerHooks/useRatingController";
 import { useUpdateGroupVenue } from "../../api/controllerHooks/useGroupVenueController";
 import { todayDateInputValue } from "../../lib/date";
+import useToast from "../../contexts/toast/useToast";
 import TableStatus from "../../components/common/TableStatus";
 import TableScrollContainer from "../../components/common/TableScrollContainer";
 import InfiniteScrollLoader from "../../components/common/InfiniteScrollLoader";
@@ -33,7 +36,13 @@ import useJustRated from "../../hooks/useJustRated";
 import useSaveFeedback from "../../hooks/useSaveFeedback";
 import useRatingCelebration from "../../contexts/ratingCelebration/useRatingCelebration";
 import type GroupVenueResult from "../../models/results/GroupVenueResult";
+import type RatingOptionResult from "../../models/results/generic/RatingOptionResult";
 import { GroupVenueSortParameters } from "../../enums/GroupVenueSortParameters";
+
+const optionIdForLabel = (
+  options: RatingOptionResult[],
+  label: string | undefined,
+) => options.find((option) => option.label === label)?.optionId;
 
 const BASE_COLUMNS: VenueListingColumn[] = [
   { label: "Name", sortBy: GroupVenueSortParameters.VenueName },
@@ -63,6 +72,7 @@ const GroupVenuesPage = () => {
 
   const { justRatedId, markJustRated } = useJustRated();
   const noRatingSave = useSaveFeedback();
+  const { showToast } = useToast();
   const { notifyRatingsSaved } = useRatingCelebration();
   const invalidateRatingQueries = useInvalidateRatingQueries();
   const { mutate: updateGroupVenue, isPending: isUpdatingGroupVenue } =
@@ -127,19 +137,6 @@ const GroupVenuesPage = () => {
     );
   };
 
-  const markVisited = (venue: GroupVenueResult) => {
-    if (venue.visited || isUpdatingGroupVenue) return;
-
-    updateGroupVenue({
-      groupVenueId: venue.groupVenueId,
-      request: {
-        venueName: venue.venueName,
-        visited: true,
-        visitedOn: todayDateInputValue(),
-      },
-    });
-  };
-
   const [prevIsMobile, setPrevIsMobile] = useState(isMobile);
   if (prevIsMobile !== isMobile) {
     setPrevIsMobile(isMobile);
@@ -187,6 +184,8 @@ const GroupVenuesPage = () => {
   const { data: vibeOptionData } = useGetOptionsForGroup("VibeOption", id);
   const { data: venueTypeOptionData, isSuccess: hasLoadedVenueTypeOptions } =
     useGetOptionsForGroup("VenueTypeOption", id);
+  const { data: foodTypeOptionData, isSuccess: hasLoadedFoodTypeOptions } =
+    useGetOptionsForGroup("FoodTypeOption", id);
   const qualityOptions = qualityOptionData?.options ?? [];
   const costOptions = costOptionData?.options ?? [];
   const vibeOptions = vibeOptionData?.options ?? [];
@@ -195,9 +194,65 @@ const GroupVenuesPage = () => {
     !(venueTypeOptionData?.options ?? []).some(
       (option) => option.groupId === id,
     );
+  const venueTypeOptions = venueTypeOptionData?.options ?? [];
+  const foodTypeOptions = foodTypeOptionData?.options ?? [];
+  const canResolveVenueTypes =
+    hasLoadedVenueTypeOptions && hasLoadedFoodTypeOptions;
+
+  const markVisited = (venue: GroupVenueResult) => {
+    if (venue.visited || isUpdatingGroupVenue || !canResolveVenueTypes) return;
+
+    const venueTypeOptionId = optionIdForLabel(
+      venueTypeOptions,
+      venue.venueType,
+    );
+    const foodTypeOptionId = optionIdForLabel(foodTypeOptions, venue.foodType);
+    if (
+      (venue.venueType && !venueTypeOptionId) ||
+      (venue.foodType && !foodTypeOptionId)
+    ) {
+      showToast(
+        "Couldn't preserve the venue data. Please try again.",
+        "danger",
+      );
+      return;
+    }
+
+    updateGroupVenue({
+      groupVenueId: venue.groupVenueId,
+      request: {
+        venueName: venue.venueName,
+        visited: true,
+        visitedOn: todayDateInputValue(),
+        venueTypeOptionId,
+        foodTypeOptionId,
+        googlePlaceId: venue.googlePlaceId,
+        formattedAddress: venue.formattedAddress,
+        latitude: venue.latitude,
+        longitude: venue.longitude,
+      },
+    });
+  };
 
   return (
-    <div className="manage-venues-page">
+    <div className="manage-venues-page" aria-busy={isUpdatingGroupVenue}>
+      <Modal
+        show={isUpdatingGroupVenue}
+        backdrop="static"
+        keyboard={false}
+        centered
+        aria-labelledby="venue-update-saving-label"
+      >
+        <Modal.Body
+          className="d-flex align-items-center justify-content-center gap-2"
+          role="status"
+          aria-live="polite"
+        >
+          <Spinner animation="border" size="sm" aria-hidden="true" />
+          <span id="venue-update-saving-label">Saving venue...</span>
+        </Modal.Body>
+      </Modal>
+
       <h2 className="mb-1 lead">Create & Rate</h2>
       <p className="text-muted small mb-3">
         Add, edit and rate the venues for this group. You can add your ratings
@@ -304,7 +359,9 @@ const GroupVenuesPage = () => {
                 onEditDetails={setDetailsVenue}
                 onEditRatings={setRatingsVenue}
                 onMarkVisited={markVisited}
-                markVisitedDisabled={isUpdatingGroupVenue}
+                markVisitedDisabled={
+                  isUpdatingGroupVenue || !canResolveVenueTypes
+                }
                 onMarkDidNotGo={markDidNotGo}
                 noRatingStatus={
                   noRatingVenueId === x.groupVenueId
@@ -435,7 +492,9 @@ const GroupVenuesPage = () => {
                     onEditDetails={setDetailsVenue}
                     onEditRatings={setRatingsVenue}
                     onMarkVisited={markVisited}
-                    markVisitedDisabled={isUpdatingGroupVenue}
+                    markVisitedDisabled={
+                      isUpdatingGroupVenue || !canResolveVenueTypes
+                    }
                     onMarkDidNotGo={markDidNotGo}
                     noRatingStatus={
                       noRatingVenueId === x.groupVenueId

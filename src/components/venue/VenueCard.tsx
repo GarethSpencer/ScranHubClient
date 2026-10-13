@@ -124,7 +124,7 @@ const VenueCard = ({
 
   return (
     <div
-      className={`venue-card${justRated ? " venue-card-just-rated" : ""}${!venue.visited ? " venue-card-swipe-enabled" : ""}`}
+      className={`venue-card${justRated ? " venue-card-just-rated" : ""}${!venue.visited && !markVisitedDisabled ? " venue-card-swipe-enabled" : ""}`}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={finishSwipe}
@@ -143,11 +143,11 @@ const VenueCard = ({
       >
         <button
           type="button"
-          className={`venue-card-zone venue-card-details${!venue.visited ? " venue-card-details-swipeable" : ""}`}
+          className={`venue-card-zone venue-card-details${!venue.visited && !markVisitedDisabled ? " venue-card-details-swipeable" : ""}`}
           onClick={() => onEditDetails(venue)}
           aria-label={`Edit details for ${venue.venueName}`}
         >
-          {!venue.visited && (
+          {!venue.visited && !markVisitedDisabled && (
             <FaAnglesRight
               className="venue-card-swipe-indicator"
               aria-hidden="true"
