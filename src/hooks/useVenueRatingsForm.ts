@@ -200,8 +200,8 @@ const useVenueRatingsForm = (
             groupVenueId,
           })
         : Promise.resolve(),
-    ]).then((results) => {
-      invalidateRatingQueries(groupId, groupVenueId);
+    ]).then(async (results) => {
+      await invalidateRatingQueries(groupId, groupVenueId);
       return results;
     });
   };
@@ -235,8 +235,8 @@ const useVenueRatingsForm = (
         createVibeRating,
         updateVibeRating,
       ),
-    ]).then((results) => {
-      invalidateRatingQueries(groupId, groupVenueId);
+    ]).then(async (results) => {
+      await invalidateRatingQueries(groupId, groupVenueId);
       return results;
     });
   };

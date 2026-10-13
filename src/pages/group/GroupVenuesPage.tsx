@@ -117,7 +117,7 @@ const GroupVenuesPage = () => {
             optionId: null,
           }),
         ]);
-        invalidateRatingQueries(id, venue.groupVenueId);
+        await invalidateRatingQueries(id, venue.groupVenueId);
         notifyRatingsSaved();
       },
       () => {

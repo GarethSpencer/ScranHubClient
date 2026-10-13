@@ -31,40 +31,41 @@ const invalidateRatingQueries = (
   controller: RatingController,
   groupId: string,
   groupVenueId: string,
-) => {
-  queryClient.invalidateQueries({
-    queryKey: [controller, groupId, "venues", groupVenueId],
-  });
-  queryClient.invalidateQueries({ queryKey: [controller, groupId, "me"] });
-  queryClient.invalidateQueries({ queryKey: [controller, groupId, "group"] });
-  queryClient.invalidateQueries({ queryKey: ["groups", groupId, "venues"] });
-  queryClient.invalidateQueries({ queryKey: ["userGroups"] });
-};
+) =>
+  Promise.all([
+    queryClient.invalidateQueries({
+      queryKey: [controller, groupId, "venues", groupVenueId],
+    }),
+    queryClient.invalidateQueries({ queryKey: [controller, groupId, "me"] }),
+    queryClient.invalidateQueries({ queryKey: [controller, groupId, "group"] }),
+    queryClient.invalidateQueries({ queryKey: ["groups", groupId, "venues"] }),
+    queryClient.invalidateQueries({ queryKey: ["userGroups"] }),
+  ]);
 
 export const useInvalidateRatingQueries = () => {
   const queryClient = useQueryClient();
 
   return useCallback(
-    (groupId: string, groupVenueId: string) => {
-      for (const controller of Object.keys(
-        ratingServices,
-      ) as RatingController[]) {
+    async (groupId: string, groupVenueId: string) =>
+      Promise.all([
+        ...(Object.keys(ratingServices) as RatingController[]).flatMap(
+          (controller) => [
+            queryClient.invalidateQueries({
+              queryKey: [controller, groupId, "venues", groupVenueId],
+            }),
+            queryClient.invalidateQueries({
+              queryKey: [controller, groupId, "me"],
+            }),
+            queryClient.invalidateQueries({
+              queryKey: [controller, groupId, "group"],
+            }),
+          ],
+        ),
         queryClient.invalidateQueries({
-          queryKey: [controller, groupId, "venues", groupVenueId],
-        });
-        queryClient.invalidateQueries({
-          queryKey: [controller, groupId, "me"],
-        });
-        queryClient.invalidateQueries({
-          queryKey: [controller, groupId, "group"],
-        });
-      }
-
-      queryClient.invalidateQueries({
-        queryKey: ["groups", groupId, "venues"],
-      });
-      queryClient.invalidateQueries({ queryKey: ["userGroups"] });
-    },
+          queryKey: ["groups", groupId, "venues"],
+        }),
+        queryClient.invalidateQueries({ queryKey: ["userGroups"] }),
+      ]),
     [queryClient],
   );
 };
@@ -81,9 +82,9 @@ export const useCreateRating = (
   return useMutation<AddRatingResponse, Error, CreateRatingRequest>({
     mutationFn: (request: CreateRatingRequest) =>
       service.post<AddRatingResponse, CreateRatingRequest>(undefined, request),
-    onSuccess: (data, request) => {
+    onSuccess: async (data, request) => {
       if (!options?.deferInvalidation) {
-        invalidateRatingQueries(
+        await invalidateRatingQueries(
           queryClient,
           controller,
           groupId,
@@ -111,9 +112,14 @@ export const useUpdateRating = (
   >({
     mutationFn: ({ ratingId, request }) =>
       service.patch<CommonResponse, UpdateRatingRequest>(ratingId, request),
-    onSuccess: (data, { groupVenueId }) => {
+    onSuccess: async (data, { groupVenueId }) => {
       if (!options?.deferInvalidation) {
-        invalidateRatingQueries(queryClient, controller, groupId, groupVenueId);
+        await invalidateRatingQueries(
+          queryClient,
+          controller,
+          groupId,
+          groupVenueId,
+        );
       }
       if (!options?.silent && data.message) showToast(data.message, "success");
     },
@@ -135,9 +141,14 @@ export const useDeleteRating = (
     { ratingId: string; groupVenueId: string }
   >({
     mutationFn: ({ ratingId }) => service.delete<CommonResponse>(ratingId),
-    onSuccess: (data, { groupVenueId }) => {
+    onSuccess: async (data, { groupVenueId }) => {
       if (!options?.deferInvalidation) {
-        invalidateRatingQueries(queryClient, controller, groupId, groupVenueId);
+        await invalidateRatingQueries(
+          queryClient,
+          controller,
+          groupId,
+          groupVenueId,
+        );
       }
       if (!options?.silent && data.message) showToast(data.message, "success");
     },
