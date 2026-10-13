@@ -125,7 +125,16 @@ export const useCreateGroupVenue = (groupId: string) => {
   });
 };
 
-export const useUpdateGroupVenue = (groupId: string) => {
+export const useUpdateGroupVenue = (
+  groupId: string,
+  {
+    awaitVenueRefresh = false,
+    onVenueRefreshStart,
+  }: {
+    awaitVenueRefresh?: boolean;
+    onVenueRefreshStart?: () => void;
+  } = {},
+) => {
   const queryClient = useQueryClient();
   const { showToast } = useToast();
 
@@ -139,11 +148,15 @@ export const useUpdateGroupVenue = (groupId: string) => {
         CommonResponse,
         UpdateGroupVenueRequest
       >(groupVenueId, request),
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({
+    onSuccess: async (data) => {
+      const venueRefresh = queryClient.invalidateQueries({
         queryKey: ["groups", groupId, "venues"],
       });
       queryClient.invalidateQueries({ queryKey: ["userGroups"] });
+      if (awaitVenueRefresh) {
+        onVenueRefreshStart?.();
+        await venueRefresh;
+      }
       if (data.message) showToast(data.message, "success");
     },
   });

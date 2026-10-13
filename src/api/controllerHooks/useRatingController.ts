@@ -82,9 +82,9 @@ export const useCreateRating = (
   return useMutation<AddRatingResponse, Error, CreateRatingRequest>({
     mutationFn: (request: CreateRatingRequest) =>
       service.post<AddRatingResponse, CreateRatingRequest>(undefined, request),
-    onSuccess: async (data, request) => {
+    onSuccess: (data, request) => {
       if (!options?.deferInvalidation) {
-        await invalidateRatingQueries(
+        void invalidateRatingQueries(
           queryClient,
           controller,
           groupId,
@@ -112,9 +112,9 @@ export const useUpdateRating = (
   >({
     mutationFn: ({ ratingId, request }) =>
       service.patch<CommonResponse, UpdateRatingRequest>(ratingId, request),
-    onSuccess: async (data, { groupVenueId }) => {
+    onSuccess: (data, { groupVenueId }) => {
       if (!options?.deferInvalidation) {
-        await invalidateRatingQueries(
+        void invalidateRatingQueries(
           queryClient,
           controller,
           groupId,
@@ -141,9 +141,9 @@ export const useDeleteRating = (
     { ratingId: string; groupVenueId: string }
   >({
     mutationFn: ({ ratingId }) => service.delete<CommonResponse>(ratingId),
-    onSuccess: async (data, { groupVenueId }) => {
+    onSuccess: (data, { groupVenueId }) => {
       if (!options?.deferInvalidation) {
-        await invalidateRatingQueries(
+        void invalidateRatingQueries(
           queryClient,
           controller,
           groupId,

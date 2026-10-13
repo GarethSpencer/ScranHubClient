@@ -9,7 +9,6 @@ import useVenueRatingsForm, {
 } from "../../hooks/useVenueRatingsForm";
 import useVenueRatingsRemove from "../../hooks/useVenueRatingsRemove";
 import useSaveFeedback from "../../hooks/useSaveFeedback";
-import useRatingCelebration from "../../contexts/ratingCelebration/useRatingCelebration";
 import SaveButton from "../common/SaveButton";
 import VenueRatingsFields from "./VenueRatingsFields";
 
@@ -18,6 +17,7 @@ interface Props {
   venue: GroupVenueResult | null;
   onClose: () => void;
   onRatingsSaved?: (groupVenueId: string) => void;
+  onRefreshRatings?: (groupVenueId: string) => void;
 }
 
 const VenueRatingsModal = ({
@@ -25,13 +25,17 @@ const VenueRatingsModal = ({
   venue,
   onClose,
   onRatingsSaved,
+  onRefreshRatings,
 }: Props) => {
   const [savedVenueId, setSavedVenueId] = useState<string | null>(null);
+  const [removedVenueId, setRemovedVenueId] = useState<string | null>(null);
 
   const ratings = useVenueRatingsForm(groupId, venue);
   const saveFeedback = useSaveFeedback();
-  const { notifyRatingsSaved } = useRatingCelebration();
-  const removeFlow = useVenueRatingsRemove(ratings.remove, onClose);
+  const removeFlow = useVenueRatingsRemove(ratings.remove, () => {
+    setRemovedVenueId(venue?.groupVenueId ?? null);
+    onClose();
+  });
 
   const isPending = saveFeedback.isBusy || removeFlow.isRemoving;
 
@@ -45,10 +49,7 @@ const VenueRatingsModal = ({
 
     const groupVenueId = venue.groupVenueId;
     saveFeedback.save(
-      async () => {
-        await ratings.save();
-        notifyRatingsSaved();
-      },
+      () => ratings.save(),
       () => {
         setSavedVenueId(groupVenueId);
         onClose();
@@ -63,6 +64,10 @@ const VenueRatingsModal = ({
     if (savedVenueId) {
       onRatingsSaved?.(savedVenueId);
       setSavedVenueId(null);
+    }
+    if (removedVenueId) {
+      onRefreshRatings?.(removedVenueId);
+      setRemovedVenueId(null);
     }
   };
 

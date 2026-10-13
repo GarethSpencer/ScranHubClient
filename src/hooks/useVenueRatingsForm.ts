@@ -4,7 +4,6 @@ import {
   useUpdateRating,
   useDeleteRating,
   useGetRatingsForGroupVenue,
-  useInvalidateRatingQueries,
 } from "../api/controllerHooks/useRatingController";
 import { useGetOptionsForGroup } from "../api/controllerHooks/useOptionController";
 import { useGetCurrentUser } from "../api/controllerHooks/useUserController";
@@ -163,8 +162,6 @@ const useVenueRatingsForm = (
     { silent: true, deferInvalidation: true },
   );
 
-  const invalidateRatingQueries = useInvalidateRatingQueries();
-
   const hasSavedRatings =
     currentQualityRating != null ||
     currentCostRating != null ||
@@ -200,15 +197,11 @@ const useVenueRatingsForm = (
             groupVenueId,
           })
         : Promise.resolve(),
-    ]).then(async (results) => {
-      await invalidateRatingQueries(groupId, groupVenueId);
-      return results;
-    });
+    ]);
   };
 
   const save = (isVisited: boolean = venue?.visited ?? false) => {
     if (!venue) return Promise.resolve();
-    const groupVenueId = venue.groupVenueId;
     const canCreate = isVisited && !wasRemoved;
     return Promise.all([
       persistRating(
@@ -235,10 +228,7 @@ const useVenueRatingsForm = (
         createVibeRating,
         updateVibeRating,
       ),
-    ]).then(async (results) => {
-      await invalidateRatingQueries(groupId, groupVenueId);
-      return results;
-    });
+    ]);
   };
 
   return {

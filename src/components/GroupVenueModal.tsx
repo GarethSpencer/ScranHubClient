@@ -1,4 +1,3 @@
-import { useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
@@ -13,7 +12,6 @@ import useVenueRatingsForm, {
 import useVenueRatingsRemove from "../hooks/useVenueRatingsRemove";
 import useVenueDelete from "../hooks/useVenueDelete";
 import useSaveFeedback from "../hooks/useSaveFeedback";
-import useRatingCelebration from "../contexts/ratingCelebration/useRatingCelebration";
 import SaveButton from "./common/SaveButton";
 import VenueDetailsFields from "./venue/VenueDetailsFields";
 import VenueRatingsFields from "./venue/VenueRatingsFields";
@@ -28,6 +26,8 @@ interface Props {
   venue: GroupVenueResult | null;
   onClose: () => void;
   onRatingsSaved?: (groupVenueId: string) => void;
+  onRefreshRatings?: (groupVenueId: string) => void;
+  isRefreshingRatings?: boolean;
 }
 
 const GroupVenueModal = ({
@@ -35,11 +35,10 @@ const GroupVenueModal = ({
   venue,
   onClose,
   onRatingsSaved,
+  onRefreshRatings,
+  isRefreshingRatings = false,
 }: Props) => {
-  const [savedVenueId, setSavedVenueId] = useState<string | null>(null);
-
   const { showToast } = useToast();
-  const { notifyRatingsSaved } = useRatingCelebration();
 
   const details = useVenueDetailsForm(groupId, venue);
   const ratings = useVenueRatingsForm(groupId, venue);
@@ -48,6 +47,7 @@ const GroupVenueModal = ({
   const ratingsRemoveFlow = useVenueRatingsRemove(ratings.remove, () => {
     ratings.reset();
     showToast("Ratings removed", "success");
+    if (venue) onRefreshRatings?.(venue.groupVenueId);
   });
   const deleteFlow = useVenueDelete(details.remove, onClose);
 
@@ -79,12 +79,9 @@ const GroupVenueModal = ({
 
     const groupVenueId = venue.groupVenueId;
     ratingsSave.save(
-      async () => {
-        await ratings.save(details.values.visited);
-        notifyRatingsSaved();
-      },
+      () => ratings.save(details.values.visited),
       () => {
-        setSavedVenueId(groupVenueId);
+        onRatingsSaved?.(groupVenueId);
         ratingsSave.reset();
       },
     );
@@ -95,11 +92,6 @@ const GroupVenueModal = ({
     ratings.reset();
     detailsSave.reset();
     ratingsSave.reset();
-
-    if (savedVenueId) {
-      onRatingsSaved?.(savedVenueId);
-      setSavedVenueId(null);
-    }
   };
 
   return (
@@ -179,6 +171,19 @@ const GroupVenueModal = ({
                       !ratings.areAllRatingsSet
                     }
                   />
+                  {isRefreshingRatings && (
+                    <div
+                      className="d-flex align-items-center justify-content-center gap-2 small text-muted"
+                      role="status"
+                      aria-live="polite"
+                    >
+                      <span
+                        className="spinner-border spinner-border-sm"
+                        aria-hidden="true"
+                      />
+                      <span>Refreshing venue ratings…</span>
+                    </div>
+                  )}
                   <VenueRatingsRemoveControls
                     removeFlow={ratingsRemoveFlow}
                     hasSavedRatings={ratings.hasSavedRatings}

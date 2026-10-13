@@ -69,6 +69,9 @@ const GroupVenuesPage = () => {
   const [ratingsVenue, setRatingsVenue] = useState<GroupVenueResult | null>(
     null,
   );
+  const [refreshingRatingsCount, setRefreshingRatingsCount] = useState(0);
+  const [isRefreshingVisitedVenue, setIsRefreshingVisitedVenue] =
+    useState(false);
 
   const { justRatedId, markJustRated } = useJustRated();
   const noRatingSave = useSaveFeedback();
@@ -76,7 +79,10 @@ const GroupVenuesPage = () => {
   const { notifyRatingsSaved } = useRatingCelebration();
   const invalidateRatingQueries = useInvalidateRatingQueries();
   const { mutate: updateGroupVenue, isPending: isUpdatingGroupVenue } =
-    useUpdateGroupVenue(id);
+    useUpdateGroupVenue(id, {
+      awaitVenueRefresh: true,
+      onVenueRefreshStart: () => setIsRefreshingVisitedVenue(true),
+    });
   const { mutateAsync: createQualityNoRating } = useCreateRating(
     "QualityRating",
     id,
@@ -99,6 +105,23 @@ const GroupVenuesPage = () => {
     },
   );
   const [noRatingVenueId, setNoRatingVenueId] = useState<string | null>(null);
+
+  const refreshRatings = async (groupVenueId: string) => {
+    setRefreshingRatingsCount((count) => count + 1);
+    try {
+      await invalidateRatingQueries(id, groupVenueId);
+    } catch {
+      showToast("Couldn't refresh venue ratings. Please try again.", "danger");
+    } finally {
+      setRefreshingRatingsCount((count) => Math.max(0, count - 1));
+    }
+  };
+
+  const completeRatingsUpdate = (groupVenueId: string) => {
+    notifyRatingsSaved();
+    markJustRated(groupVenueId);
+    refreshRatings(groupVenueId);
+  };
 
   const markDidNotGo = (venue: GroupVenueResult) => {
     if (
@@ -127,12 +150,13 @@ const GroupVenuesPage = () => {
             optionId: null,
           }),
         ]);
-        await invalidateRatingQueries(id, venue.groupVenueId);
         notifyRatingsSaved();
       },
       () => {
-        setNoRatingVenueId(null);
-        noRatingSave.reset();
+        void refreshRatings(venue.groupVenueId).finally(() => {
+          setNoRatingVenueId(null);
+          noRatingSave.reset();
+        });
       },
     );
   };
@@ -218,24 +242,32 @@ const GroupVenuesPage = () => {
       return;
     }
 
-    updateGroupVenue({
-      groupVenueId: venue.groupVenueId,
-      request: {
-        venueName: venue.venueName,
-        visited: true,
-        visitedOn: todayDateInputValue(),
-        venueTypeOptionId,
-        foodTypeOptionId,
-        googlePlaceId: venue.googlePlaceId,
-        formattedAddress: venue.formattedAddress,
-        latitude: venue.latitude,
-        longitude: venue.longitude,
+    updateGroupVenue(
+      {
+        groupVenueId: venue.groupVenueId,
+        request: {
+          venueName: venue.venueName,
+          visited: true,
+          visitedOn: todayDateInputValue(),
+          venueTypeOptionId,
+          foodTypeOptionId,
+          googlePlaceId: venue.googlePlaceId,
+          formattedAddress: venue.formattedAddress,
+          latitude: venue.latitude,
+          longitude: venue.longitude,
+        },
       },
-    });
+      {
+        onSettled: () => setIsRefreshingVisitedVenue(false),
+      },
+    );
   };
 
   return (
-    <div className="manage-venues-page" aria-busy={isUpdatingGroupVenue}>
+    <div
+      className="manage-venues-page"
+      aria-busy={isUpdatingGroupVenue || refreshingRatingsCount > 0}
+    >
       <Modal
         show={isUpdatingGroupVenue}
         backdrop="static"
@@ -249,7 +281,11 @@ const GroupVenuesPage = () => {
           aria-live="polite"
         >
           <Spinner animation="border" size="sm" aria-hidden="true" />
-          <span id="venue-update-saving-label">Saving venue...</span>
+          <span id="venue-update-saving-label">
+            {isRefreshingVisitedVenue
+              ? "Refreshing venues..."
+              : "Saving venue..."}
+          </span>
         </Modal.Body>
       </Modal>
 
@@ -264,6 +300,16 @@ const GroupVenuesPage = () => {
           Add Venue
         </Button>
       </div>
+      {refreshingRatingsCount > 0 && (
+        <div
+          className="alert alert-info d-flex align-items-center gap-2 py-2"
+          role="status"
+          aria-live="polite"
+        >
+          <Spinner size="sm" aria-hidden="true" />
+          <span>Refreshing venue ratings…</span>
+        </div>
+      )}
 
       <CreateGroupVenueModal
         show={showCreateModal}
@@ -276,7 +322,9 @@ const GroupVenuesPage = () => {
           groupId={id}
           venue={detailsVenue}
           onClose={() => setDetailsVenue(null)}
-          onRatingsSaved={markJustRated}
+          onRatingsSaved={completeRatingsUpdate}
+          onRefreshRatings={refreshRatings}
+          isRefreshingRatings={refreshingRatingsCount > 0}
         />
       )}
       {isMobile && (
@@ -290,7 +338,8 @@ const GroupVenuesPage = () => {
             groupId={id}
             venue={ratingsVenue}
             onClose={() => setRatingsVenue(null)}
-            onRatingsSaved={markJustRated}
+            onRatingsSaved={completeRatingsUpdate}
+            onRefreshRatings={refreshRatings}
           />
         </>
       )}
