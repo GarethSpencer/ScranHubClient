@@ -82,6 +82,7 @@ const GroupVenuesPage = () => {
     useUpdateGroupVenue(id, {
       awaitVenueRefresh: true,
       onVenueRefreshStart: () => setIsRefreshingVisitedVenue(true),
+      onVenueRefreshComplete: () => setIsRefreshingVisitedVenue(false),
     });
   const { mutateAsync: createQualityNoRating } = useCreateRating(
     "QualityRating",
@@ -115,6 +116,14 @@ const GroupVenuesPage = () => {
     } finally {
       setRefreshingRatingsCount((count) => Math.max(0, count - 1));
     }
+  };
+
+  const handleVenueRefreshStart = () => {
+    setRefreshingRatingsCount((count) => count + 1);
+  };
+
+  const handleVenueRefreshComplete = () => {
+    setRefreshingRatingsCount((count) => Math.max(0, count - 1));
   };
 
   const completeRatingsUpdate = (groupVenueId: string) => {
@@ -307,7 +316,7 @@ const GroupVenuesPage = () => {
           aria-live="polite"
         >
           <Spinner size="sm" aria-hidden="true" />
-          <span>Refreshing venue ratings…</span>
+          <span>Refreshing venue data…</span>
         </div>
       )}
 
@@ -325,6 +334,8 @@ const GroupVenuesPage = () => {
           onRatingsSaved={completeRatingsUpdate}
           onRefreshRatings={refreshRatings}
           isRefreshingRatings={refreshingRatingsCount > 0}
+          onVenueRefreshStart={handleVenueRefreshStart}
+          onVenueRefreshComplete={handleVenueRefreshComplete}
         />
       )}
       {isMobile && (
@@ -333,6 +344,8 @@ const GroupVenuesPage = () => {
             groupId={id}
             venue={detailsVenue}
             onClose={() => setDetailsVenue(null)}
+            onVenueRefreshStart={handleVenueRefreshStart}
+            onVenueRefreshComplete={handleVenueRefreshComplete}
           />
           <VenueRatingsModal
             groupId={id}

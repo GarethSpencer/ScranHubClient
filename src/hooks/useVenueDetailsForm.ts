@@ -11,6 +11,11 @@ import type GroupVenueResult from "../models/results/GroupVenueResult";
 import type RatingOptionResult from "../models/results/generic/RatingOptionResult";
 import { toDatePickerValue, todayDateInputValue } from "../lib/date";
 
+interface VenueRefreshCallbacks {
+  onVenueRefreshStart?: () => void;
+  onVenueRefreshComplete?: () => void;
+}
+
 const optionIdForLabel = (
   options: RatingOptionResult[],
   label: string | undefined,
@@ -19,6 +24,7 @@ const optionIdForLabel = (
 const useVenueDetailsForm = (
   groupId: string,
   venue: GroupVenueResult | null,
+  refreshCallbacks?: VenueRefreshCallbacks,
 ) => {
   const [venueName, setVenueName] = useState("");
   const [visited, setVisited] = useState(false);
@@ -46,7 +52,10 @@ const useVenueDetailsForm = (
   const areOptionsLoading = isVenueTypesLoading || isFoodTypesLoading;
 
   const { mutateAsync: updateVenue, isPending: isUpdating } =
-    useUpdateGroupVenue(groupId);
+    useUpdateGroupVenue(groupId, {
+      onVenueRefreshStart: refreshCallbacks?.onVenueRefreshStart,
+      onVenueRefreshComplete: refreshCallbacks?.onVenueRefreshComplete,
+    });
   const { mutate: deleteVenue, isPending: isDeleting } =
     useDeleteGroupVenue(groupId);
 

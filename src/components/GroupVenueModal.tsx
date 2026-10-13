@@ -28,6 +28,8 @@ interface Props {
   onRatingsSaved?: (groupVenueId: string) => void;
   onRefreshRatings?: (groupVenueId: string) => void;
   isRefreshingRatings?: boolean;
+  onVenueRefreshStart?: () => void;
+  onVenueRefreshComplete?: () => void;
 }
 
 const GroupVenueModal = ({
@@ -37,10 +39,15 @@ const GroupVenueModal = ({
   onRatingsSaved,
   onRefreshRatings,
   isRefreshingRatings = false,
+  onVenueRefreshStart,
+  onVenueRefreshComplete,
 }: Props) => {
   const { showToast } = useToast();
 
-  const details = useVenueDetailsForm(groupId, venue);
+  const details = useVenueDetailsForm(groupId, venue, {
+    onVenueRefreshStart,
+    onVenueRefreshComplete,
+  });
   const ratings = useVenueRatingsForm(groupId, venue);
   const detailsSave = useSaveFeedback();
   const ratingsSave = useSaveFeedback();

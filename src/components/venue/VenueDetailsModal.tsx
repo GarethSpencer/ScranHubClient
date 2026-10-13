@@ -15,10 +15,21 @@ interface Props {
   groupId: string;
   venue: GroupVenueResult | null;
   onClose: () => void;
+  onVenueRefreshStart?: () => void;
+  onVenueRefreshComplete?: () => void;
 }
 
-const VenueDetailsModal = ({ groupId, venue, onClose }: Props) => {
-  const details = useVenueDetailsForm(groupId, venue);
+const VenueDetailsModal = ({
+  groupId,
+  venue,
+  onClose,
+  onVenueRefreshStart,
+  onVenueRefreshComplete,
+}: Props) => {
+  const details = useVenueDetailsForm(groupId, venue, {
+    onVenueRefreshStart,
+    onVenueRefreshComplete,
+  });
   const detailsSave = useSaveFeedback();
   const deleteFlow = useVenueDelete(details.remove, onClose);
 

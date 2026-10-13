@@ -130,9 +130,11 @@ export const useUpdateGroupVenue = (
   {
     awaitVenueRefresh = false,
     onVenueRefreshStart,
+    onVenueRefreshComplete,
   }: {
     awaitVenueRefresh?: boolean;
     onVenueRefreshStart?: () => void;
+    onVenueRefreshComplete?: () => void;
   } = {},
 ) => {
   const queryClient = useQueryClient();
@@ -153,9 +155,16 @@ export const useUpdateGroupVenue = (
         queryKey: ["groups", groupId, "venues"],
       });
       queryClient.invalidateQueries({ queryKey: ["userGroups"] });
+      if (onVenueRefreshStart) onVenueRefreshStart();
+      const finishVenueRefresh = () => onVenueRefreshComplete?.();
       if (awaitVenueRefresh) {
-        onVenueRefreshStart?.();
-        await venueRefresh;
+        try {
+          await venueRefresh;
+        } finally {
+          finishVenueRefresh();
+        }
+      } else if (onVenueRefreshComplete) {
+        void venueRefresh.finally(finishVenueRefresh);
       }
       if (data.message) showToast(data.message, "success");
     },
