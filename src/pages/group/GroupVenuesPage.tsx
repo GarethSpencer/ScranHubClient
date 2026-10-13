@@ -10,6 +10,8 @@ import {
   useCreateRating,
   useInvalidateRatingQueries,
 } from "../../api/controllerHooks/useRatingController";
+import { useUpdateGroupVenue } from "../../api/controllerHooks/useGroupVenueController";
+import { todayDateInputValue } from "../../lib/date";
 import TableStatus from "../../components/common/TableStatus";
 import TableScrollContainer from "../../components/common/TableScrollContainer";
 import InfiniteScrollLoader from "../../components/common/InfiniteScrollLoader";
@@ -63,6 +65,8 @@ const GroupVenuesPage = () => {
   const noRatingSave = useSaveFeedback();
   const { notifyRatingsSaved } = useRatingCelebration();
   const invalidateRatingQueries = useInvalidateRatingQueries();
+  const { mutate: updateGroupVenue, isPending: isUpdatingGroupVenue } =
+    useUpdateGroupVenue(id);
   const { mutateAsync: createQualityNoRating } = useCreateRating(
     "QualityRating",
     id,
@@ -121,6 +125,19 @@ const GroupVenuesPage = () => {
         noRatingSave.reset();
       },
     );
+  };
+
+  const markVisited = (venue: GroupVenueResult) => {
+    if (venue.visited || isUpdatingGroupVenue) return;
+
+    updateGroupVenue({
+      groupVenueId: venue.groupVenueId,
+      request: {
+        venueName: venue.venueName,
+        visited: true,
+        visitedOn: todayDateInputValue(),
+      },
+    });
   };
 
   const [prevIsMobile, setPrevIsMobile] = useState(isMobile);
@@ -286,6 +303,8 @@ const GroupVenuesPage = () => {
                 vibeOptions={vibeOptions}
                 onEditDetails={setDetailsVenue}
                 onEditRatings={setRatingsVenue}
+                onMarkVisited={markVisited}
+                markVisitedDisabled={isUpdatingGroupVenue}
                 onMarkDidNotGo={markDidNotGo}
                 noRatingStatus={
                   noRatingVenueId === x.groupVenueId
@@ -415,6 +434,8 @@ const GroupVenuesPage = () => {
                     vibeOptions={vibeOptions}
                     onEditDetails={setDetailsVenue}
                     onEditRatings={setRatingsVenue}
+                    onMarkVisited={markVisited}
+                    markVisitedDisabled={isUpdatingGroupVenue}
                     onMarkDidNotGo={markDidNotGo}
                     noRatingStatus={
                       noRatingVenueId === x.groupVenueId
