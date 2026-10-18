@@ -1197,6 +1197,19 @@ $switch-knob-tick-bg: switch-knob-bg("M-1.5 0.1 -0.5 1.2 1.5 -1.1", $success);
   --section-accent: var(--bs-menu4);
 }
 
+@include media-breakpoint-up(md) {
+  .content-wrapper:has(.summary-page, .manage-venues-page) {
+    width: fit-content;
+    max-width: 100%;
+  }
+
+  .content-wrapper:has(.summary-page, .manage-venues-page) .section-tabs {
+    width: 100%;
+    max-width: calc(map-get($container-max-widths, xl) - 4rem);
+    margin-inline: auto;
+  }
+}
+
 .content-wrapper:has(
     .summary-page,
     .manage-venues-page,
