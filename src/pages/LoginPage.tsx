@@ -46,11 +46,11 @@ const LoginPage = () => {
       {verificationRequired && (
         <Alert
           variant="warning"
-          className="w-75 mx-auto mt-4 text-start"
+          className="w-75 mx-auto mt-4 text-center"
           role="alert"
         >
           Please verify your email address before signing in. Check your inbox
-          for the verification email from ScranHub.
+          for your verification email or request a new one from the site admin.
         </Alert>
       )}
       <div className="w-75 mx-auto mt-5">
