@@ -1,3 +1,4 @@
+import Alert from "react-bootstrap/Alert";
 import Button from "react-bootstrap/Button";
 import { useLocation } from "react-router-dom";
 import useAuth from "../auth/useAuth";
@@ -7,10 +8,20 @@ interface LoginType {
   type: "login" | "signup";
 }
 
+const EMAIL_VERIFICATION_PARAM = "emailVerificationRequired";
+
 const LoginPage = () => {
   const location = useLocation();
   const { loginWithRedirect } = useAuth();
-  const returnTo = getSafeReturnTo(location.state);
+  const safeReturnTo = getSafeReturnTo(location.state);
+  const returnUrl = new URL(safeReturnTo ?? "/", window.location.origin);
+  const verificationRequired =
+    returnUrl.searchParams.get(EMAIL_VERIFICATION_PARAM) === "1" ||
+    new URLSearchParams(location.search).get(EMAIL_VERIFICATION_PARAM) === "1";
+  returnUrl.searchParams.delete(EMAIL_VERIFICATION_PARAM);
+  const returnTo = safeReturnTo
+    ? `${returnUrl.pathname}${returnUrl.search}${returnUrl.hash}`
+    : undefined;
 
   const auth0Signup = (
     e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>,
@@ -32,6 +43,16 @@ const LoginPage = () => {
       <h2 className="lead">
         Plan and rate your scranning adventures with your friends!
       </h2>
+      {verificationRequired && (
+        <Alert
+          variant="warning"
+          className="w-75 mx-auto mt-4 text-start"
+          role="alert"
+        >
+          Please verify your email address before signing in. Check your inbox
+          for the verification email from ScranHub.
+        </Alert>
+      )}
       <div className="w-75 mx-auto mt-5">
         <Button
           size="lg"
